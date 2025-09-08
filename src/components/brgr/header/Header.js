@@ -28,7 +28,7 @@ export default function CustomNavbar({
     
   let showCurrentLocation 
   let showAddress 
-  console.log("console added")
+
   if (selectedOutlet && selectedVenue && orderType==="storePickUp") {
     showCurrentLocation = false
     showAddress = true
