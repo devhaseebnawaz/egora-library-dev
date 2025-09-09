@@ -10,7 +10,7 @@ import { formatTime, formatDate } from "../../../utils/formatDateTime";
 import { getScreenSizeCategory, getIconWidthHeight } from '../../../utils/fontsize';
 
 export default function OrderSuccessPage({ open, onClose, themeColors, actions, prop, styles, states, globalComponentStyles, layout }) {
-
+    
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const { orderData } = states ?? {}
