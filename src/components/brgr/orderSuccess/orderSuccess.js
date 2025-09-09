@@ -10,7 +10,7 @@ import { formatTime, formatDate } from "../../../utils/formatDateTime";
 import { getScreenSizeCategory, getIconWidthHeight } from '../../../utils/fontsize';
 
 export default function OrderSuccessPage({ open, onClose, themeColors, actions, prop, styles, states, globalComponentStyles, layout }) {
-
+    
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const { orderData } = states ?? {}
@@ -27,10 +27,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
             actions.navigateToHome(`${baseUrl}`)
         }
     }
-
-
-
-
+    
     const getOrderInformationHeadingStyles = {
         color:
             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessOrderInformationHeadingTextColor?.value !== ""
@@ -63,8 +60,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                 ? globalComponentStyles?.Text?.fontWeight?.value
                 : `${themeColors?.OrderSuccessOrderInformationHeadingTextStyle?.value}`,
     };
-
-
+   
     const getOrderInformationKeyStyles = {
         color:
             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessOrderInformationKeyTextColor?.value !== ""
@@ -130,14 +126,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                 ? globalComponentStyles?.Text?.fontWeight?.value
                 : `${themeColors?.OrderSuccessOrderInformationValueTextStyle?.value}`,
     };
-
-
-
-
-
-
-
-
+    
     const getPaymentInformationHeadingStyles = {
         color:
             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPaymentHeadingTextColor?.value !== ""
@@ -238,12 +227,6 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                 : `${themeColors?.OrderSuccessPaymentValueTextStyle?.value}`,
     };
 
-
-
-
-
-
-
     const getProductInformationHeadingStyles = {
         color:
             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessProductsHeadingTextColor?.value !== ""
@@ -343,9 +326,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                 ? globalComponentStyles?.Text?.fontWeight?.value
                 : `${themeColors?.OrderSuccessProductsValueTextStyle?.value}`,
     };
-
-
-
+    
     const getThankYouStyles = {
         color:
             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessThankYouTextColor?.value !== ""
@@ -444,8 +425,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                 ? globalComponentStyles?.Text?.fontWeight?.value
                 : `${themeColors?.OrderSuccessOrderPlacedTextStyle?.value}`,
     };
-
-
+    
     const getDescriptionStyles = {
         color:
             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessDescriptionTextColor?.value !== ""
@@ -517,9 +497,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                 ? globalComponentStyles?.Text?.fontWeight?.value
                 : `${themeColors?.OrderSuccessPlaceAnotherOrderTextStyle?.value}`,
     };
-
-
-
+   
     const getNeedSupportStyles = {
         color:
             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessNeedSupportTextColor?.value !== ""
@@ -652,37 +630,96 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                 ? globalComponentStyles?.Text?.fontWeight?.value
                 : `${themeColors?.OrderSuccessViewLocationTextStyle?.value}`,
     };
-
-    const getFooterStyles = (type) => ({
+    const getPoweredByStyles = {
         color:
-            styles?.[type + "Color"]?.value ||
-            globalComponentStyles?.Text?.color?.value ||
-            themeColors?.[type + "Color"]?.value,
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextColor?.value !== ""
+                ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextColor?.value}`
+                : globalComponentStyles?.Text?.color?.value != ""
+                    ? globalComponentStyles?.Text?.color?.value
+                    : `${themeColors?.OrderSuccessPoweredByTextColor?.value}`,
         fontSize:
-            styles?.[type + "Size"]?.value[getScreenSizeCategory()] ||
-            globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] ||
-            themeColors?.[type + "Size"]?.value[getScreenSizeCategory()],
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextSize?.value[getScreenSizeCategory()] != 0
+                ? layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextSize?.value[getScreenSizeCategory()]
+                : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
+                    ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
+                    : themeColors?.OrderSuccessPoweredByTextSize?.value[getScreenSizeCategory()],
         fontWeight:
-            styles?.[type + "Weight"]?.value ||
-            globalComponentStyles?.Text?.fontFamily?.value ||
-            themeColors?.[type + "Weight"]?.value,
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextWeight?.value != ""
+                ? layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextWeight?.value
+                : globalComponentStyles?.Text?.fontWeight?.value != ""
+                    ? globalComponentStyles?.Text?.fontWeight?.value
+                    : themeColors?.OrderSuccessPoweredByTextWeight?.value,
         fontFamily:
-            styles?.[type + "Font"]?.value ||
-            globalComponentStyles?.Text?.fontFamily?.value ||
-            themeColors?.[type + "Font"]?.value,
-        fontStyle:
-            styles?.[type + "Style"]?.value ||
-            globalComponentStyles?.Text?.fontWeight?.value ||
-            themeColors?.[type + "Style"]?.value,
-    });
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextFont?.value != ""
+                ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextFont?.value}`
+                : globalComponentStyles?.Text?.fontFamily?.value != ""
+                    ? globalComponentStyles?.Text?.fontFamily?.value
+                    : `${themeColors?.OrderSuccessPoweredByTextFont?.value}`,
+
+        fontStyle: layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextStyle?.value !== ""
+            ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessPoweredByTextStyle?.value}`
+            : globalComponentStyles?.Text?.fontWeight?.value != ""
+                ? globalComponentStyles?.Text?.fontWeight?.value
+                : `${themeColors?.OrderSuccessPoweredByTextStyle?.value}`,
+    };
+
+
+    const getFooterEgoraStyles = {
+        color:
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextColor?.value !== ""
+                ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextColor?.value}`
+                : globalComponentStyles?.Text?.color?.value != ""
+                    ? globalComponentStyles?.Text?.color?.value
+                    : `${themeColors?.OrderSuccessEgoraTextColor?.value}`,
+        fontSize:
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextSize?.value[getScreenSizeCategory()] != 0
+                ? layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextSize?.value[getScreenSizeCategory()]
+                : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
+                    ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
+                    : themeColors?.OrderSuccessEgoraTextSize?.value[getScreenSizeCategory()],
+        fontWeight:
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextWeight?.value != ""
+                ? layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextWeight?.value
+                : globalComponentStyles?.Text?.fontWeight?.value != ""
+                    ? globalComponentStyles?.Text?.fontWeight?.value
+                    : themeColors?.OrderSuccessEgoraTextWeight?.value,
+        fontFamily:
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextFont?.value != ""
+                ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextFont?.value}`
+                : globalComponentStyles?.Text?.fontFamily?.value != ""
+                    ? globalComponentStyles?.Text?.fontFamily?.value
+                    : `${themeColors?.OrderSuccessEgoraTextFont?.value}`,
+
+        fontStyle: layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextStyle?.value !== ""
+            ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessEgoraTextStyle?.value}`
+            : globalComponentStyles?.Text?.fontWeight?.value != ""
+                ? globalComponentStyles?.Text?.fontWeight?.value
+                : `${themeColors?.OrderSuccessEgoraTextStyle?.value}`,
+    };
 
     return (
         <Box sx={{
             backgroundColor: "#ffffff"
         }}>
             {states.logoUrl &&
-                <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-                    <img src={states.logoUrl} alt="Logo" style={{ height: '110px', zIndex: '1000000' }} />
+                <Grid item xs={12} sx={{
+                    display: 'flex', justifyContent: 'center', border: '2px solid Red', background: "Pink",
+                    borderRadius:
+                        layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
+                            ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
+                            : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}%`,
+                    backgroundColor:
+                        layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBackgroundColor?.value != ""
+                            ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBackgroundColor?.value}`
+                            : `${themeColors?.OrderSuccessImageBackgroundColor?.value}`
+                }}>
+                    <img src={states.logoUrl} alt="Logo" style={{
+                        height: '110px', zIndex: '1000000',
+                        borderRadius:
+                            layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
+                                ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
+                                : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}%`
+                    }} />
                 </Grid>
             }
 
@@ -774,9 +811,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                         underline="hover"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        sx={{ 
-                                            ...getViewLocationStyles
-                                         }}
+                                        sx={{ fontSize: 14 }}
                                     >
                                         View Location 📍
                                     </Link>
@@ -1162,7 +1197,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                             width: '100%',
                             py: 3,
                             backgroundColor:
-                                styles?.FooterBackgroundColor?.value || themeColors?.FooterBackgroundColor?.value,
+                                styles?.OrderSuccessFooterTextColor?.value || themeColors?.OrderSuccessFooterTextColor?.value,
                             display: 'flex',
                             flexWrap: 'wrap',
                             justifyContent: 'center',
@@ -1170,14 +1205,14 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                             gap: 1,
                         }}
                     >
-                        <Typography variant="body2" component="span" sx={getFooterStyles("FooterText")}>
+                        <Typography variant="body2" component="span" sx={{ ...getPoweredByStyles }}>
                             Powered by
                         </Typography>
                         <Link
                             href="#"
                             color="inherit"
                             underline="hover"
-                            sx={getFooterStyles("FooterLink")}
+                            sx={{ ...getFooterEgoraStyles }}
                             fontWeight="bold"
                         >
                             Egora

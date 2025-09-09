@@ -194,8 +194,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
             : `${themeColors?.CartCheckoutPaymentCheckedIconColor?.value}`
 
     };
-
-
+    
     const getPaymentUnCheckedIconStyles = {
         width:
             layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutPaymentIconUnCheckedHeightWidth?.value != 0
@@ -679,17 +678,25 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
             }} >
                 <Grid container spacing={3} justifyContent="center">
                     {states.logoUrl &&
-                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center',
-                        borderRadius:
-                            layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value !== ""
-                                ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value}%`
-                                : `${themeColors?.CartCheckoutSummaryImageBorderRadius?.value || 0}%`,
-                        backgroundColor:
-                            layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBackgroundColor?.value != ""
-                                ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBackgroundColor?.value}`
-                                : `${themeColors?.CartCheckoutSummaryImageBackgroundColor?.value}`,
-                                         }}>
-                            <img src={states.logoUrl} alt="Logo" style={{ height: '125px', borderRadius: '20px' }} />
+                        <Grid item xs={12} sx={{
+                            display: 'flex', justifyContent: 'center',
+                            borderRadius:
+                                layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value !== ""
+                                    ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value}%`
+                                    : `${themeColors?.CartCheckoutSummaryImageBorderRadius?.value || 0}%`,
+                            backgroundColor:
+                                layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBackgroundColor?.value != ""
+                                    ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBackgroundColor?.value}`
+                                    : `${themeColors?.CartCheckoutSummaryImageBackgroundColor?.value}`
+                        }}>
+                            <img src={states.logoUrl} alt="Logo" 
+                                style={{
+                                    borderRadius:
+                                        layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value !== ""
+                                            ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value}%`
+                                            : `${themeColors?.CartCheckoutSummaryImageBorderRadius?.value || 0}%`,
+                                }} 
+                            />
                         </Grid>
                     }
 
