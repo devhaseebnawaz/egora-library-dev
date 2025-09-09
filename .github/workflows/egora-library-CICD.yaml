@@ -73,7 +73,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json package-lock.json || true
-          git commit -m "Update package version and name [skip ci]" || echo "No changes to commit"
+          git add dist/ -f
+          git commit -m "Update package version, name and dist [skip ci]" || echo "No changes to commit"
           git push origin HEAD
 
       - name: Publish to npm
