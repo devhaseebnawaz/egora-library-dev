@@ -26,6 +26,7 @@ export default function CustomNavbar({
   const { selectedVenue, currentLocation, orderType,selectedOutlet } = states ?? {}
   const { venueAddressOne, venueAddressTwo } = selectedVenue ?? {}
     
+  console.log("console. added")
   let showCurrentLocation 
   let showAddress 
 
@@ -62,12 +63,13 @@ export default function CustomNavbar({
       <AppBar
         position="static"
         style={{
-          backgroundColor:
-            styles?.AppBarBackgroundColor?.value != ""
-              ? styles?.AppBarBackgroundColor?.value
-              : globalComponentStyles?.Background?.color?.value != ""
-                ? globalComponentStyles?.Background?.color?.value
-                : themeColors?.AppBarBackgroundColor?.value,
+          // backgroundColor:
+          //   styles?.AppBarBackgroundColor?.value != ""
+          //     ? styles?.AppBarBackgroundColor?.value
+          //     : globalComponentStyles?.Background?.color?.value != ""
+          //       ? globalComponentStyles?.Background?.color?.value
+          //       : themeColors?.AppBarBackgroundColor?.value,
+          backgroundColor:"red",
           boxShadow: "none",
           position: "relative",
           zIndex: 10,
