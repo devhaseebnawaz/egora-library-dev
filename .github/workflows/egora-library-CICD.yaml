@@ -1,0 +1,74 @@
+name: CI/CD Publish Pipeline
+
+on:
+  push:
+    branches:
+      - test
+      - staging
+      - main
+      - production
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - run: npm install
+
+      - name: Set package name based on branch
+        id: set_pkg
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo "Branch: $BRANCH_NAME"
+          
+          if [[ "$BRANCH_NAME" == "test" ]]; then
+            PACKAGE_NAME="egora-library-test"
+          elif [[ "$BRANCH_NAME" == "staging" ]]; then
+            PACKAGE_NAME="egora-library-staging"
+          elif [[ "$BRANCH_NAME" == "main" ]]; then
+            PACKAGE_NAME="egora-library-dev"
+          elif [[ "$BRANCH_NAME" == "production" ]]; then
+            PACKAGE_NAME="egora-library"
+          else
+            echo "Branch not configured for publishing."
+            exit 1
+          fi
+
+          echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
+
+      - name: Bump version
+        run: |
+          npm version patch -m "Bump version [skip ci]"
+
+      - name: Update package.json name
+        run: |
+          sed -i "s/\"name\": \".*\"/\"name\": \"${PACKAGE_NAME}\"/" package.json
+          cat package.json | grep '"name"'
+
+      - name: Build package
+        run: |
+          rm -rf dist
+          npm run build
+
+      - name: Push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json package-lock.json || true
+          git commit -m "Update package version and name [skip ci]" || echo "No changes to commit"
+          git push origin HEAD
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm publish --access public
