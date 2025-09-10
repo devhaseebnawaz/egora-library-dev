@@ -665,6 +665,16 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                 ? layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryItemSectionBackgroundColor?.value
                 : themeColors?.CartCheckoutSummaryItemSectionBackgroundColor?.value,
     };
+
+    const redirectHome = () => {
+        const baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
+        const urlsToAppendId = ["http://localhost:3031", "http://stores.dev.egora.pk", "http://stores.stg.egora.pk", "http://stores.test.egora.pk", "http://stores.egora.pk"];
+        if (urlsToAppendId.includes(baseUrl)) {
+            actions.navigateToHome(`${baseUrl}/?${franchiseId}`)
+        } else {
+            actions.navigateToHome(`${baseUrl}`)
+        }
+    }
     return (
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{
@@ -689,13 +699,15 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                                     ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBackgroundColor?.value}`
                                     : `${themeColors?.CartCheckoutSummaryImageBackgroundColor?.value}`
                         }}>
-                            <img src={states.logoUrl} alt="Logo" 
+                            <img src={states.logoUrl} alt="Logo"
                                 style={{
                                     borderRadius:
                                         layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value !== ""
                                             ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value}%`
                                             : `${themeColors?.CartCheckoutSummaryImageBorderRadius?.value || 0}%`,
-                                }} 
+                                    cursor: 'pointer'
+                                }}
+                                onClick={redirectHome}
                             />
                         </Grid>
                     }

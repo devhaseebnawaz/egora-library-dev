@@ -703,7 +703,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
         }}>
             {states.logoUrl &&
                 <Grid item xs={12} sx={{
-                    display: 'flex', justifyContent: 'center', border: '2px solid Red', background: "Pink",
+                    display: 'flex', justifyContent: 'center',
                     borderRadius:
                         layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
                             ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
@@ -718,8 +718,10 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                         borderRadius:
                             layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
                                 ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
-                                : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}%`
-                    }} />
+                                : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}%`,
+                        cursor: 'pointer'
+                    }}
+                        onClick={redirectHome} />
                 </Grid>
             }
 
