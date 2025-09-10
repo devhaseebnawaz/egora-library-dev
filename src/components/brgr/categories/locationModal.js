@@ -779,28 +779,41 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
 
             {
-                states?.orderType === 'storePickUp' && <Button
-                    fullWidth
-                    onClick={handleOutletSelection}
-                    sx={{
+                states?.orderType === 'storePickUp' &&
+                <>
+                    <Button
+                        fullWidth
+                        onClick={handleOutletSelection}
+                        sx={{
 
-                        py: 1.5,
-                        textTransform: "none",
-                        ":hover": {
-                            backgroundColor: layout?.locationLayout?.body[0].styles?.LocationModalOrderConfirmSelectionHoverTextColor?.value !== ""
-                                ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderConfirmSelectionHoverTextColor?.value}`
-                                : `${themeColors?.LocationModalOrderConfirmSelectionHoverTextColor?.value}`
+                            py: 1.5,
+                            textTransform: "none",
+                            ":hover": {
+                                backgroundColor: layout?.locationLayout?.body[0].styles?.LocationModalOrderConfirmSelectionHoverTextColor?.value !== ""
+                                    ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderConfirmSelectionHoverTextColor?.value}`
+                                    : `${themeColors?.LocationModalOrderConfirmSelectionHoverTextColor?.value}`
 
-                        },
-                        ...getSelectButtonStyles
-                    }}
-                    disabled={
-                        !previewMode &&
-                        (!states.selectedOutlet || !states.selectedOutlet.isOnlineForStore)
-                    }
-                >
-                    Select
-                </Button>
+                            },
+                            ...getSelectButtonStyles
+                        }}
+                        disabled={
+                            !previewMode &&
+                            (!states.selectedOutlet || !states.selectedOutlet.isOnlineForStore)
+                        }
+                    >
+                        Select
+                    </Button>
+                    
+                    {states?.errorForDeniedLocation && (
+                        <Typography
+                            variant="body2"
+                            color="error"
+                            sx={{ mt: 2, textAlign: "center" }}
+                        >
+                            {states?.errorForDeniedLocation}
+                        </Typography>
+                    )}
+                </>
             }
         </Box >
     );
