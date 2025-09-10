@@ -8,7 +8,6 @@ import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
 
 export default function AllCategoriesPage({ prop, actions, styles, states, themeColors, globalComponentStyles }) {
-  
   const theme = useTheme();
   const mdDown = useMediaQuery(theme.breakpoints.down("md")); 
   const categoryRefs = useRef({});

@@ -1,4 +1,4 @@
-To Reflect the chnages in Dist File 
+To Reflect the changes in Dist File 
 
  1- Remove dist folder ode modules and package.lock.json file 
     ### `rm -rf dist node_modules package-lock.json`
