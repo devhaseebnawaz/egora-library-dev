@@ -1,5 +1,5 @@
 {
-  "name": "egora-library",
+  "name": "egora-library-dev",
   "version": "1.0.15",
   "description": "Component library for Egora platform",
   "main": "dist/index.cjs.js",
