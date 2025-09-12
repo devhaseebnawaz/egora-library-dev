@@ -12,6 +12,8 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
 
+
+
 export default function ItemCard({
   item,
   actions,
@@ -177,7 +179,7 @@ export default function ItemCard({
               : "/assets/placeholder.png"
           }
           alt={item.name}
-          style={{ height: "250px", objectFit: "fill" }}
+          style={{ height: smDown ? "150px" : "250px", objectFit: smDown ? "cover" : "fill" }}
         />
 
         <CardContent
@@ -187,6 +189,8 @@ export default function ItemCard({
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
+            padding:smDown ? '12px':'24px',
+            paddingBottom: smDown ? '12px !important':'24px !important', 
           }}
         >
           <Box>
@@ -199,7 +203,7 @@ export default function ItemCard({
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                minHeight: "3em",     // ensure height same even if text short
+                minHeight: smDown ? "2em" :  "3em",    // ensure height same even if text short
                 ...getItemNameStyles
               }}
             >
@@ -216,7 +220,7 @@ export default function ItemCard({
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                minHeight: "3em",     // fix height for uniformity
+                minHeight: smDown ? "2em" :  "3em",     // fix height for uniformity
               }}
             >
               {item.description}

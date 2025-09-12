@@ -91,6 +91,7 @@ export default function InfoBlock({ themeColors, actions, prop, styles, states, 
                     : themeColors?.InfoBlockBackgroundColor?.value,
             }}
         >
+            <Container>
             <Typography  sx={{...getInfoBlockTitleStyles}}>
                 {prop.editable.title.value}
             </Typography>
@@ -98,6 +99,7 @@ export default function InfoBlock({ themeColors, actions, prop, styles, states, 
             <Typography sx={{...getInfoBlockDescriptionStyles}} >
                 {prop.editable.description.value}
             </Typography>
+            </Container>
         </Box>
     );
 }

@@ -117,6 +117,10 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
           transition: transitionEnabled ? "transform 0.8s ease-in-out" : "none",
           transform: `translateX(-${currentIndex * 100}%)`,
           width: "100%",
+          height:  
+            styles?.HeroCarouselDisplayedImageHeight?.value != 0
+              ? styles?.HeroCarouselDisplayedImageHeight?.value
+              : themeColors?.HeroCarouselDisplayedImageHeight?.value,
         }}
       >
         {fullSlides.map((img, index) => (

@@ -213,7 +213,7 @@ export default function ItemDetailModal({
   const { isOnlineForStore } = selectedVenue ?? {}
   const [filteredChoiceGroups, setFilteredChoiceGroups] = useState([]);
   const [selectedSauces, setSelectedSauces] = useState({ items: [] });
-  const [quantity, setQuantity] = React.useState(1);
+  const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState(states.itemForDetailedModal?.notes ? states.itemForDetailedModal?.notes : "");
   const [selectedVariant, setSelectedVariant] = useState(
     isItemEdit ?

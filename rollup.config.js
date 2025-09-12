@@ -1,4 +1,3 @@
-
 import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
@@ -6,6 +5,7 @@ import babel from "@rollup/plugin-babel";
 import { terser } from "rollup-plugin-terser";
 import json from "@rollup/plugin-json";
 import path from 'path';
+import polyfillNode from 'rollup-plugin-polyfill-node';
 
 export default {
   input: "src/index.js",
@@ -29,6 +29,7 @@ export default {
     commonjs({
       include: /node_modules/,
     }),
+    polyfillNode(),
     json(),
     babel({
       exclude: "node_modules/**",

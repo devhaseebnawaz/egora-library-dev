@@ -20,6 +20,7 @@ export default function CustomNavbar({
   layout,
   previewMode = false,
 }) {
+  console.log("console added")
   const isMobile = useMediaQuery('(max-width:600px)');
   const truncateLength = isMobile ? 10 : 25;
   const isBelow850 = useMediaQuery('(max-width:850px)');
