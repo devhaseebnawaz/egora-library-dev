@@ -26,6 +26,21 @@ export default function ItemCardV2({
 }) {
     const theme = useTheme();
     const smDown = useMediaQuery(theme.breakpoints.down("sm"));
+    
+    const getCardStyles = {
+        backgroundColor:
+          styles?.AllCategoriesItemCardBackgroundColorV2?.value !== ""
+            ? styles?.AllCategoriesItemCardBackgroundColorV2?.value
+            : globalComponentStyles?.Button?.color?.value !== ""
+              ? globalComponentStyles?.Button?.color?.value
+              : themeColors?.AllCategoriesItemCardBackgroundColorV2?.value,
+        borderRadius:
+          styles?.AllCategoriesItemCardBorderRadiusV2?.value !== ""
+            ? `${styles?.AllCategoriesItemCardBorderRadiusV2?.value}%`
+            : `${themeColors?.AllCategoriesItemCardBorderRadiusV2?.value}%`,
+       
+      };
+
     const getItemNameStyles = {
         color:
             styles?.AllCategoriesItemNameTextColorV2?.value !== ""
@@ -59,6 +74,42 @@ export default function ItemCardV2({
                 : globalComponentStyles?.Text?.fontStyle?.value !== ""
                     ? globalComponentStyles?.Text?.fontStyle?.value
                     : themeColors?.AllCategoriesItemNameTextStyleV2?.value,
+    };
+
+
+    const getItemDescriptionStyles = {
+        color:
+            styles?.AllCategoriesItemDescriptionTextColorV2?.value !== ""
+                ? styles?.AllCategoriesItemDescriptionTextColorV2?.value
+                : globalComponentStyles?.Text?.color?.value !== ""
+                    ? globalComponentStyles?.Text?.color?.value
+                    : themeColors?.AllCategoriesItemDescriptionTextColorV2?.value,
+        fontWeight:
+            styles?.AllCategoriesItemDescriptionTextWeightV2?.value != ""
+                ? styles?.AllCategoriesItemDescriptionTextWeightV2?.value
+                : globalComponentStyles?.Text?.fontWeight?.value != ""
+                    ? globalComponentStyles?.Text?.fontWeight?.value :
+                    themeColors?.AllCategoriesItemDescriptionTextWeightV2?.value,
+        fontSize:
+            styles?.AllCategoriesItemDescriptionTextSizeV2?.value[getScreenSizeCategory()] != 0
+                ? styles?.AllCategoriesItemDescriptionTextSizeV2?.value[getScreenSizeCategory()]
+                : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
+                    ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
+                    : themeColors?.AllCategoriesItemDescriptionTextSizeV2?.value[getScreenSizeCategory()],
+
+        fontFamily:
+            styles?.AllCategoriesItemDescriptionTextFontV2?.value !== ""
+                ? styles?.AllCategoriesItemDescriptionTextFontV2?.value
+                : globalComponentStyles?.Text?.fontFamily?.value !== ""
+                    ? globalComponentStyles?.Text?.fontFamily?.value
+                    : themeColors?.AllCategoriesItemDescriptionTextFontV2?.value,
+
+        fontStyle:
+            styles?.AllCategoriesItemDescriptionTextStyleV2?.value !== ""
+                ? styles?.AllCategoriesItemDescriptionTextStyleV2?.value
+                : globalComponentStyles?.Text?.fontStyle?.value !== ""
+                    ? globalComponentStyles?.Text?.fontStyle?.value
+                    : themeColors?.AllCategoriesItemDescriptionTextStyleV2?.value,
     };
 
     const getPriceTagStyles = {
@@ -162,6 +213,7 @@ export default function ItemCardV2({
                 display: "flex",
                 alignItems: "flex-start",
                 p: 1,
+                ...getCardStyles
             }}
         >
            
@@ -179,14 +231,30 @@ export default function ItemCardV2({
                     height: 150,
                     borderRadius: "8px",
                     objectFit: "cover",
-                    m: 1
+                    m: 1,
+                    width: 
+                    styles?.AllCategoriesItemImageHeightV2?.value != ""
+                    ? styles?.AllCategoriesItemImageHeightV2?.value
+                    : globalComponentStyles?.LogoImage?.size?.value != ""
+                        ? globalComponentStyles?.LogoImage?.size?.value
+                        : themeColors?.AllCategoriesItemImageHeightV2?.value,
+                    height: 
+                        styles?.AllCategoriesItemImageHeightV2?.value != ""
+                        ? styles?.AllCategoriesItemImageHeightV2?.value
+                        : globalComponentStyles?.LogoImage?.size?.value != ""
+                            ? globalComponentStyles?.LogoImage?.size?.value
+                            : themeColors?.AllCategoriesItemImageHeightV2?.value,
+                    borderRadius:
+                        styles?.AllCategoriesItemImageBorderRadiusV2?.value != ""
+                        ? styles?.AllCategoriesItemImageBorderRadiusV2?.value
+                            : themeColors?.AllCategoriesItemImageBorderRadiusV2?.value,
                 }}
             />
 
             <CardContent sx={{ flex: 1, pl: 2, pt: 0, pb: "0 !important" }}>
                 <Typography
                     variant="subtitle1"
-                    sx={{ fontWeight: "bold", mb: 0.5 }}
+                    sx={{ fontWeight: "bold", mb: 0.5, ...getItemNameStyles }}
                 >
                     {item?.name}
                 </Typography>
@@ -211,7 +279,7 @@ export default function ItemCardV2({
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         minHeight: "40px",
-
+                        ...getItemDescriptionStyles
                     }}
                 >
           {item?.description || ""}
@@ -229,6 +297,7 @@ export default function ItemCardV2({
                             px: 1,
                             py: 0.3,
                             fontSize: "0.9rem",
+                            ...getPriceTagStyles
                         }}
                     >
                          Rs. {item.price}
@@ -245,7 +314,8 @@ export default function ItemCardV2({
                             color: "black",
                             fontWeight: "bold",
                             textTransform: "none",
-                            "&:hover": { backgroundColor: "#e6b800" },
+                            "&:hover": { backgroundColor: styles?.AllCategoriesCartAddHoverColorV2?.value },
+                            ...getCartAddButtonStyles
                         }}
                     >
                         Add To Cart
