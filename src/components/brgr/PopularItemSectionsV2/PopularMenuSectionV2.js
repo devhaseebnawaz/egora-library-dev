@@ -10,7 +10,6 @@ export default function PopularMenuSectionV2({ prop, actions, styles, states, th
   const mdDown = useMediaQuery(theme.breakpoints.down("md"));
   const displayItems = prop?.static?.displayitems || [];
   const [products, setProducts] = useState(displayItems);
-  console.log("Prodects to display ::", products)
   const { query } = states ?? {};
 
   useEffect(() => {
@@ -25,7 +24,17 @@ export default function PopularMenuSectionV2({ prop, actions, styles, states, th
   }, [query, displayItems]);
 
   return (
-    <Container style={{ marginTop: "30px" }}>
+    <Container 
+    style={{
+       padding: "10px",
+       marginTop: "30px", 
+       backgroundColor:
+       styles?.PopularMenuSectionBackgroundColorV2?.value != ""
+         ? styles?.PopularMenuSectionBackgroundColorV2?.value
+         : globalComponentStyles?.Background?.color?.value != ""
+           ? globalComponentStyles?.Background?.color?.value
+           : themeColors?.PopularMenuSectionBackgroundColorV2?.value,
+     }}>
       <Box mb={4} mt={4}>
         <Typography
           variant="h4"
@@ -34,34 +43,34 @@ export default function PopularMenuSectionV2({ prop, actions, styles, states, th
             alignItems: "center",
             gap: 8,
             fontWeight:
-              styles?.PopularMenuSectionHeadingTextWeight?.value != ""
-                ? styles?.PopularMenuSectionHeadingTextWeight?.value
+              styles?.PopularMenuSectionHeadingTextWeightV2?.value != ""
+                ? styles?.PopularMenuSectionHeadingTextWeightV2?.value
                 : globalComponentStyles?.Text?.fontWeight?.value != ""
                   ? globalComponentStyles?.Text?.fontWeight?.value :
-                  themeColors?.PopularMenuSectionHeadingTextWeight?.value,
-            color: styles?.PopularMenuSectionHeadingTextColor?.value != ""
-              ? styles?.PopularMenuSectionHeadingTextColor?.value
+                  themeColors?.PopularMenuSectionHeadingTextWeightV2?.value,
+            color: styles?.PopularMenuSectionHeadingTextColorV2?.value != ""
+              ? styles?.PopularMenuSectionHeadingTextColorV2?.value
               : globalComponentStyles?.Text?.color?.value != ""
                 ? globalComponentStyles?.Text?.color?.value :
-                themeColors?.PopularMenuSectionHeadingTextColor?.value,
+                themeColors?.PopularMenuSectionHeadingTextColorV2?.value,
 
-            fontSize: styles?.PopularMenuSectionHeadingTextSize?.value[getScreenSizeCategory()] != 0
-              ? styles?.PopularMenuSectionHeadingTextSize?.value[getScreenSizeCategory()]
+            fontSize: styles?.PopularMenuSectionHeadingTextSizeV2?.value[getScreenSizeCategory()] != 0
+              ? styles?.PopularMenuSectionHeadingTextSizeV2?.value[getScreenSizeCategory()]
               : globalComponentStyles?.Text?.size?.value != [getScreenSizeCategory()]
                 ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] :
-                themeColors?.PopularMenuSectionHeadingTextSize?.value[getScreenSizeCategory()],
+                themeColors?.PopularMenuSectionHeadingTextSizeV2?.value[getScreenSizeCategory()],
 
-            fontFamily: styles?.PopularMenuSectionHeadingTextFont?.value != ""
-              ? styles?.PopularMenuSectionHeadingTextFont?.value
+            fontFamily: styles?.PopularMenuSectionHeadingTextFontV2?.value != ""
+              ? styles?.PopularMenuSectionHeadingTextFontV2?.value
               : globalComponentStyles?.Text?.fontFamily?.value != ""
                 ? globalComponentStyles?.Text?.fontFamily?.value :
-                themeColors?.PopularMenuSectionHeadingTextFont?.value,
+                themeColors?.PopularMenuSectionHeadingTextFontV2?.value,
 
-            fontStyle: styles?.PopularMenuSectionHeadingTextStyle?.value != ""
-              ? styles?.PopularMenuSectionHeadingTextStyle?.value
+            fontStyle: styles?.PopularMenuSectionHeadingTextStyleV2?.value != ""
+              ? styles?.PopularMenuSectionHeadingTextStyleV2?.value
               : globalComponentStyles?.Text?.fontWeight?.value != ""
                 ? globalComponentStyles?.Text?.fontWeight?.value :
-                themeColors?.PopularMenuSectionHeadingTextStyle?.value,
+                themeColors?.PopularMenuSectionHeadingTextStyleV2?.value,
 
           }}
         >
@@ -69,35 +78,35 @@ export default function PopularMenuSectionV2({ prop, actions, styles, states, th
         </Typography>
         <Typography variant="subtitle1" style={{
           fontWeight:
-            styles?.PopularMenuSectionDescriptionTextWeight?.value != ""
-              ? styles?.PopularMenuSectionDescriptionTextWeight?.value
+            styles?.PopularMenuSectionDescriptionTextWeightV2?.value != ""
+              ? styles?.PopularMenuSectionDescriptionTextWeightV2?.value
               : globalComponentStyles?.Text?.fontWeight?.value != ""
                 ? globalComponentStyles?.Text?.fontWeight?.value :
-                themeColors?.PopularMenuSectionDescriptionTextWeight?.value,
+                themeColors?.PopularMenuSectionDescriptionTextWeightV2?.value,
 
-          color: styles?.PopularMenuSectionDescriptionTextColor?.value != ""
-            ? styles?.PopularMenuSectionDescriptionTextColor?.value
+          color: styles?.PopularMenuSectionDescriptionTextColorV2?.value != ""
+            ? styles?.PopularMenuSectionDescriptionTextColorV2?.value
             : globalComponentStyles?.Text?.color?.value != ""
               ? globalComponentStyles?.Text?.color?.value :
-              themeColors?.PopularMenuSectionDescriptionTextColor?.value,
+              themeColors?.PopularMenuSectionDescriptionTextColorV2?.value,
 
-          fontSize: styles?.PopularMenuSectionDescriptionTextSize?.value[getScreenSizeCategory()] != 0
-            ? styles?.PopularMenuSectionDescriptionTextSize?.value[getScreenSizeCategory()]
+          fontSize: styles?.PopularMenuSectionDescriptionTextSizeV2?.value[getScreenSizeCategory()] != 0
+            ? styles?.PopularMenuSectionDescriptionTextSizeV2?.value[getScreenSizeCategory()]
             : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
               ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] :
-              themeColors?.PopularMenuSectionDescriptionTextSize?.value[getScreenSizeCategory()],
+              themeColors?.PopularMenuSectionDescriptionTextSizeV2?.value[getScreenSizeCategory()],
 
-          fontFamily: styles?.PopularMenuSectionDescriptionTextFont?.value != ""
-            ? styles?.PopularMenuSectionDescriptionTextFont?.value
+          fontFamily: styles?.PopularMenuSectionDescriptionTextFontV2?.value != ""
+            ? styles?.PopularMenuSectionDescriptionTextFontV2?.value
             : globalComponentStyles?.Text?.fontFamily?.value != ""
               ? globalComponentStyles?.Text?.fontFamily?.value :
-              themeColors?.PopularMenuSectionDescriptionTextFont?.value,
+              themeColors?.PopularMenuSectionDescriptionTextFontV2?.value,
 
-          fontStyle: styles?.PopularMenuSectionDescriptionTextStyle?.value != ""
-            ? styles?.PopularMenuSectionDescriptionTextStyle?.value
+          fontStyle: styles?.PopularMenuSectionDescriptionTextStyleV2?.value != ""
+            ? styles?.PopularMenuSectionDescriptionTextStyleV2?.value
             : globalComponentStyles?.Text?.fontWeight?.value != ""
               ? globalComponentStyles?.Text?.fontWeight?.value :
-              themeColors?.PopularMenuSectionDescriptionTextStyle?.value,
+              themeColors?.PopularMenuSectionDescriptionTextStyleV2?.value,
 
         }}>
           {prop?.editable?.description?.value}
@@ -110,35 +119,35 @@ export default function PopularMenuSectionV2({ prop, actions, styles, states, th
           style={{
             textAlign: "center", marginTop: 40,
             fontWeight:
-              styles?.PopularMenuSectionDescriptionTextWeight?.value != ""
-                ? styles?.PopularMenuSectionDescriptionTextWeight?.value
+              styles?.PopularMenuSectionDescriptionTextWeightV2?.value != ""
+                ? styles?.PopularMenuSectionDescriptionTextWeightV2?.value
                 : globalComponentStyles?.Text?.fontWeight?.value != ""
                   ? globalComponentStyles?.Text?.fontWeight?.value :
-                  themeColors?.PopularMenuSectionDescriptionTextWeight?.value,
+                  themeColors?.PopularMenuSectionDescriptionTextWeightV2?.value,
 
-            color: styles?.PopularMenuSectionDescriptionTextColor?.value != ""
-              ? styles?.PopularMenuSectionDescriptionTextColor?.value
+            color: styles?.PopularMenuSectionDescriptionTextColorV2?.value != ""
+              ? styles?.PopularMenuSectionDescriptionTextColorV2?.value
               : globalComponentStyles?.Text?.color?.value != ""
                 ? globalComponentStyles?.Text?.color?.value :
-                themeColors?.PopularMenuSectionDescriptionTextColor?.value,
+                themeColors?.PopularMenuSectionDescriptionTextColorV2?.value,
 
-            fontSize: styles?.PopularMenuSectionDescriptionTextSize?.value[getScreenSizeCategory()] != 0
-              ? styles?.PopularMenuSectionDescriptionTextSize?.value[getScreenSizeCategory()]
+            fontSize: styles?.PopularMenuSectionDescriptionTextSizeV2?.value[getScreenSizeCategory()] != 0
+              ? styles?.PopularMenuSectionDescriptionTextSizeV2?.value[getScreenSizeCategory()]
               : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
                 ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] :
-                themeColors?.PopularMenuSectionDescriptionTextSize?.value[getScreenSizeCategory()],
+                themeColors?.PopularMenuSectionDescriptionTextSizeV2?.value[getScreenSizeCategory()],
 
-            fontFamily: styles?.PopularMenuSectionDescriptionTextFont?.value != ""
-              ? styles?.PopularMenuSectionDescriptionTextFont?.value
+            fontFamily: styles?.PopularMenuSectionDescriptionTextFontV2?.value != ""
+              ? styles?.PopularMenuSectionDescriptionTextFontV2?.value
               : globalComponentStyles?.Text?.fontFamily?.value != ""
                 ? globalComponentStyles?.Text?.fontFamily?.value :
-                themeColors?.PopularMenuSectionDescriptionTextFont?.value,
+                themeColors?.PopularMenuSectionDescriptionTextFontV2?.value,
 
-            fontStyle: styles?.PopularMenuSectionDescriptionTextStyle?.value != ""
-              ? styles?.PopularMenuSectionDescriptionTextStyle?.value
+            fontStyle: styles?.PopularMenuSectionDescriptionTextStyleV2?.value != ""
+              ? styles?.PopularMenuSectionDescriptionTextStyleV2?.value
               : globalComponentStyles?.Text?.fontWeight?.value != ""
                 ? globalComponentStyles?.Text?.fontWeight?.value :
-                themeColors?.PopularMenuSectionDescriptionTextStyle?.value,
+                themeColors?.PopularMenuSectionDescriptionTextStyleV2?.value,
           }}
         >
           No items found.
