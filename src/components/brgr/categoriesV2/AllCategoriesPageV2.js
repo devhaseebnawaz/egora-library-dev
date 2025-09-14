@@ -116,37 +116,37 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
 
   const getCategoryNameStyles = {
     color:
-      styles?.AllCategoriesCategoryTextColor?.value !== ""
-        ? styles?.AllCategoriesCategoryTextColor?.value
+      styles?.AllCategoriesCategoryTextColorV2?.value !== ""
+        ? styles?.AllCategoriesCategoryTextColorV2?.value
         : globalComponentStyles?.Text?.color?.value !== ""
           ? globalComponentStyles?.Text?.color?.value
-          : themeColors?.AllCategoriesCategoryTextColor?.value,
+          : themeColors?.AllCategoriesCategoryTextColorV2?.value,
 
     fontSize:
-      styles?.AllCategoriesCategoryTextSize?.value[getScreenSizeCategory()] != 0
-        ? styles?.AllCategoriesCategoryTextSize?.value[getScreenSizeCategory()]
+      styles?.AllCategoriesCategoryTextSizeV2?.value[getScreenSizeCategory()] != 0
+        ? styles?.AllCategoriesCategoryTextSizeV2?.value[getScreenSizeCategory()]
         : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
           ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
-          : themeColors?.AllCategoriesCategoryTextSize?.value[getScreenSizeCategory()],
+          : themeColors?.AllCategoriesCategoryTextSizeV2?.value[getScreenSizeCategory()],
     fontWeight:
-      styles?.AllCategoriesCategoryTextWeight?.value != ""
-        ? styles?.AllCategoriesCategoryTextWeight?.value
+      styles?.AllCategoriesCategoryTextWeightV2?.value != ""
+        ? styles?.AllCategoriesCategoryTextWeightV2?.value
         : globalComponentStyles?.Text?.fontWeight?.value != ""
           ? globalComponentStyles?.Text?.fontWeight?.value :
-          themeColors?.AllCategoriesCategoryTextWeight?.value,
+          themeColors?.AllCategoriesCategoryTextWeightV2?.value,
     fontFamily:
-      styles?.AllCategoriesCategoryTextFont?.value !== ""
-        ? styles?.AllCategoriesCategoryTextFont?.value
+      styles?.AllCategoriesCategoryTextFontV2?.value !== ""
+        ? styles?.AllCategoriesCategoryTextFontV2?.value
         : globalComponentStyles?.Text?.fontFamily?.value !== ""
           ? globalComponentStyles?.Text?.fontFamily?.value
-          : themeColors?.AllCategoriesCategoryTextFont?.value,
+          : themeColors?.AllCategoriesCategoryTextFontV2?.value,
 
     fontStyle:
-      styles?.AllCategoriesCategoryTextStyle?.value !== ""
+      styles?.AllCategoriesCategoryTextStyleV2?.value !== ""
         ? styles?.AllCategoriesCategoryTextStyle?.value
         : globalComponentStyles?.Text?.fontStyle?.value !== ""
-          ? globalComponentStyles?.Text?.fontStyle?.value
-          : themeColors?.AllCategoriesCategoryTextStyle?.value,
+          ? globalComponentStyles?.Text?.fontStyleV2?.value
+          : themeColors?.AllCategoriesCategoryTextStyleV2?.value,
   };
 
   const values = prop.editable.categoryId.value;
@@ -160,7 +160,15 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
     .filter(Boolean);
 
   return (
-    <Container style={{ marginTop: "30px" }}>
+    <Container style={{ marginTop: "30px", 
+    backgroundColor:
+    styles?.AllCategoriesBackgroundColorV2?.value != ""
+      ? styles?.AllCategoriesBackgroundColorV2?.value
+      : globalComponentStyles?.Background?.color?.value != ""
+        ? globalComponentStyles?.Background?.color?.value
+        : themeColors?.AllCategoriesBackgroundColorV2?.value,
+        padding: "10px"
+     }}>
       {sortedCategory.map((category, index) => (
         <Box
           key={category.id}
@@ -173,7 +181,7 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
             <Typography variant="h3" style={{ marginBottom: "16px", ...getCategoryNameStyles }}>
               {category.name}
             </Typography>
-            <BannerV2 img={prop.editable.categoryId.value[index]?.img} />
+            <BannerV2 img={prop.editable.categoryId.value[index]?.img} styles={styles} themeColors={themeColors}  />
 
             <Grid container spacing={2}>
               {category?.items?.map((item, index) => (
