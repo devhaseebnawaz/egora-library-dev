@@ -16,16 +16,6 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 export default function ItemCardV2({ item, themeColors, styles, actions, states, globalComponentStyles }) {
   const theme = useTheme();
   const getItemNameStyles = {
-    backgroundColor:
-      styles?.PopularMenuSectionItemNameTextBackgroundColorV2?.value !== ""
-        ? styles?.PopularMenuSectionItemNameTextBackgroundColorV2?.value
-        : globalComponentStyles?.Text?.color?.value !== ""
-          ? globalComponentStyles?.Text?.color?.value
-          : themeColors?.PopularMenuSectionItemNameTextBackgroundColorV2?.value,
-    borderRadius:
-      styles?.PopularMenuSectionItemNameBorderRadiusV2?.value !== ""
-        ? `${styles?.PopularMenuSectionItemNameBorderRadiusV2?.value}%`
-        : `${themeColors?.PopularMenuSectionItemNameBorderRadiusV2?.value}%`,
     color:
       styles?.PopularMenuSectionItemNameTextColorV2?.value !== ""
         ? styles?.PopularMenuSectionItemNameTextColorV2?.value
@@ -60,62 +50,149 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
           : themeColors?.PopularMenuSectionItemNameTextStyleV2?.value,
   };
 
+  const getItemDescriptionStyles = {
+    color:
+      styles?.PopularMenuSectionItemDescriptionTextColorV2?.value !== ""
+        ? styles?.PopularMenuSectionItemDescriptionTextColorV2?.value
+        : globalComponentStyles?.Text?.color?.value !== ""
+          ? globalComponentStyles?.Text?.color?.value
+          : themeColors?.PopularMenuSectionItemDescriptionTextColorV2?.value,
+    fontWeight:
+      styles?.PopularMenuSectionItemDescriptionTextWeightV2?.value != ""
+        ? styles?.PopularMenuSectionItemDescriptionTextWeightV2?.value
+        : globalComponentStyles?.Text?.fontWeight?.value != ""
+          ? globalComponentStyles?.Text?.fontWeight?.value :
+          themeColors?.PopularMenuSectionItemDescriptionTextWeightV2?.value,
+    fontSize:
+      styles?.PopularMenuSectionItemDescriptionTextSizeV2?.value[getScreenSizeCategory()] != 0
+        ? styles?.PopularMenuSectionItemDescriptionTextSizeV2?.value[getScreenSizeCategory()]
+        : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
+          ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
+          : themeColors?.PopularMenuSectionItemDescriptionTextSizeV2?.value[getScreenSizeCategory()],
+
+    fontFamily:
+      styles?.PopularMenuSectionItemDescriptionTextFontV2?.value !== ""
+        ? styles?.PopularMenuSectionItemDescriptionTextFontV2?.value
+        : globalComponentStyles?.Text?.fontFamily?.value !== ""
+          ? globalComponentStyles?.Text?.fontFamily?.value
+          : themeColors?.PopularMenuSectionItemDescriptionTextFontV2?.value,
+
+    fontStyle:
+      styles?.PopularMenuSectionItemDescriptionTextStyleV2?.value !== ""
+        ? styles?.PopularMenuSectionItemDescriptionTextStyleV2?.value
+        : globalComponentStyles?.Text?.fontWeight?.value !== ""
+          ? globalComponentStyles?.Text?.fontWeight?.value
+          : themeColors?.PopularMenuSectionItemDescriptionTextStyleV2?.value,
+  };
+
+
   console.log("getItemNameStyles getItemNameStyles", themeColors)
   const getPriceTagStyles = {
     color:
-      styles?.PopularMenuSectionPriceTextColorV2?.value !== ""
-        ? styles?.PopularMenuSectionPriceTextColorV2?.value
+      styles?.PopularMenuSectionPriceTagTextColorV2?.value !== ""
+        ? styles?.PopularMenuSectionPriceTagTextColorV2?.value
         : globalComponentStyles?.Text?.color?.value !== ""
           ? globalComponentStyles?.Text?.color?.value
-          : themeColors?.PopularMenuSectionPriceTextColorV2?.value,
+          : themeColors?.PopularMenuSectionPriceTagTextColorV2?.value,
     fontWeight:
-      styles?.PopularMenuSectionPriceTextWeightV2?.value != ""
-        ? styles?.PopularMenuSectionPriceTextWeightV2?.value
+      styles?.PopularMenuSectionPriceTagTextWeightV2?.value != ""
+        ? styles?.PopularMenuSectionPriceTagTextWeightV2?.value
         : globalComponentStyles?.Text?.fontWeight?.value != ""
           ? globalComponentStyles?.Text?.fontWeight?.value :
-          themeColors?.PopularMenuSectionPriceTextWeightV2?.value,
+          themeColors?.PopularMenuSectionPriceTagTextWeightV2?.value,
     fontSize:
-      styles?.PopularMenuSectionPriceTextSizeV2?.value[getScreenSizeCategory()] != 0
-        ? styles?.PopularMenuSectionPriceTextSizeV2?.value[getScreenSizeCategory()]
+      styles?.PopularMenuSectionPriceTagTextSizeV2?.value[getScreenSizeCategory()] != 0
+        ? styles?.PopularMenuSectionPriceTagTextSizeV2?.value[getScreenSizeCategory()]
         : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
           ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
-          : themeColors?.PopularMenuSectionPriceTextSizeV2?.value[getScreenSizeCategory()],
+          : themeColors?.PopularMenuSectionPriceTagTextSizeV2?.value[getScreenSizeCategory()],
 
     fontFamily:
-      styles?.PopularMenuSectionPriceTextFontV2?.value !== ""
-        ? styles?.PopularMenuSectionPriceTextFontV2?.value
+      styles?.PopularMenuSectionPriceTagTextFontV2?.value !== ""
+        ? styles?.PopularMenuSectionPriceTagTextFontV2?.value
         : globalComponentStyles?.Text?.fontFamily?.value !== ""
           ? globalComponentStyles?.Text?.fontFamily?.value
-          : themeColors?.PopularMenuSectionPriceTextFontV2?.value,
+          : themeColors?.PopularMenuSectionPriceTagTextFontV2?.value,
 
     fontStyle:
-      styles?.PopularMenuSectionPriceTextStyleV2?.value !== ""
-        ? styles?.PopularMenuSectionPriceTextStyleV2?.value
+      styles?.PopularMenuSectionPriceTagTextStyleV2?.value !== ""
+        ? styles?.PopularMenuSectionPriceTagTextStyleV2?.value
         : globalComponentStyles?.Text?.fontWeight?.value !== ""
           ? globalComponentStyles?.Text?.fontWeight?.value
-          : themeColors?.PopularMenuSectionPriceTextStyleV2?.value,
+          : themeColors?.PopularMenuSectionPriceTagTextStyleV2?.value
+  };
 
-    borderRadius: styles?.PopularMenuSectionPriceBorderRadiusV2?.value !== ""
-      ? styles?.PopularMenuSectionPriceBorderRadiusV2?.value
-      : themeColors?.PopularMenuSectionPriceBorderRadiusV2?.value,
 
-    backgroundColor: styles?.PopularMenuSectionPriceBackgroundcolorV2?.value !== ""
-      ? styles?.PopularMenuSectionPriceBackgroundcolorV2?.value
-      : globalComponentStyles?.Text?.backgroundColor?.value !== ""
-        ? globalComponentStyles?.Text?.backgroundColor?.value
-        : themeColors?.PopularMenuSectionPriceBackgroundcolorV2?.value,
+
+  const getAddToCartButtontyles = {
+    backgroundColor:
+      styles?.PopularMenuSectionCartAddBackgroundcolorV2?.value !== ""
+        ? styles?.PopularMenuSectionCartAddBackgroundcolorV2?.value
+        : globalComponentStyles?.Button?.color?.value !== ""
+          ? globalComponentStyles?.Button?.color?.value
+          : themeColors?.PopularMenuSectionCartAddBackgroundcolorV2?.value,
+    borderRadius:
+      styles?.PopularMenuSectionCartAddBorderRadiusV2?.value !== ""
+        ? `${styles?.PopularMenuSectionCartAddBorderRadiusV2?.value}%`
+        : `${themeColors?.PopularMenuSectionCartAddBorderRadiusV2?.value}%`,
+    color:
+      styles?.PopularMenuSectionCartAddTextColorV2?.value !== ""
+        ? styles?.PopularMenuSectionCartAddTextColorV2?.value
+        : globalComponentStyles?.Text?.color?.value !== ""
+          ? globalComponentStyles?.Text?.color?.value
+          : themeColors?.PopularMenuSectionCartAddTextColorV2?.value,
+    fontWeight:
+      styles?.PopularMenuSectionCartAddTextWeightV2?.value != ""
+        ? styles?.PopularMenuSectionCartAddTextWeightV2?.value
+        : globalComponentStyles?.Text?.fontWeight?.value != ""
+          ? globalComponentStyles?.Text?.fontWeight?.value :
+          themeColors?.PopularMenuSectionCartAddTextWeightV2?.value,
+    fontSize:
+      styles?.PopularMenuSectionCartAddTextSizeV2?.value[getScreenSizeCategory()] != 0
+        ? styles?.PopularMenuSectionCartAddTextSizeV2?.value[getScreenSizeCategory()]
+        : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
+          ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
+          : themeColors?.PopularMenuSectionCartAddTextSizeV2?.value[getScreenSizeCategory()],
+
+    fontFamily:
+      styles?.PopularMenuSectionCartAddTextFontV2?.value !== ""
+        ? styles?.PopularMenuSectionCartAddTextFontV2?.value
+        : globalComponentStyles?.Text?.fontFamily?.value !== ""
+          ? globalComponentStyles?.Text?.fontFamily?.value
+          : themeColors?.PopularMenuSectionCartAddTextFontV2?.value,
+
+    fontStyle:
+      styles?.PopularMenuSectionCartAddTagTextStyleV2?.value !== ""
+        ? styles?.PopularMenuSectionCartAddTagTextStyleV2?.value
+        : globalComponentStyles?.Text?.fontWeight?.value !== ""
+          ? globalComponentStyles?.Text?.fontWeight?.value
+          : themeColors?.PopularMenuSectionCartAddTagTextStyleV2?.value,
+  };
+
+  const getCardStyles = {
+    backgroundColor:
+      styles?.PopularMenuSectionItemCardBackgroundColorV2?.value !== ""
+        ? styles?.PopularMenuSectionItemCardBackgroundColorV2?.value
+        : globalComponentStyles?.Button?.color?.value !== ""
+          ? globalComponentStyles?.Button?.color?.value
+          : themeColors?.PopularMenuSectionItemCardBackgroundColorV2?.value,
+    borderRadius:
+      styles?.PopularMenuSectionItemCardBorderRadiusV2?.value !== ""
+        ? `${styles?.PopularMenuSectionItemCardBorderRadiusV2?.value}%`
+        : `${themeColors?.PopularMenuSectionItemCardBorderRadiusV2?.value}%`,
+   
   };
 
   return (
     <Card
       sx={{
-        borderRadius: "12px",
         boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
         overflow: "hidden",
         display: "flex",
         alignItems: "flex-start",
         width: "100%",
         maxWidth: 400,
+        ...getCardStyles
       }}
     >
       <CardMedia
@@ -133,11 +210,25 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
           e.target.src = '/assets/placeholder.png'
         }}
         sx={{
-          width: 150,
-          height: 150,
+          
           objectFit: "cover",
-          borderRadius: "8px",
           m: 1,
+          width: 
+            styles?.PopularMenuSectionImageHeightV2?.value != ""
+              ? styles?.PopularMenuSectionImageHeightV2?.value
+              : globalComponentStyles?.LogoImage?.size?.value != ""
+                ? globalComponentStyles?.LogoImage?.size?.value
+                : themeColors?.PopularMenuSectionImageHeightV2?.value,
+          height: 
+            styles?.PopularMenuSectionImageHeightV2?.value != ""
+              ? styles?.PopularMenuSectionImageHeightV2?.value
+              : globalComponentStyles?.LogoImage?.size?.value != ""
+                ? globalComponentStyles?.LogoImage?.size?.value
+                : themeColors?.PopularMenuSectionImageHeightV2?.value,
+          borderRadius:
+            styles?.PopularMenuSectionImageBorderRadiusV2?.value != ""
+              ? styles?.PopularMenuSectionImageBorderRadiusV2?.value
+                : themeColors?.PopularMenuSectionImageBorderRadiusV2?.value,
         }}
       />
 
@@ -154,14 +245,13 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         <Typography
           variant="body2"
           sx={{
-            color: "text.secondary",
             mb: 1,
             display: "-webkit-box",
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            minHeight: "40px",
+            ...getItemDescriptionStyles
           }}
         >
           {item?.description || ""}
@@ -186,11 +276,9 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
             variant="contained"
             disableElevation
             sx={{
-              backgroundColor: "#ffcc00",
-              color: "black",
-              fontWeight: "bold",
               textTransform: "none",
-              "&:hover": { backgroundColor: "#e6b800" },
+              "&:hover": { backgroundColor: styles?.PopularMenuSectionCartAddHovercolorV2?.value },
+              ...getAddToCartButtontyles
             }}
           >
             Add To Cart
