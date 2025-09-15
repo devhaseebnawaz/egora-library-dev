@@ -2,7 +2,9 @@ import Header from './components/brgr/header/Header'
 import HeroCarousel from './components/brgr/header/HeroCarousel';
 import SearchBar from './components/brgr/search/SearchBar';
 import PopularMenuSection from './components/brgr/PopularItemSections/PopularMenuSection';
+import PopularMenuSectionV2 from './components/brgr/PopularItemSectionsV2/PopularMenuSectionV2';
 import AllCategoriesPage from './components/brgr/categories/AllCategoriesPage';
+import AllCategoriesPageV2 from './components/brgr/categoriesV2/AllCategoriesPageV2';
 import InfoBlock from './components/brgr/InfoBlock/InfoBlock';
 import Footer from './components/brgr/footer/Footer';
 import CategoryCarousel from './components/brgr/categories/CategoryCarousel';
@@ -15,4 +17,4 @@ import AnnouncementsBanner from './components/brgr/AnnouncementsBanner/announcem
 import CartDrawer from './components/brgr//header/CartDrawer';
 import CartBottomBar from './components/brgr/CartBottomBar/CartBottomBar';
 import EditorTextBlock from './components/brgr/editorTextBlock/editorTextBlock';
-export { AnnouncementsBanner, CartDrawer, ItemDetailModal,CartCheckoutSummary, TextBlock,EditorTextBlock, OrderSuccessPage, Header, LocationModal, HeroCarousel, CategoryCarousel, SearchBar, PopularMenuSection, AllCategoriesPage, Footer, InfoBlock, CartBottomBar };
+export { AnnouncementsBanner, CartDrawer, ItemDetailModal, CartCheckoutSummary, TextBlock, EditorTextBlock, OrderSuccessPage, Header, LocationModal, HeroCarousel, CategoryCarousel, SearchBar, PopularMenuSection, PopularMenuSectionV2, AllCategoriesPage, AllCategoriesPageV2, Footer, InfoBlock, CartBottomBar };
