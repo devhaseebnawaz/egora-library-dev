@@ -181,8 +181,9 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
             <Typography variant="h3" style={{ marginBottom: "16px", ...getCategoryNameStyles }}>
               {category.name}
             </Typography>
-            <BannerV2 img={prop.editable.categoryId.value[index]?.img} styles={styles} themeColors={themeColors}  />
-
+            
+            { styles?.AllCategoriesBannerImageShowV2?.value &&  <BannerV2 img={prop.editable.categoryId.value[index]?.img} styles={styles} themeColors={themeColors}  /> } 
+            
             <Grid container spacing={2}>
               {category?.items?.map((item, index) => (
                 <Grid
