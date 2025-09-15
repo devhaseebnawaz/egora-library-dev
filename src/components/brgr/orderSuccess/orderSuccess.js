@@ -699,26 +699,34 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
 
     return (
         <Box sx={{
-            backgroundColor: "#ffffff"
+            backgroundColor: layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessBackgroundColor?.value
         }}>
             {states.logoUrl &&
                 <Grid item xs={12} sx={{
                     display: 'flex', justifyContent: 'center',
                     borderRadius:
-                        layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
-                            ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
+                        layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
+                            ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
                             : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}%`,
                     backgroundColor:
-                        layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBackgroundColor?.value != ""
-                            ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBackgroundColor?.value}`
+                        layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBackgroundColor?.value != ""
+                            ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBackgroundColor?.value}`
                             : `${themeColors?.OrderSuccessImageBackgroundColor?.value}`
                 }}>
                     <img src={states.logoUrl} alt="Logo" style={{
-                        height: '110px', zIndex: '1000000',
+                        zIndex: '1000000',
                         borderRadius:
-                            layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
-                                ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
+                            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
+                                ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
                                 : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}%`,
+                         width: 
+                            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageHeightWidth?.value !== ""
+                                ? layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageHeightWidth?.value
+                                : themeColors?.OrderSuccessImageHeightWidth?.value,
+                        height: 
+                            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageHeightWidth?.value !== ""
+                                ? layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageHeightWidth?.value
+                                : themeColors?.OrderSuccessImageHeightWidth?.value,  
                         cursor: 'pointer'
                     }}
                         onClick={redirectHome} />

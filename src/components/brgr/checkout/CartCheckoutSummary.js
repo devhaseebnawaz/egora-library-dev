@@ -705,6 +705,15 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                                         layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value !== ""
                                             ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value}%`
                                             : `${themeColors?.CartCheckoutSummaryImageBorderRadius?.value || 0}%`,
+                                    width: 
+                                        layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageHeightWidth?.value !== ""
+                                            ? layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageHeightWidth?.value
+                                            : themeColors?.CartCheckoutSummaryImageHeightWidth?.value,
+                                    height: 
+                                        layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageHeightWidth?.value !== ""
+                                            ? layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageHeightWidth?.value
+                                            : themeColors?.CartCheckoutSummaryImageHeightWidth?.value,  
+
                                     cursor: 'pointer'
                                 }}
                                 onClick={redirectHome}
