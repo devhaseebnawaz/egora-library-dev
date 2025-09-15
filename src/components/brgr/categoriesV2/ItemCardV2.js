@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { getScreenSizeCategory } from "src/components/brgr/utils/fontsize";
+import { getScreenSizeCategory } from "../../../utils/fontsize";
 
 
 export default function ItemCardV2({
