@@ -34,19 +34,19 @@ jobs:
           echo "Branch: $BRANCH_NAME"
           
           if [[ "$BRANCH_NAME" == "test" ]]; then
-            PACKAGE_NAME="egora-library-test"
+            PUBLISH_NAME="egora-library-test"
           elif [[ "$BRANCH_NAME" == "staging" ]]; then
-            PACKAGE_NAME="egora-library-staging"
+            PUBLISH_NAME="egora-library-staging"
           elif [[ "$BRANCH_NAME" == "main" ]]; then
-            PACKAGE_NAME="egora-library-dev"
+            PUBLISH_NAME="egora-library-dev"
           elif [[ "$BRANCH_NAME" == "production" ]]; then
-            PACKAGE_NAME="egora-library"
+            PUBLISH_NAME="egora-library"
           else
             echo "Branch not configured for publishing."
             exit 1
           fi
 
-          echo "PACKAGE_NAME=$PACKAGE_NAME" >> $GITHUB_ENV
+          echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
 
       - name: Setup git identity
         run: |
@@ -57,16 +57,18 @@ jobs:
         run: |
           npm version patch -m "Bump version [skip ci]"
 
-      - name: Update package.json name
-        run: |
-          sed -i "s/\"name\": \".*\"/\"name\": \"${PACKAGE_NAME}\"/" package.json
-          cat package.json | grep '"name"'
-
       - name: Build package
         run: |
           rm -rf dist
           mv rollup.config.js rollup.config.mjs
           npm run build
+
+      - name: Prepare package.json for publish
+        run: |
+          # keep repo name as egora-library but change only for publish
+          jq --arg name "$PUBLISH_NAME" '.name=$name' package.json > package.tmp.json
+          mv package.tmp.json package.json
+          cat package.json | grep '"name"'
 
       - name: Push changes
         run: |
@@ -74,7 +76,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add package.json package-lock.json || true
           git add dist/ -f
-          git commit -m "Update package version, name and dist [skip ci]" || echo "No changes to commit"
+          git commit -m "Update package version, dist [skip ci]" || echo "No changes to commit"
           git push origin HEAD
 
       - name: Publish to npm

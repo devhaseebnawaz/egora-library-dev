@@ -1198,8 +1198,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                         sx={{
                             width: '100%',
                             py: 3,
-                            backgroundColor:
-                                styles?.OrderSuccessFooterTextColor?.value || themeColors?.OrderSuccessFooterTextColor?.value,
+                            // backgroundColor: styles?.OrderSuccessFooterTextColor?.value || themeColors?.OrderSuccessFooterTextColor?.value,
                             display: 'flex',
                             flexWrap: 'wrap',
                             justifyContent: 'center',
