@@ -5,7 +5,7 @@ import BannerV2 from "../categoriesV2/BannerV2";
 import CategoryLayout from "../categories/CategoryLayout";
 import ItemCardV2 from "./ItemCardV2";
 import { useTheme } from '@mui/material/styles';
-import { getFontSize, getScreenSizeCategory } from "src/components/brgr/utils/fontsize";
+import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
 
 export default function AllCategoriesPageV2({ prop, actions, styles, states, themeColors, globalComponentStyles }) {
   const theme = useTheme();

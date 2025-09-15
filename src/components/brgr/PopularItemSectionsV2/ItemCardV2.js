@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
-import { getScreenSizeCategory } from "src/components/brgr/utils/fontsize";
+import { getScreenSizeCategory } from "../../../utils/fontsize";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 

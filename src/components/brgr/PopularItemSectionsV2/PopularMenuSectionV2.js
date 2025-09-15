@@ -3,7 +3,7 @@ import { Grid, Box, Typography, Container, useMediaQuery } from "@mui/material";
 import ItemCardV2 from "./ItemCardV2";
 import ItemDetailModal from "../categories/ItemDetailModal";
 import { useTheme } from '@mui/material/styles';
-import { getFontSize, getScreenSizeCategory } from "src/components/brgr/utils/fontsize";
+import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
 
 export default function PopularMenuSectionV2({ prop, actions, styles, states, themeColors, globalComponentStyles }) {
   const theme = useTheme();
