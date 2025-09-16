@@ -167,7 +167,6 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
       : globalComponentStyles?.Background?.color?.value != ""
         ? globalComponentStyles?.Background?.color?.value
         : themeColors?.AllCategoriesBackgroundColorV2?.value,
-        padding: "10px"
      }}>
       {sortedCategory.map((category, index) => (
         <Box
