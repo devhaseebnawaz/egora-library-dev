@@ -25,16 +25,17 @@ const modalStyle = (themeColors, layout) => {
         width: "95%",
         maxWidth: 500,
         backgroundColor:
-            layout?.locationLayout?.body[0].styles?.LocationModalBackgroundColor?.value != ""
-                ? `${layout?.locationLayout?.body[0].styles?.LocationModalBackgroundColor?.value}`
-
-                : `${themeColors?.LocationModalBackgroundColor?.value}`,
+        layout?.locationLayout?.body[0].styles?.LocationModalBackgroundColor?.value != ""
+        ? `${layout?.locationLayout?.body[0].styles?.LocationModalBackgroundColor?.value}`
+        
+        : `${themeColors?.LocationModalBackgroundColor?.value}`,
         borderRadius:
-            layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value != 0
-                ? layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value
-                : themeColors?.LocationModalBorderRadius?.value,
+        layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value != 0
+        ? layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value
+        : themeColors?.LocationModalBorderRadius?.value,
         boxShadow: 24,
-        padding: "32px 24px 24px"
+        padding: "32px 24px 24px",
+        outline: "none"
     }
 };
 
@@ -457,6 +458,9 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             boxShadow: "none",
                             minWidth: "100px",
                             ...getOrderTypeSelectorSelectedButtonStyles,
+                               "&:hover": {
+                                backgroundColor: "transparent"
+                            },
                         }}
                     >
                         DELIVERY
@@ -495,6 +499,9 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             boxShadow: "none",
                             minWidth: "100px",
                             ...getOrderTypeSelectorSelectedButtonStyles,
+                               "&:hover": {
+                                backgroundColor: "transparent"
+                            },
                         }}
                     >
                         PICKUP
