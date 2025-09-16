@@ -297,13 +297,11 @@ const CartDrawer = ({
           ? globalComponentStyles?.Button?.fontStyle?.value
           : themeColors?.cartDrawerButtonTextStyle?.value,
     borderRadius:
-      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerButtonBorderRadius
-        ?.value != 0
-        ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerButtonBorderRadius
-          ?.value
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerButtonBorderRadius?.value != 0
+        ? `${layout?.cartDrawerLayout?.body[0].styles?.cartDrawerButtonBorderRadius?.value}px`
         : globalComponentStyles?.Button?.borderRadius?.value != 0
-          ? globalComponentStyles?.Button?.borderRadius?.value
-          : themeColors?.cartDrawerButtonBorderRadius?.value,
+          ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+          : `${themeColors?.cartDrawerButtonBorderRadius?.value}px`,
   };
 
   const getSecondaryButtonStyles = {
@@ -391,11 +389,10 @@ const CartDrawer = ({
     borderRadius:
       layout?.cartDrawerLayout?.body[0].styles?.cartDrawerIconButtonBorderRadius
         ?.value != 0
-        ? layout?.cartDrawerLayout?.body[0].styles
-          ?.cartDrawerIconButtonBorderRadius?.value
+        ? `${layout?.cartDrawerLayout?.body[0].styles?.cartDrawerIconButtonBorderRadius?.value}px`
         : globalComponentStyles?.IconButton?.borderRadius?.value != 0
-          ? globalComponentStyles?.IconButton?.borderRadius?.value
-          : themeColors?.cartDrawerIconButtonBorderRadius?.value,
+          ? `${globalComponentStyles?.IconButton?.borderRadius?.value}px`
+          : `${themeColors?.cartDrawerIconButtonBorderRadius?.value}px`,
   };
 
   const getDividerStyles = {
@@ -429,19 +426,16 @@ const CartDrawer = ({
     borderTopLeftRadius:
       layout?.cartDrawerLayout?.body[0].styles?.cartDrawerBorderRadius?.value !=
         0
-        ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerBorderRadius
-          ?.value
+        ? `${layout?.cartDrawerLayout?.body[0].styles?.cartDrawerBorderRadius?.value}px`
         : globalComponentStyles?.Drawer?.borderRadius?.value != 0
-          ? globalComponentStyles?.Drawer?.borderRadius?.value
-          : themeColors?.cartDrawerBorderRadius?.value,
+          ? `${globalComponentStyles?.Drawer?.borderRadius?.value}px`
+          : `${themeColors?.cartDrawerBorderRadius?.value}px`,
     borderBottomLeftRadius:
-      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerBorderRadius?.value !=
-        0
-        ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerBorderRadius
-          ?.value
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerBorderRadius?.value !=0
+        ? `${layout?.cartDrawerLayout?.body[0].styles?.cartDrawerBorderRadius?.value}px`
         : globalComponentStyles?.Drawer?.borderRadius?.value != 0
-          ? globalComponentStyles?.Drawer?.borderRadius?.value
-          : themeColors?.cartDrawerBorderRadius?.value,
+          ? `${globalComponentStyles?.Drawer?.borderRadius?.value}px`
+          : `${themeColors?.cartDrawerBorderRadius?.value}px`,
   };
 
   const getAddMoreItemTextStyles = {
@@ -656,8 +650,8 @@ const CartDrawer = ({
       : `${themeColors?.cartDrawerSummaryItemImageBackgroundColor?.value}`,
 
     borderRadius: layout?.cartDrawerLayout?.body[0].styles?.cartDrawerSummaryItemImageBorderRadius?.value != 0
-      ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerSummaryItemImageBorderRadius?.value
-      : themeColors?.cartDrawerSummaryItemImageBorderRadius?.value,
+      ? `${layout?.cartDrawerLayout?.body[0].styles?.cartDrawerSummaryItemImageBorderRadius?.value}px`
+      : `${themeColors?.cartDrawerSummaryItemImageBorderRadius?.value}px`,
   };
 
   const getItemQtyStyles = {
@@ -735,10 +729,10 @@ const CartDrawer = ({
           : themeColors?.cartDrawerItemQtyButtonBackgroundColor?.value,
     borderRadius:
       layout?.cartDrawerLayout?.body[0].styles?.cartDrawerItemQtyBorderRadius?.value !== ""
-        ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerItemQtyBorderRadius?.value
+        ? `${layout?.cartDrawerLayout?.body[0].styles?.cartDrawerItemQtyBorderRadius?.value}px`
         : globalComponentStyles?.Button?.borderRadius?.value !== ""
-          ? globalComponentStyles?.Button?.borderRadius?.value
-          : themeColors?.cartDrawerItemQtyBorderRadius?.value,
+          ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+          : `${themeColors?.cartDrawerItemQtyBorderRadius?.value}px`,
     border:
       layout?.cartDrawerLayout?.body[0].styles?.cartDrawerItemQtyBorderColor?.value !== ""
         ? `2px solid ${layout?.cartDrawerLayout?.body[0].styles?.cartDrawerItemQtyBorderColor?.value}`

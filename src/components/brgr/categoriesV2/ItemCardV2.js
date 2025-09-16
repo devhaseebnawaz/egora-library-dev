@@ -36,8 +36,8 @@ export default function ItemCardV2({
               : themeColors?.AllCategoriesItemCardBackgroundColorV2?.value,
         borderRadius:
           styles?.AllCategoriesItemCardBorderRadiusV2?.value !== ""
-            ? `${styles?.AllCategoriesItemCardBorderRadiusV2?.value}%`
-            : `${themeColors?.AllCategoriesItemCardBorderRadiusV2?.value}%`,
+            ? `${styles?.AllCategoriesItemCardBorderRadiusV2?.value}px`
+            : `${themeColors?.AllCategoriesItemCardBorderRadiusV2?.value}px`,
        
       };
 
@@ -146,8 +146,8 @@ export default function ItemCardV2({
                     : themeColors?.AllCategoriesPriceTagTextStyleV2?.value,
 
         borderRadius: styles?.AllCategoriesPriceTagBorderRadiusV2?.value !== ""
-            ? styles?.AllCategoriesPriceTagBorderRadiusV2?.value
-            : themeColors?.AllCategoriesPriceTagBorderRadiusV2?.value,
+            ? `${styles?.AllCategoriesPriceTagBorderRadiusV2?.value}px`
+            : `${themeColors?.AllCategoriesPriceTagBorderRadiusV2?.value}px`,
 
         backgroundColor: styles?.AllCategoriesPriceTagTextBackgroundcolorV2?.value !== ""
             ? styles?.AllCategoriesPriceTagTextBackgroundcolorV2?.value
@@ -192,8 +192,8 @@ export default function ItemCardV2({
                     : themeColors?.AllCategoriesCartAddTagTextStyleV2?.value,
 
         borderRadius: styles?.AllCategoriesCartAddBorderRadiusV2?.value !== ""
-            ? styles?.AllCategoriesCartAddBorderRadiusV2?.value
-            : themeColors?.AllCategoriesCartAddBorderRadiusV2?.value,
+            ? `${styles?.AllCategoriesCartAddBorderRadiusV2?.value}px`
+            : `${themeColors?.AllCategoriesCartAddBorderRadiusV2?.value}px`,
 
         backgroundColor: styles?.AllCategoriesCartAddBackgroundcolorV2?.value !== ""
             ? styles?.AllCategoriesCartAddBackgroundcolorV2?.value
@@ -246,8 +246,8 @@ export default function ItemCardV2({
                             : themeColors?.AllCategoriesItemImageHeightV2?.value,
                     borderRadius:
                         styles?.AllCategoriesItemImageBorderRadiusV2?.value != ""
-                        ? styles?.AllCategoriesItemImageBorderRadiusV2?.value
-                            : themeColors?.AllCategoriesItemImageBorderRadiusV2?.value,
+                        ? `${styles?.AllCategoriesItemImageBorderRadiusV2?.value}px`
+                            : `${themeColors?.AllCategoriesItemImageBorderRadiusV2?.value}px`,
                 }}
             />
 
