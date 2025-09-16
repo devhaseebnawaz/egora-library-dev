@@ -317,6 +317,10 @@ export default function ItemCardV2({
                             "&:hover": { backgroundColor: styles?.AllCategoriesCartAddHoverColorV2?.value },
                             ...getCartAddButtonStyles
                         }}
+                        onClick={() => {
+                            actions.handleOpenCard();
+                            states.setItemForDetailedModal(item);
+                        }}
                     >
                         Add To Cart
                     </Button>
