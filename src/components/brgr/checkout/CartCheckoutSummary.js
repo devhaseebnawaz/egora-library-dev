@@ -529,8 +529,8 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
             : `${themeColors?.CartCheckoutSummaryItemImageBackgroundColor?.value}`,
 
         borderRadius: layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryItemImageBorderRadius?.value != 0
-            ? layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryItemImageBorderRadius?.value
-            : themeColors?.CartCheckoutSummaryItemImageBorderRadius?.value,
+            ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryItemImageBorderRadius?.value}px`
+            : `${themeColors?.CartCheckoutSummaryItemImageBorderRadius?.value}px`,
     };
 
     const getItemQtyStyles = {
@@ -692,8 +692,8 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                             display: 'flex', justifyContent: 'center',
                             borderRadius:
                                 layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value !== ""
-                                    ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value}%`
-                                    : `${themeColors?.CartCheckoutSummaryImageBorderRadius?.value || 0}%`,
+                                    ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value}px`
+                                    : `${themeColors?.CartCheckoutSummaryImageBorderRadius?.value || 0}px`,
                             backgroundColor:
                                 layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBackgroundColor?.value != ""
                                     ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBackgroundColor?.value}`
@@ -703,8 +703,8 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                                 style={{
                                     borderRadius:
                                         layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value !== ""
-                                            ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value}%`
-                                            : `${themeColors?.CartCheckoutSummaryImageBorderRadius?.value || 0}%`,
+                                            ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value}px`
+                                            : `${themeColors?.CartCheckoutSummaryImageBorderRadius?.value || 0}px`,
                                     width: 
                                         layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageHeightWidth?.value !== ""
                                             ? layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageHeightWidth?.value

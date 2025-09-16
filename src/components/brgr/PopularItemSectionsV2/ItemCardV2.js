@@ -133,8 +133,8 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
           : themeColors?.PopularMenuSectionCartAddBackgroundcolorV2?.value,
     borderRadius:
       styles?.PopularMenuSectionCartAddBorderRadiusV2?.value !== ""
-        ? `${styles?.PopularMenuSectionCartAddBorderRadiusV2?.value}%`
-        : `${themeColors?.PopularMenuSectionCartAddBorderRadiusV2?.value}%`,
+        ? `${styles?.PopularMenuSectionCartAddBorderRadiusV2?.value}px`
+        : `${themeColors?.PopularMenuSectionCartAddBorderRadiusV2?.value}px`,
     color:
       styles?.PopularMenuSectionCartAddTextColorV2?.value !== ""
         ? styles?.PopularMenuSectionCartAddTextColorV2?.value
@@ -178,8 +178,8 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
           : themeColors?.PopularMenuSectionItemCardBackgroundColorV2?.value,
     borderRadius:
       styles?.PopularMenuSectionItemCardBorderRadiusV2?.value !== ""
-        ? `${styles?.PopularMenuSectionItemCardBorderRadiusV2?.value}%`
-        : `${themeColors?.PopularMenuSectionItemCardBorderRadiusV2?.value}%`,
+        ? `${styles?.PopularMenuSectionItemCardBorderRadiusV2?.value}px`
+        : `${themeColors?.PopularMenuSectionItemCardBorderRadiusV2?.value}px`,
    
   };
 
@@ -227,8 +227,8 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
                 : themeColors?.PopularMenuSectionImageHeightV2?.value,
           borderRadius:
             styles?.PopularMenuSectionImageBorderRadiusV2?.value != ""
-              ? styles?.PopularMenuSectionImageBorderRadiusV2?.value
-                : themeColors?.PopularMenuSectionImageBorderRadiusV2?.value,
+              ? `${styles?.PopularMenuSectionImageBorderRadiusV2?.value}px`
+                : `${themeColors?.PopularMenuSectionImageBorderRadiusV2?.value}px`,
         }}
       />
 
