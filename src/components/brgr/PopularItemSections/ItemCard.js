@@ -16,8 +16,8 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
           : themeColors?.PopularMenuSectionItemNameTextBackgroundColor?.value,
     borderRadius:
       styles?.PopularMenuSectionItemNameBorderRadius?.value !== ""
-        ? `${styles?.PopularMenuSectionItemNameBorderRadius?.value}%`
-        : `${themeColors?.PopularMenuSectionItemNameBorderRadius?.value}%`,
+        ? `${styles?.PopularMenuSectionItemNameBorderRadius?.value}px`
+        : `${themeColors?.PopularMenuSectionItemNameBorderRadius?.value}px`,
     color:
       styles?.PopularMenuSectionItemNameTextColor?.value !== ""
         ? styles?.PopularMenuSectionItemNameTextColor?.value
@@ -87,8 +87,8 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
           : themeColors?.PopularMenuSectionPriceTextStyle?.value,
 
     borderRadius: styles?.PopularMenuSectionPriceBorderRadius?.value !== ""
-      ? styles?.PopularMenuSectionPriceBorderRadius?.value
-      : themeColors?.PopularMenuSectionPriceBorderRadius?.value,
+      ? `${styles?.PopularMenuSectionPriceBorderRadius?.value}px`
+      : `${themeColors?.PopularMenuSectionPriceBorderRadius?.value}px`,
 
     backgroundColor: styles?.PopularMenuSectionPriceBackgroundcolor?.value !== ""
       ? styles?.PopularMenuSectionPriceBackgroundcolor?.value

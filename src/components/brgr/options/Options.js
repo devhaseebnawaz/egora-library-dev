@@ -42,7 +42,7 @@ export default function Options({
               mb: 1,
               ...getDescriptionStyles, 
               border: `solid ${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderColor?.value}`, 
-              borderRadius: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderRadius?.value , 
+              borderRadius: `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderRadius?.value}px` , 
               backgroundColor: isSelected ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonSelectedBackgroundColor?.value : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBackgroundColor?.value,
               color: isSelected ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSelectedDescriptionTextColor?.value  : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalDescriptionTextColor?.value, 
               '&:hover': {
