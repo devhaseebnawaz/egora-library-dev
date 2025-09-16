@@ -699,7 +699,8 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
 
     return (
         <Box sx={{
-            backgroundColor: layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessBackgroundColor?.value
+            backgroundColor: layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessBackgroundColor?.value,
+            pt: { xs: 2, sm: 2, md: 4 }
         }}>
             {states.logoUrl &&
                 <Grid item xs={12} sx={{

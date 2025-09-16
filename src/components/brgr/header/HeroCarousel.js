@@ -4,6 +4,7 @@ import { Box, IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
 import arrowLeft from "@iconify-icons/mdi/chevron-left";
 import arrowRight from "@iconify-icons/mdi/chevron-right";
+import { getScreenSizeCategory } from "src/components/brgr/utils/fontsize";
 
 export default function HeroCarousel({ prop, themeColors, styles, states, globalComponentStyles }) {
   const [currentIndex, setCurrentIndex] = useState(1);
@@ -118,9 +119,9 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
           transform: `translateX(-${currentIndex * 100}%)`,
           width: "100%",
           height:  
-            styles?.HeroCarouselDisplayedImageHeight?.value != 0
-              ? styles?.HeroCarouselDisplayedImageHeight?.value
-              : themeColors?.HeroCarouselDisplayedImageHeight?.value,
+            styles?.HeroCarouselDisplayedImageHeight?.value[getScreenSizeCategory()] != 0
+              ? styles?.HeroCarouselDisplayedImageHeight?.value[getScreenSizeCategory()]
+              : themeColors?.HeroCarouselDisplayedImageHeight?.value[getScreenSizeCategory()],
         }}
       >
         {fullSlides.map((img, index) => (
