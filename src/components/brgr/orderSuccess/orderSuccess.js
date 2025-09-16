@@ -736,8 +736,8 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                     display: 'flex', justifyContent: 'center',
                     borderRadius:
                         layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
-                            ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
-                            : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}%`,
+                            ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}px`
+                            : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}px`,
                     backgroundColor:
                         layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBackgroundColor?.value != ""
                             ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBackgroundColor?.value}`
@@ -747,8 +747,8 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                         zIndex: '1000000',
                         borderRadius:
                             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""
-                                ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}%`
-                                : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}%`,
+                                ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value}px`
+                                : `${themeColors?.OrderSuccessImageBorderRadius?.value || 0}px`,
                          width: 
                             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageHeightWidth?.value !== ""
                                 ? layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageHeightWidth?.value

@@ -374,8 +374,8 @@ export default function CustomNavbar({
                 ,
                 borderRadius:
                   styles?.AppBarCartQtyIconBorderRadius?.value != ""
-                    ? styles?.AppBarCartQtyIconBorderRadius?.value
-                    : themeColors?.AppBarCartQtyIconBorderRadius?.value,
+                    ? `${styles?.AppBarCartQtyIconBorderRadius?.value}px`
+                    : `${themeColors?.AppBarCartQtyIconBorderRadius?.value}px`,
 
                 border: `2px solid ${styles?.AppBarCartQtyIconBorderColor?.value != ""
                   ? styles?.AppBarCartQtyIconBorderColor?.value
@@ -421,10 +421,10 @@ export default function CustomNavbar({
             ,
             borderRadius:
               styles?.AppBarImageBorderRadius?.value != ""
-                ? styles?.AppBarImageBorderRadius?.value
+                ? `${styles?.AppBarImageBorderRadius?.value}px`
                 : globalComponentStyles?.LogoImage?.borderRadius?.value != ""
-                  ? globalComponentStyles?.LogoImage?.borderRadius?.value
-                  : themeColors?.AppBarImageBorderRadius?.value,
+                  ? `${globalComponentStyles?.LogoImage?.borderRadius?.value}px`
+                  : `${themeColors?.AppBarImageBorderRadius?.value}px`,
             overflow: "hidden",
           }}
         >

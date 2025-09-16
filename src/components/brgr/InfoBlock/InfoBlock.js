@@ -92,9 +92,11 @@ export default function InfoBlock({ themeColors, actions, prop, styles, states, 
             }}
         >
             <Container>
-            <Typography  sx={{...getInfoBlockTitleStyles}}>
-                {prop.editable.title.value}
-            </Typography>
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Typography sx={{ ...getInfoBlockTitleStyles }}>
+                        {prop.editable.title.value}
+                    </Typography>
+                </Box>
 
             <Typography sx={{...getInfoBlockDescriptionStyles}} >
                 {prop.editable.description.value}
