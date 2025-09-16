@@ -697,9 +697,39 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                 : `${themeColors?.OrderSuccessEgoraTextStyle?.value}`,
     };
 
+    const orderMessages = {
+        pending: {
+            storePickUp: "Your pickup order is awaiting confirmation",
+            storeDelivery: "Your delivery order is awaiting confirmation"
+        },
+        processing: {
+            storePickUp: "Your pickup order is being prepared",
+            storeDelivery: "Your delivery order is being prepared"
+        },
+        finished: {
+            storePickUp: "Your order is ready for pickup",
+            storeDelivery: "Your food is out for delivery"
+        },
+        completed: {
+            storePickUp: "You have successfully picked up your order",
+            storeDelivery: "Your order has been successfully delivered"
+        },
+        abort: {
+            storePickUp: "Your pickup order was canceled by the venue",
+            storeDelivery: "Your delivery order was canceled by the venue"
+        },
+        noShow: {
+            storePickUp: "Your pickup order was canceled after being prepared",
+            storeDelivery: "Your delivery order was canceled while being served"
+        }
+    };
+
+    const message = orderMessages?.[state]?.[orderType] || "Your order status is updating...";
+
     return (
         <Box sx={{
-            backgroundColor: layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessBackgroundColor?.value
+            backgroundColor: layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessBackgroundColor?.value,
+            pt: { xs: 2, sm: 2, md: 4 }
         }}>
             {states.logoUrl &&
                 <Grid item xs={12} sx={{
@@ -766,18 +796,23 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                            
                         }}>
                             <Stack direction="row" alignItems="center" spacing={1} mb={1}>
-                                <Typography variant="subtitle1" fontWeight={700} sx={{ ...getHeadingsStyles }}>Your Order is</Typography>
-                                <Chip label={state} color="warning" size="small" />
-                                {state === "processing" || state === "finished" &&
+                                <Typography
+                                    variant="subtitle1"
+                                    fontWeight={700}
+                                    sx={{ ...getHeadingsStyles }}
+                                >
+                                    {message}
+                                </Typography>
+                                {(state === "processing" || state === "finished") && (
                                     <UniversalImage
                                         src="/assets/live.gif"
-                                        alt="Order Success"
+                                        alt="Order Live"
                                         width={30}
                                         height={30}
                                         style={{ objectFit: "contain" }}
                                         priority
                                     />
-                                }
+                                )}
                             </Stack>
                             <Typography sx={{ ...getHeadingsStyles }} >Order No:{" "}
                                 <Typography component="span" sx={{ ...getDescriptionStyles }}>
