@@ -186,18 +186,22 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
   return (
     <Card
       sx={{
-        boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-        overflow: "hidden",
+        borderRadius: "12px",
+        boxShadow: '0 0 1.25rem .2rem rgb(0 0 0 / 5%)',
+        cursor: "pointer",
         display: "flex",
-        alignItems: "flex-start",
-        width: "100%",
-        maxWidth: 400,
-        ...getCardStyles
+        gap: '10px',
+        p: 1.2,
+        ...getCardStyles,
+        height: 170,
+      }}
+      onClick={() => {
+        actions.handleOpenCard();
+        states.setItemForDetailedModal(item);
       }}
     >
       <CardMedia
         component="img"
-        // image="/assets/placeholder.png"
         src={
           item?.photoURL
             ? `${states.storeImagesBaseUrl}/${item.photoURL}`
@@ -210,16 +214,14 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
           e.target.src = '/assets/placeholder.png'
         }}
         sx={{
-          
-          objectFit: "cover",
-          m: 1,
-          width: 
+          objectFit: "fill",
+          width:
             styles?.PopularMenuSectionImageHeightV2?.value != ""
               ? styles?.PopularMenuSectionImageHeightV2?.value
               : globalComponentStyles?.LogoImage?.size?.value != ""
                 ? globalComponentStyles?.LogoImage?.size?.value
                 : themeColors?.PopularMenuSectionImageHeightV2?.value,
-          height: 
+          height:
             styles?.PopularMenuSectionImageHeightV2?.value != ""
               ? styles?.PopularMenuSectionImageHeightV2?.value
               : globalComponentStyles?.LogoImage?.size?.value != ""
@@ -228,16 +230,22 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
           borderRadius:
             styles?.PopularMenuSectionImageBorderRadiusV2?.value != ""
               ? `${styles?.PopularMenuSectionImageBorderRadiusV2?.value}px`
-                : `${themeColors?.PopularMenuSectionImageBorderRadiusV2?.value}px`,
+              : `${themeColors?.PopularMenuSectionImageBorderRadiusV2?.value}px`,
         }}
       />
 
-      <CardContent sx={{ flex: 1, pl: 1, pr: 2 }}>
+      <CardContent sx={{ flex: 1, pl: 0, pt: 0, pr: 0, pb: "0 !important", display: "flex", flexDirection: "column" }}>
         <Typography
           variant="subtitle1"
           sx={{
-            mb: 0.5,
             ...getItemNameStyles,
+            mb: 0.2,
+            display: "-webkit-box",
+            margin: 0,
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: 'ellipsis',
           }}
         >
           {item?.name}
@@ -245,38 +253,44 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         <Typography
           variant="body2"
           sx={{
-            mb: 1,
+            ...getItemDescriptionStyles,
+            mb: .2,
             display: "-webkit-box",
+            margin: 0,
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
             overflow: "hidden",
             textOverflow: "ellipsis",
-            ...getItemDescriptionStyles
           }}
         >
           {item?.description || ""}
         </Typography>
 
-        <Box sx={{ mb: 1 }}>
+        <Box
+          sx={{
+            mt: "auto",
+            display: "flex",
+            flexDirection: 'column',
+            justifyContent: "space-between",
+            alignItems: "start",
+          }}
+        >
           <Typography
-            variant="body2"
+            variant="subtitle"
             sx={{
               px: 1,
               py: 0.3,
-              display: "inline-block",
               ...getPriceTagStyles
             }}
           >
-            Rs. {item?.price}
+            Rs. {item.price}
           </Typography>
-        </Box>
-
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Button
             variant="contained"
             disableElevation
             sx={{
               textTransform: "none",
+              marginTop: '5px',
               "&:hover": { backgroundColor: styles?.PopularMenuSectionCartAddHovercolorV2?.value },
               ...getAddToCartButtontyles
             }}
