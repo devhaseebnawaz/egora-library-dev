@@ -26,7 +26,6 @@ export default function PopularMenuSectionV2({ prop, actions, styles, states, th
   return (
     <Container 
     style={{
-       padding: "10px",
        marginTop: "30px", 
        backgroundColor:
        styles?.PopularMenuSectionBackgroundColorV2?.value != ""
