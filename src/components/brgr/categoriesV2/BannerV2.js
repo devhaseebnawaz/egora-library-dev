@@ -16,8 +16,8 @@ export default function BannerV2({ img, styles, themeColors }) {
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
         borderRadius: styles?.AllCategoriesBannerImageBorderRadiusV2?.value !== ""
-        ? `${styles?.AllCategoriesBannerImageBorderRadiusV2?.value}%`
-        : `${themeColors?.AllCategoriesBannerImageBorderRadiusV2?.value}%`,
+        ? `${styles?.AllCategoriesBannerImageBorderRadiusV2?.value}px`
+        : `${themeColors?.AllCategoriesBannerImageBorderRadiusV2?.value}px`,
         margin: '20px 0',
       }}
     />

@@ -31,8 +31,8 @@ const modalStyle = (themeColors, layout) => {
         : `${themeColors?.LocationModalBackgroundColor?.value}`,
         borderRadius:
         layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value != 0
-        ? layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value
-        : themeColors?.LocationModalBorderRadius?.value,
+        ? `${layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value}px`
+        : `${themeColors?.LocationModalBorderRadius?.value}px`,
         boxShadow: 24,
         padding: "32px 24px 24px",
         outline: "none"
@@ -159,10 +159,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                     : themeColors?.LocationModalConfirmSelectionTextStyle?.value,
         borderRadius:
             layout?.locationLayout?.body[0].styles?.LocationModalConfirmSelectionBorderRadius?.value != 0
-                ? layout?.locationLayout?.body[0].styles?.LocationModalConfirmSelectionBorderRadius?.value
+                ? `${layout?.locationLayout?.body[0].styles?.LocationModalConfirmSelectionBorderRadius?.value}px`
                 : globalComponentStyles?.Button?.borderRadius?.value != 0
-                    ? globalComponentStyles?.Button?.borderRadius?.value
-                    : themeColors?.LocationModalConfirmSelectionBorderRadius?.value,
+                    ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                    : `${themeColors?.LocationModalConfirmSelectionBorderRadius?.value}px`,
     };
 
 
@@ -346,8 +346,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                     height: "80px",
                     borderRadius:
                         layout?.locationLayout?.body[0].styles?.LocationModalImageBorderRadius?.value !== ""
-                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalImageBorderRadius?.value}%`
-                            : `${themeColors?.LocationModalImageBorderRadius?.value || 0}%`,
+                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalImageBorderRadius?.value}px`
+                            : `${themeColors?.LocationModalImageBorderRadius?.value || 0}px`,
                     backgroundColor:
                         layout?.locationLayout?.body[0].styles?.LocationModalImageBackgroundColor?.value != ""
                             ? `${layout?.locationLayout?.body[0].styles?.LocationModalImageBackgroundColor?.value}`
@@ -419,10 +419,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                                     : themeColors?.LocationModalOrderTypeSelectorBackgroundColor?.value,
                         borderRadius:
                             layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorBorderRadius?.value != 0
-                                ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorBorderRadius?.value
+                                ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorBorderRadius?.value}px`
                                 : globalComponentStyles?.Button?.borderRadius?.value != 0
-                                    ? globalComponentStyles?.Button?.borderRadius?.value
-                                    : themeColors?.LocationModalOrderTypeSelectorBorderRadius?.value,
+                                    ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                    : `${themeColors?.LocationModalOrderTypeSelectorBorderRadius?.value}px`,
                         p: "4px",
                     }}
                 >
@@ -431,10 +431,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                         sx={{
                             borderRadius:
                                 layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value != 0
-                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value
+                                    ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`
                                     : globalComponentStyles?.Button?.borderRadius?.value != 0
-                                        ? globalComponentStyles?.Button?.borderRadius?.value
-                                        : themeColors?.LocationModalOrderTypeSelectorButtonBorderRadius?.value,
+                                        ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                        : `${themeColors?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`,
                             px: 3,
                             py: 1,
                             bgcolor: states.orderType === "storeDelivery" ?
@@ -470,10 +470,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                         sx={{
                             borderRadius:
                                 layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value != 0
-                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value
+                                    ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`
                                     : globalComponentStyles?.Button?.borderRadius?.value != 0
-                                        ? globalComponentStyles?.Button?.borderRadius?.value
-                                        : themeColors?.LocationModalOrderTypeSelectorButtonBorderRadius?.value,
+                                        ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                        : `${themeColors?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`,
 
                             px: 3,
                             py: 1,
@@ -586,9 +586,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                                     sx: {
                                         borderRadius:
                                             layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletBorderRadius?.value != 0
-                                                ? layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletBorderRadius?.value
-
-                                                : themeColors?.LocationModalSelectOutletBorderRadius?.value,
+                                                ? `${layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletBorderRadius?.value}px`
+                                                : `${themeColors?.LocationModalSelectOutletBorderRadius?.value}px`,
                                         height: "48px",
                                         backgroundColor:
                                             layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletBackgroundColor?.value !== ""
@@ -658,10 +657,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                                                     : themeColors?.LocationModalSearchLocationButtonBackgroundColor?.value,
                                         borderRadius:
                                             layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value != 0
-                                                ? layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value
+                                                ? `${layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value}px`
                                                 : globalComponentStyles?.Button?.borderRadius?.value != 0
-                                                    ? globalComponentStyles?.Button?.borderRadius?.value
-                                                    : themeColors?.LocationModalSearchLocationButtonBorderRadius?.value,
+                                                    ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                                    : `${themeColors?.LocationModalSearchLocationButtonBorderRadius?.value}px`,
                                         height: "44px",
                                         "& .MuiOutlinedInput-notchedOutline": {
                                             border: "none",
@@ -702,10 +701,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                         width: "100%",
                         borderRadius:
                             layout?.locationLayout?.body[0].styles?.LocationModalUseCurrentLocationBorderRadius?.value != 0
-                                ? layout?.locationLayout?.body[0].styles?.LocationModalUseCurrentLocationBorderRadius?.value
+                                ? `${layout?.locationLayout?.body[0].styles?.LocationModalUseCurrentLocationBorderRadius?.value}px`
                                 : globalComponentStyles?.Button?.borderRadius?.value != 0
-                                    ? globalComponentStyles?.Button?.borderRadius?.value
-                                    : themeColors?.LocationModalUseCurrentLocationBorderRadius?.value,
+                                    ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                    : `${themeColors?.LocationModalUseCurrentLocationBorderRadius?.value}px`,
                     }}
                 >
                     <MyLocationIcon sx={{
@@ -849,8 +848,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             : `${themeColors?.LocationModalBackgroundColor?.value}`,
                     borderRadius:
                         layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value != 0
-                            ? layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value
-                            : themeColors?.LocationModalBorderRadius?.value,
+                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalBorderRadius?.value}px`
+                            : `${themeColors?.LocationModalBorderRadius?.value}px`,
                 }}
 
             >{content}</Box>

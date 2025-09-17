@@ -93,8 +93,8 @@ export default function ItemCard({
           : themeColors?.AllCategoriesPriceTagTextStyle?.value,
 
     borderRadius: styles?.AllCategoriesPriceTagBorderRadius?.value !== ""
-      ? styles?.AllCategoriesPriceTagBorderRadius?.value
-      : themeColors?.AllCategoriesPriceTagBorderRadius?.value,
+      ? `${styles?.AllCategoriesPriceTagBorderRadius?.value}px`
+      : `${themeColors?.AllCategoriesPriceTagBorderRadius?.value}px`,
 
     backgroundColor: styles?.AllCategoriesPriceTagTextBackgroundcolor?.value !== ""
       ? styles?.AllCategoriesPriceTagTextBackgroundcolor?.value
@@ -139,8 +139,8 @@ export default function ItemCard({
           : themeColors?.AllCategoriesCartAddTagTextStyle?.value,
 
     borderRadius: styles?.AllCategoriesCartAddBorderRadius?.value !== ""
-      ? styles?.AllCategoriesCartAddBorderRadius?.value
-      : themeColors?.AllCategoriesCartAddBorderRadius?.value,
+      ? `${styles?.AllCategoriesCartAddBorderRadius?.value}px`
+      : `${themeColors?.AllCategoriesCartAddBorderRadius?.value}px`,
 
     backgroundColor: styles?.AllCategoriesCartAddBackgroundcolor?.value !== ""
       ? styles?.AllCategoriesCartAddBackgroundcolor?.value

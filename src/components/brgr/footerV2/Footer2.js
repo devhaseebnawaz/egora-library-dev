@@ -3,7 +3,7 @@ import { Typography, Box, Link, IconButton } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import { getScreenSizeCategory } from "src/components/brgr/utils/fontsize";
+import { getScreenSizeCategory } from "../../../utils/fontsize";
 
 export default function CustomFooterV2({
   themeColors,
