@@ -206,115 +206,101 @@ export default function ItemCardV2({
         <Card
             sx={{
                 borderRadius: "12px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-                overflow: "hidden",
-                position: "relative",
+                boxShadow: '0 0 1.25rem .2rem rgb(0 0 0 / 5%)',
                 cursor: "pointer",
                 display: "flex",
-                alignItems: "flex-start",
-                p: 1,
-                ...getCardStyles
+                gap: '10px',
+                p: 1.2,
+                ...getCardStyles,
+                height: 170,
+            }}
+            onClick={() => {
+                actions.handleOpenCard();
+                states.setItemForDetailedModal(item);
             }}
         >
-           
-
             <CardMedia
                 component="img"
-                image={
-                    item?.photoURL
-                        ? `${states?.storeImagesBaseUrl}/${item?.photoURL}`
-                        : "/assets/placeholder.png"
-                }
+                image={item?.photoURL ? `${states?.storeImagesBaseUrl}/${item?.photoURL}` : "/assets/placeholder.png"}
                 alt={item?.name}
                 sx={{
-                    width: 150,
-                    height: 150,
-                    borderRadius: "8px",
-                    objectFit: "cover",
-                    m: 1,
-                    width: 
-                    styles?.AllCategoriesItemImageHeightV2?.value != ""
-                    ? styles?.AllCategoriesItemImageHeightV2?.value
-                    : globalComponentStyles?.LogoImage?.size?.value != ""
-                        ? globalComponentStyles?.LogoImage?.size?.value
-                        : themeColors?.AllCategoriesItemImageHeightV2?.value,
-                    height: 
+                    objectFit: "fill",
+                    width:
                         styles?.AllCategoriesItemImageHeightV2?.value != ""
-                        ? styles?.AllCategoriesItemImageHeightV2?.value
-                        : globalComponentStyles?.LogoImage?.size?.value != ""
-                            ? globalComponentStyles?.LogoImage?.size?.value
-                            : themeColors?.AllCategoriesItemImageHeightV2?.value,
+                            ? styles?.AllCategoriesItemImageHeightV2?.value
+                            : globalComponentStyles?.LogoImage?.size?.value != ""
+                                ? globalComponentStyles?.LogoImage?.size?.value
+                                : themeColors?.AllCategoriesItemImageHeightV2?.value,
+                    height:
+                        styles?.AllCategoriesItemImageHeightV2?.value != ""
+                            ? styles?.AllCategoriesItemImageHeightV2?.value
+                            : globalComponentStyles?.LogoImage?.size?.value != ""
+                                ? globalComponentStyles?.LogoImage?.size?.value
+                                : themeColors?.AllCategoriesItemImageHeightV2?.value,
                     borderRadius:
                         styles?.AllCategoriesItemImageBorderRadiusV2?.value != ""
-                        ? `${styles?.AllCategoriesItemImageBorderRadiusV2?.value}px`
+                            ? `${styles?.AllCategoriesItemImageBorderRadiusV2?.value}px`
                             : `${themeColors?.AllCategoriesItemImageBorderRadiusV2?.value}px`,
                 }}
             />
 
-            <CardContent sx={{ flex: 1, pl: 2, pt: 0, pb: "0 !important" }}>
+            <CardContent sx={{ flex: 1, pl: 0, pt: 0, pr: 0, pb: "0 !important", display: "flex", flexDirection: "column" }}>
                 <Typography
                     variant="subtitle1"
-                    sx={{ fontWeight: "bold", mb: 0.5, ...getItemNameStyles }}
+                    sx={{
+                        ...getItemNameStyles,
+                        mb: 0.2,
+                        display: "-webkit-box",
+                        margin: 0,
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                        textOverflow: 'ellipsis',
+                    }}
                 >
                     {item?.name}
                 </Typography>
-                {/* <Typography
-                    variant="subtitle1"
-                    sx={{ fontWeight: "bold",
-                         mb: 0.5,
-                        minHeight: smDown ? "2em" : "3em",    // ensure height same even if text short
-                        ...getItemNameStyles
-                    }}
-                >
-                    {item?.name?item?.name:"Dummay"}
-                </Typography> */}
                 <Typography
                     variant="body2"
                     sx={{
-                        color: "text.secondary",
-                        mb: 1,
+                        ...getItemDescriptionStyles,
+                        mb: .2,
                         display: "-webkit-box",
+                        margin: 0,
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
-                        minHeight: "40px",
-                        ...getItemDescriptionStyles
                     }}
                 >
-          {item?.description || ""}
+                    {item?.description || ""}
                 </Typography>
-
-                {/* Price */}
-                <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                <Box
+                    sx={{
+                        mt: "auto",
+                        display: "flex",
+                        flexDirection: 'column',
+                        justifyContent: "space-between",
+                        alignItems: "start",
+                    }}
+                >
                     <Typography
-                        variant="body2"
+                        variant="subtitle"
                         sx={{
-                            backgroundColor: "green",
-                            color: "white",
-                            fontWeight: "bold",
-                            borderRadius: "4px",
                             px: 1,
                             py: 0.3,
-                            fontSize: "0.9rem",
                             ...getPriceTagStyles
                         }}
                     >
-                         Rs. {item.price}
+                        Rs. {item.price}
                     </Typography>
-                </Box>
-
-                {/* Add to cart + Favorite */}
-                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Button
                         variant="contained"
                         disableElevation
                         sx={{
-                            backgroundColor: "#ffcc00",
-                            color: "black",
-                            fontWeight: "bold",
                             textTransform: "none",
                             "&:hover": { backgroundColor: styles?.AllCategoriesCartAddHoverColorV2?.value },
+                            marginTop: '5px',
                             ...getCartAddButtonStyles
                         }}
                         onClick={() => {
