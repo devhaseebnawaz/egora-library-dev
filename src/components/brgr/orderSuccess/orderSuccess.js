@@ -819,7 +819,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                     {billNumber}
                                 </Typography>
                             </Typography>
-                            {orderType === "storeDelivery" ? (
+                              {orderType === "storeDelivery" ? (
                                 <Typography
                                     mt={2}
                                     sx={{
@@ -827,22 +827,20 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                         color: "#6c757d",
                                     }}
                                 >
-                                    Your order has been received, we might call you for confirmation or address
-                                    <Box
-                                        component="span"
-                                        sx={{
-                                            display: { xs: "inline", sm: "block" }
-                                        }}
-                                    >
-                                        {" "}details if required.
-                                    </Box>
+                                    Your order has been received, we might call you for confirmation or address details if required.
                                 </Typography>
                             ) : (
                                 <>
-                                    <Typography variant="body2" mt={1} sx={{ ...getDescriptionStyles }}>
-                                        You have to collect your order from:
-                                    </Typography>
-                                    <Typography mt={1} sx={{ ...getHeadingsStyles }}><strong>{name}</strong></Typography>
+                                    {orderType === "storePickUp" && (
+                                        <Typography variant="body2" mt={1} sx={{ ...getDescriptionStyles }}>
+                                            You have to collect your order from:
+                                        </Typography>
+                                    )}
+                                </>
+                            )
+                            }
+                            <>
+                               <Typography mt={1} sx={{ ...getHeadingsStyles }}><strong>{name}</strong></Typography>
                                     <Typography color="text.secondary" sx={{ ...getHeadingsStyles }}>
                                         Location:{" "}
                                         <Typography component="span" sx={{ ...getDescriptionStyles }}>
@@ -863,12 +861,10 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                     <Typography mt={1} sx={{ ...getHeadingsStyles }}>
                                         Phone:{" "}
                                         <Typography component="span" sx={{ ...getDescriptionStyles }}>
-                                            {venuePhoneNumber}
+                                            +92{venuePhoneNumber}
                                         </Typography>
                                     </Typography>
-                                </>
-                            )
-                            }
+                            </>
                         </Box>
                     </Box>
 
