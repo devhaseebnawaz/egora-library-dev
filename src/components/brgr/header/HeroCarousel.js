@@ -4,7 +4,7 @@ import { Box, IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
 import arrowLeft from "@iconify-icons/mdi/chevron-left";
 import arrowRight from "@iconify-icons/mdi/chevron-right";
-import { getScreenSizeCategory } from "src/components/brgr/utils/fontsize";
+import { getScreenSizeCategory } from "../../../utils/fontsize";
 
 export default function HeroCarousel({ prop, themeColors, styles, states, globalComponentStyles }) {
   const [currentIndex, setCurrentIndex] = useState(1);
