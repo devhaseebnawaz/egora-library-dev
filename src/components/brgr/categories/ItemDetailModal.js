@@ -673,7 +673,7 @@ export default function ItemDetailModal({
               style={{
                 minWidth: smDown ? 30 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value,
                 height: smDown ? 30 :  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value,
-                borderRadius: smDown ? 8:  layout?.itemDetailModalLayout?.body[0].styles?.IItemDetailModalSubtractIconBorderRadius?.value,
+                borderRadius: smDown ? 8:  `${layout?.itemDetailModalLayout?.body[0].styles?.IItemDetailModalSubtractIconBorderRadius?.value}px`,
                 backgroundColor: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconBackColor?.value
                   || '#ccc',
                 color: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconColor?.value
@@ -694,7 +694,7 @@ export default function ItemDetailModal({
               style={{
                 minWidth: smDown ? 30 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value,
                 height: smDown ? 30 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value,
-                borderRadius: smDown ? 8 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBorderRadius?.value,
+                borderRadius: smDown ? 8 : `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBorderRadius?.value}px`,
                 backgroundColor: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBackgroundColor?.value
                   || '#121212',
                 color: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconColor?.value
@@ -716,7 +716,7 @@ export default function ItemDetailModal({
               display: 'flex',
               justifyContent: states.loadingForAddUpdateItemCart ? 'center' : 'space-between',
               alignItems: 'center',
-              borderRadius:  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddToCartButtonBorderRadius?.value,
+              borderRadius:  `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddToCartButtonBorderRadius?.value}px`,
               padding: smDown ? '12px' :'12px 24px',
               fontWeight: 'bold',
               fontSize: smDown ? 12 : 16,

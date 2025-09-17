@@ -4,7 +4,7 @@ import { Box, IconButton } from "@mui/material";
 import { Icon } from "@iconify/react";
 import arrowLeft from "@iconify-icons/mdi/chevron-left";
 import arrowRight from "@iconify-icons/mdi/chevron-right";
-import { getScreenSizeCategory } from "src/components/brgr/utils/fontsize";
+import { getScreenSizeCategory } from "../../../utils/fontsize";
 
 export default function HeroCarousel({ prop, themeColors, styles, states, globalComponentStyles }) {
   const [currentIndex, setCurrentIndex] = useState(1);
@@ -252,8 +252,8 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
                     : themeColors?.HeroCarouselDotHeightWidth?.value
               ,
               borderRadius: styles?.HeroCarouselDotBorderRadius?.value != ""
-                ? styles?.HeroCarouselDotBorderRadius?.value
-                : themeColors?.HeroCarouselDotBorderRadius?.value,
+                ? `${styles?.HeroCarouselDotBorderRadius?.value}px`
+                : `${themeColors?.HeroCarouselDotBorderRadius?.value}px`,
               backgroundColor: getCarouselDotColor(index),
               cursor: "pointer",
               transition: "background-color 0.3s ease",
