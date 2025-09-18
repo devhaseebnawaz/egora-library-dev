@@ -300,7 +300,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     };
 
     const handleOutletSelection = async () => {
-        if (!states?.addressForPickUpMode) {
+        if (!states?.addressForPickUpMode && states.franchise.configurations.isEnabledPickUpLocation) {
             try {
                 const response = await actions.handleLocateMe();
                 if (response) {
@@ -315,7 +315,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
         }
 
-        if (states?.addressForPickUpMode) {
+        if (states?.addressForPickUpMode || !states.franchise.configurations.isEnabledPickUpLocation) {
             states.setGetNewData(true);
             actions.handleOpenLocationModal(false);
             actions.handleOpenLocationModalOnClick(false);
