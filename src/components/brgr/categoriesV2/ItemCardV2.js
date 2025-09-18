@@ -303,10 +303,10 @@ export default function ItemCardV2({
                             marginTop: '5px',
                             ...getCartAddButtonStyles
                         }}
-                        onClick={() => {
-                            actions.handleOpenCard();
-                            states.setItemForDetailedModal(item);
-                        }}
+                        // onClick={() => {
+                        //     actions.handleOpenCard();
+                        //     states.setItemForDetailedModal(item);
+                        // }}
                     >
                         Add To Cart
                     </Button>
