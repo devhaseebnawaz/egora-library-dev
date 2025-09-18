@@ -177,7 +177,7 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
           <CategoryLayout
           // banner={<Banner img={category.bannerImg} />}
           >
-            <Typography variant="h3" style={{ marginBottom: "16px", ...getCategoryNameStyles }}>
+            <Typography variant="h3" style={{ marginTop:"16px" , marginBottom: "16px", ...getCategoryNameStyles }}>
               {category.name}
             </Typography>
             

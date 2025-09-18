@@ -173,7 +173,7 @@ export default function AllCategoriesPage({ prop, actions, styles, states, theme
           >
             {prop.editable.categoryId.value[index]?.img ?
               <Banner img={prop.editable.categoryId.value[index]?.img} /> :
-              <Typography variant="h3" style={{ marginBottom: "16px", ...getCategoryNameStyles }}>
+              <Typography variant="h3" style={{marginTop:"16px" , marginBottom: "16px", ...getCategoryNameStyles }}>
                 {category.name}
               </Typography>
             }
