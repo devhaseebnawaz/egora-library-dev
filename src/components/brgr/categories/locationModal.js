@@ -7,6 +7,10 @@ import {
     TextField,
     InputAdornment,
     Autocomplete,
+    FormControl,
+    MenuItem,
+    InputLabel,
+    Select
 } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SearchMenuList from "./SearchMenuList";
@@ -559,7 +563,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
 
             {
                 states?.orderType === "storePickUp" && (
-                    <Autocomplete
+                    <>
+                    {/* <Autocomplete
                         options={filteredOutlets}
                         getOptionLabel={(option) => {
                             if (typeof option === "string") return option;
@@ -621,7 +626,63 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                         )}
                         noOptionsText="No outlets found"
                         sx={{ mb: 2 }}
-                    />
+                    /> */}
+                     <FormControl fullWidth sx={{ mb: 2 }}>
+                            <InputLabel id="select-outlet-label">Select Outlet</InputLabel>
+                            <Select
+                                labelId="select-outlet-label"
+                                value={states.selectedOutlet?._id || ""}
+                                onChange={(e) => {
+                                    const selected = filteredOutlets.find(
+                                        (outlet) => outlet._id === e.target.value
+                                    );
+                                    if (!selected?.isOnlineForStore) return;
+                                    states.setSelectedOutlet(selected);
+                                }}
+                                label="Select Outlet"
+                                renderValue={(selectedId) => {
+                                    const selected = filteredOutlets.find(o => o._id === selectedId);
+                                    return selected ? selected.name : "";
+                                }}
+                                sx={{
+                                    borderRadius:
+                                        layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletBorderRadius?.value != 0
+                                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletBorderRadius?.value}px`
+                                            : `${themeColors?.LocationModalSelectOutletBorderRadius?.value}px`,
+                                    backgroundColor:
+                                        layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletBackgroundColor?.value !== ""
+                                            ? layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletBackgroundColor?.value
+                                            : themeColors?.LocationModalSelectOutletBackgroundColor?.value,
+                                    "& .MuiSelect-select": {
+                                        ...getSelectOutletStyles,
+                                    },
+                                }}
+                            >
+                                {filteredOutlets.length > 0 ? (
+                                    filteredOutlets.map((outlet) => (
+                                        <MenuItem
+                                            key={outlet._id}
+                                            value={outlet._id}
+                                            disabled={!outlet.isOnlineForStore}
+                                        >
+                                            <Box>
+                                                <Typography fontWeight="bold">{outlet.name}</Typography>
+                                                <Typography variant="body2" color="textSecondary">
+                                                    {outlet.venueAddressOne} {outlet.venueAddressTwo}
+                                                </Typography>
+                                            </Box>
+                                        </MenuItem>
+                                    ))
+                                ) : (
+                                    <MenuItem disabled>
+                                        <Typography>
+                                            No outlets found
+                                        </Typography>
+                                    </MenuItem>
+                                )}
+                            </Select>
+                        </FormControl>
+                    </>
                 )
             }
 

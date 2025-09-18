@@ -294,10 +294,10 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
               "&:hover": { backgroundColor: styles?.PopularMenuSectionCartAddHovercolorV2?.value },
               ...getAddToCartButtontyles
             }}
-            onClick={() => {
-              actions.handleOpenCard();
-              states.setItemForDetailedModal(item);
-            }}
+            // onClick={() => {
+            //   actions.handleOpenCard();
+            //   states.setItemForDetailedModal(item);
+            // }}
           >
             Add To Cart
           </Button>
