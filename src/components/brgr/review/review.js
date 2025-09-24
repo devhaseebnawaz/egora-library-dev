@@ -603,6 +603,15 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
   const [reviewExists, setReviewExists] = useState(states.orderData);
   const [checkAlreadyReviewExists, setCheckAlreadyReviewExists] = useState(states.reviewAlreadyExists);
 
+  const handleGoBack = () => {
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
+    const urlsToAppendId = ["http://localhost:3031", "http://stores.dev.egora.pk", "http://stores.stg.egora.pk", "http://stores.test.egora.pk", "http://stores.egora.pk"];
+    if (urlsToAppendId.includes(baseUrl)) {
+      actions.navigateToHome(`${baseUrl}/?${(states?.orderData?.venueId?.franchiseId)}`)
+    } else {
+      actions.navigateToHome(`${baseUrl}`)
+    }
+  };
 
   useEffect(() => {
     setReviewExists(states.orderData);
@@ -667,7 +676,34 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
         return;
       }
     }
-    await actions.addReview(requestBody)
+     try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/review`,
+        requestBody,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.status === 200 || response.status === 201) {
+        console.log("Review submitted successfully:", response.data);
+        enqueueSnackbar("Review Submitted successfully!");
+        handleGoBack()
+      } else {
+        console.error("Failed to submit review:", response.data);
+        enqueueSnackbar("Failed to submit review. Please try again later.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        enqueueSnackbar("Review for this order already submitted.");
+      } else {
+        console.error("Error submitting review:", error);
+        enqueueSnackbar("Failed to submit review. Please try again later.");
+      }
+    } finally {
+      
+    }
     
   };
 
@@ -713,17 +749,7 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
   const allQuestionsRated = questionsToRate.every(
     (question) => ratings[question] > 0
   );
-
-  const handleGoBack = () => {
-    const baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
-    const urlsToAppendId = ["http://localhost:3031", "http://stores.dev.egora.pk", "http://stores.stg.egora.pk", "http://stores.test.egora.pk", "http://stores.egora.pk"];
-    if (urlsToAppendId.includes(baseUrl)) {
-      // actions.navigateToHome(`${baseUrl}/?${franchiseId.id}`)
-    } else {
-      actions.navigateToHome(`${baseUrl}`)
-    }
-  };
-
+  
   return (
     <Container maxWidth="sm" sx={{
       padding: 3,
