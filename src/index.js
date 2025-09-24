@@ -18,4 +18,6 @@ import AnnouncementsBanner from './components/brgr/AnnouncementsBanner/announcem
 import CartDrawer from './components/brgr//header/CartDrawer';
 import CartBottomBar from './components/brgr/CartBottomBar/CartBottomBar';
 import EditorTextBlock from './components/brgr/editorTextBlock/editorTextBlock';
-export { AnnouncementsBanner, CartDrawer, ItemDetailModal, CartCheckoutSummary, TextBlock, EditorTextBlock, OrderSuccessPage, Header, LocationModal, HeroCarousel, CategoryCarousel, SearchBar, PopularMenuSection, PopularMenuSectionV2, AllCategoriesPage, AllCategoriesPageV2, Footer, Footer2, InfoBlock, CartBottomBar };
+import Review from './components/brgr/review/review';
+import ReviewModal from './components/brgr/review/reviewModal';
+export { Review, ReviewModal, AnnouncementsBanner, CartDrawer, ItemDetailModal, CartCheckoutSummary, TextBlock, EditorTextBlock, OrderSuccessPage, Header, LocationModal, HeroCarousel, CategoryCarousel, SearchBar, PopularMenuSection, PopularMenuSectionV2, AllCategoriesPage, AllCategoriesPageV2, Footer, Footer2, InfoBlock, CartBottomBar };

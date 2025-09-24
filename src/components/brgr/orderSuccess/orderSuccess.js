@@ -8,6 +8,7 @@ import { fNumber } from "../../../utils/formatNumber";
 import UniversalImage from "../../../UniversalImage";
 import { formatTime, formatDate } from "../../../utils/formatDateTime";
 import { getScreenSizeCategory, getIconWidthHeight } from '../../../utils/fontsize';
+import ReviewModal from "../review/reviewModal";
 
 export default function OrderSuccessPage({ open, onClose, themeColors, actions, prop, styles, states, globalComponentStyles, layout }) {
     
@@ -1260,6 +1261,15 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                     </Box>
                 </Box>
             </Box>
+
+            {states.openReviewModal && (
+                <ReviewModal
+                    states={states}
+                    layout={layout} 
+                    globalComponentStyles={globalComponentStyles} 
+                    themeColors={themeColors}
+                />
+            )}
         </Box>
 
     );
