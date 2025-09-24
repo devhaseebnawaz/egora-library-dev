@@ -331,8 +331,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     // const handleSelectedLocation = () => {
     //     actions.handleSelectedLocation(states.userLocationLatlong)
     // }
-    function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-        const R = 6371;
+  function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+        const R = 6371e3;
         const dLat = ((lat2 - lat1) * Math.PI) / 180;
         const dLon = ((lon2 - lon1) * Math.PI) / 180;
         const a =
@@ -353,9 +353,9 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                     const [franLat, franLng] = states.latLongForDelivery.split(",").map(Number);
                     const [userLat, userLng] = response.split(",").map(Number);
 
-                    const distance = getDistanceFromLatLonInKm(franLat, franLng, userLat, userLng);
+                    const distance = getDistanceFromLatLonInMeters(franLat, franLng, userLat, userLng);
 
-                    if (distance <= states.franchise.deliveryRadius) {
+                    if (distance <= states.franchise.deliveryRadius * 1000) {
                         actions.handleSelectedLocation(states.latLongForDelivery);
                     } else {
                         states.setErrorForToFarLocation("Sorry! You are too far from the delivery address.");
