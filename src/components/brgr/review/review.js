@@ -13,7 +13,7 @@ import axios from "axios";
 import UniversalImage from "../../../UniversalImage";
 import { fNumber } from "../../../utils/formatNumber";
 import { borderRadius, Container } from "@mui/system";
-// import { useSnackbar } from "src/components/snackbar";
+import { useSnackbar } from "../../snackbar";
 // import LoadingScreen from "src/components/loading-screen";
 import capitalizeWords from "../../../utils/capitalizeWords";
 import { SvgIcon } from '@mui/material';
@@ -593,7 +593,7 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
     valueForMoney: 0,
   });
 
-  // const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [imageURLs, setImageURLs] = useState([]);
   const [venueImageURL, setVenueImageURL] = useState("");
@@ -661,9 +661,9 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
         (item) => itemRatings[item.id] > 0
       );
       if (!allItemsRated) {
-        // enqueueSnackbar("Please rate all items before submitting.", {
-        //   variant: "warning",
-        // });
+        enqueueSnackbar("Please rate all items before submitting.", {
+          variant: "warning",
+        });
         return;
       }
     }
@@ -715,7 +715,13 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
   );
 
   const handleGoBack = () => {
-    // navigate(`/`);
+    const baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
+    const urlsToAppendId = ["http://localhost:3031", "http://stores.dev.egora.pk", "http://stores.stg.egora.pk", "http://stores.test.egora.pk", "http://stores.egora.pk"];
+    if (urlsToAppendId.includes(baseUrl)) {
+      // actions.navigateToHome(`${baseUrl}/?${franchiseId.id}`)
+    } else {
+      actions.navigateToHome(`${baseUrl}`)
+    }
   };
 
   return (
@@ -742,7 +748,11 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
 
           <LoadingButton
             fullWidth
-            onClick={handleGoBack}
+            onClick={() => {
+              if (!previewMode) {
+                handleGoBack()
+              }
+            }}
             size="large"
             type="submit"
             variant="contained"

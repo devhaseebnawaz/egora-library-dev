@@ -11,7 +11,7 @@ import { getScreenSizeCategory, getIconWidthHeight } from '../../../utils/fontsi
 import ReviewModal from "../review/reviewModal";
 
 export default function OrderSuccessPage({ open, onClose, themeColors, actions, prop, styles, states, globalComponentStyles, layout }) {
-    
+    console.log("states.openReviewModal  ::", states.openReviewModal )
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const { orderData } = states ?? {}
