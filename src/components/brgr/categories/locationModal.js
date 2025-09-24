@@ -328,9 +328,46 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
         }
     };
 
-    const handleSelectedLocation = () => {
-        actions.handleSelectedLocation(states.userLocationLatlong)
+    // const handleSelectedLocation = () => {
+    //     actions.handleSelectedLocation(states.userLocationLatlong)
+    // }
+  function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+        const R = 6371e3;
+        const dLat = ((lat2 - lat1) * Math.PI) / 180;
+        const dLon = ((lon2 - lon1) * Math.PI) / 180;
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos((lat1 * Math.PI) / 180) *
+            Math.cos((lat2 * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
+
+    const handleSelectedLocation = async () => {
+        if (states.franchise.configurations.isEnabledDeliveryLocation) {
+            try {
+                const response = await actions.handleLocateMe();
+                if (response) {
+                    const [franLat, franLng] = states.latLongForDelivery.split(",").map(Number);
+                    const [userLat, userLng] = response.split(",").map(Number);
+
+                    const distance = getDistanceFromLatLonInMeters(franLat, franLng, userLat, userLng);
+
+                    if (distance <= states.franchise.deliveryRadius * 1000) {
+                        actions.handleSelectedLocation(states.latLongForDelivery);
+                    } else {
+                        states.setErrorForToFarLocation("Sorry! You are too far from the delivery address.");
+                    }
+                }
+            } catch (error) {
+                console.log("Error::", error);
+            }
+        } else {
+            actions.handleSelectedLocation(states.latLongForDelivery);
+        }
+    };
     
     const content = (
         <Box >
@@ -840,6 +877,15 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             sx={{ mt: 2, textAlign: "center" }}
                         >
                             {states.noVenueFound}
+                        </Typography>
+                    )}
+                    {states?.errorForToFarLocation && (
+                        <Typography
+                            variant="body2"
+                            color="error"
+                            sx={{ mt: 2, textAlign: "center" }}
+                        >
+                            {states?.errorForToFarLocation}
                         </Typography>
                     )}
                 </>
