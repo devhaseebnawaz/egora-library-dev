@@ -1268,6 +1268,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                     layout={layout} 
                     globalComponentStyles={globalComponentStyles} 
                     themeColors={themeColors}
+                    actions={actions}
                 />
             )}
         </Box>
