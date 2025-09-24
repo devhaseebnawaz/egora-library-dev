@@ -16,6 +16,7 @@ import Iconify from '../iconify';
 import { getIconWidthHeight, getScreenSizeCategory } from '../../../utils/fontsize';
 
 const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyles, themeColors, actions }) => {
+    console.log("previewMode ReviewModal", previewMode)
     const goToOrder = () => {
         const orderId = states?.orderData?.id;
         actions.naviagateReviewPage(`${orderId}`)
@@ -161,6 +162,8 @@ const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyle
     return (
         <>
             {previewMode ? (
+                <>
+                ZSDXFCGVHBJNKMZDXFCGVHBJN,
                 <Box
                     sx={{
                         display: "flex",
@@ -183,9 +186,10 @@ const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyle
                         {renderOrderContent()}
                     </Box>
                 </Box>
+                </>
             ) : (
                 <Dialog
-                    open={open}
+                    open={states.openReviewModal}
                     onClose={()=>{ states.setOpenReviewModal(false)}}
                     maxWidth="sm"
                     fullWidth
