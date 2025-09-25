@@ -8,9 +8,10 @@ import { fNumber } from "../../../utils/formatNumber";
 import UniversalImage from "../../../UniversalImage";
 import { formatTime, formatDate } from "../../../utils/formatDateTime";
 import { getScreenSizeCategory, getIconWidthHeight } from '../../../utils/fontsize';
+import ReviewModal from "../review/reviewModal";
 
 export default function OrderSuccessPage({ open, onClose, themeColors, actions, prop, styles, states, globalComponentStyles, layout }) {
-    
+    console.log("states.openReviewModal  ::", states.openReviewModal )
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const { orderData } = states ?? {}
@@ -1260,6 +1261,16 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                     </Box>
                 </Box>
             </Box>
+
+            {states.openReviewModal && (
+                <ReviewModal
+                    states={states}
+                    layout={layout} 
+                    globalComponentStyles={globalComponentStyles} 
+                    themeColors={themeColors}
+                    actions={actions}
+                />
+            )}
         </Box>
 
     );
