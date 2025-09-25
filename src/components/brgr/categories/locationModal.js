@@ -774,6 +774,9 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                                 data={states.data}
                                 actions={actions}
                                 onSelect={(e) => actions?.handleSelect(e)}
+                                themeColors={themeColors}
+                                layout={layout}
+                                globalComponentStyles={globalComponentStyles}
                             />
                         )}
                     </>
