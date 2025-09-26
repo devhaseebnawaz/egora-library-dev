@@ -208,6 +208,28 @@ export default function ItemDetailModal({
         : `${themeColors?.ItemDetailModalAddToCartTextStyle?.value}`,
   };
 
+  const getItemDetailImageStyle = () => {
+    const screen = getScreenSizeCategory();
+
+    let size =
+      layout?.itemDetailModalLayout?.body?.[0]?.styles?.ItemDetailModalImageHeightWidth?.value?.[screen] != 0
+        ? layout?.itemDetailModalLayout?.body?.[0]?.styles?.ItemDetailModalImageHeightWidth?.value?.[screen]
+          : themeColors?.ItemDetailModalImageHeightWidth?.value?.[screen];
+
+    size = size > 500 ? 500 : size;
+
+    const borderRadius =
+      layout?.itemDetailModalLayout?.body?.[0]?.styles?.ItemDetailModalImageBorderRadius?.value !== ""
+        ? layout?.itemDetailModalLayout?.body?.[0]?.styles?.ItemDetailModalImageBorderRadius?.value
+          : themeColors?.ItemDetailModalImageBorderRadius?.value;
+
+    return {
+      maxWidth: size,
+      maxHeight: size,
+      borderRadius,
+    };
+  };
+
   const methods = useForm();
   const { selectedVenue, choiceGroups, isItemEdit } = states ?? {}
   const { isOnlineForStore } = selectedVenue ?? {}
@@ -481,10 +503,8 @@ export default function ItemDetailModal({
             e.target.src = '/assets/placeholder.png';
           }}
           style={{
-            maxWidth: '100%',
-            maxHeight: '100%',
             objectFit: 'contain',
-            borderRadius: 8,
+            ...getItemDetailImageStyle()
           }}
         />
       </Box>
@@ -587,6 +607,8 @@ export default function ItemDetailModal({
           style={{
             marginBottom: 20,
             with:"100%",
+            display: 'flex',
+            justifyContent: 'center'
           }}
         >
           <Box
@@ -601,9 +623,8 @@ export default function ItemDetailModal({
               e.target.src = '/assets/placeholder.png';
             }}
             style={{
-              width:"100%",
-              maxHeight: 250,
-              borderRadius: 8,
+              objectFit: 'contain',
+              ...getItemDetailImageStyle()
             }}
           />
         </Box>
