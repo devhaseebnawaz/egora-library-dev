@@ -163,7 +163,6 @@ const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyle
         <>
             {previewMode ? (
                 <>
-                ZSDXFCGVHBJNKMZDXFCGVHBJN,
                 <Box
                     sx={{
                         display: "flex",

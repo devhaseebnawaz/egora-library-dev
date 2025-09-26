@@ -766,7 +766,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
 
             <Box px={2} py={4} sx={{ backgroundColor: layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessBackgroundColor?.value, minHeight: "100vh", position: 'relative', top: '-25px' }}>
                 <Box mx="auto" width="95%" >
-                    {/* Thank you part start */}
+                    {state === "pending" && 
                     <Stack alignItems="center" spacing={2} mb={4}>
                         <UniversalImage
                             src="/assets/tick-unscreen.gif"
@@ -779,6 +779,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                         <Typography sx={{ ...getThankYouStyles }} >Thank You!</Typography>
                         <Typography sx={{ ...getOrderPlacedStyles }} >Your order has been placed successfully</Typography>
                     </Stack>
+                    }
                     {/* Thank you part end */}
 
                     {/* order and branch detail start */}

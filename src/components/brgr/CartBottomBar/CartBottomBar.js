@@ -150,17 +150,7 @@ export default function CartBottomBar({
                 alignItems: "center",
             }}
         >
-            <Box
-                sx={{
-                    ...getTextStyles,
-                    width: '90%',
-                    borderRadius: "20px",
-                    boxShadow: 24,
-                    padding: "32px 24px 24px",
-                    border: "2px solid #e0e0e0",
-                }}
-
-            >{content}</Box>
+            {content}
         </Box>
     ) : (
         <>
