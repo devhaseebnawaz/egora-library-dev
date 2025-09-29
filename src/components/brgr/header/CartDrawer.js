@@ -1010,7 +1010,7 @@ const CartDrawer = ({
                   Delivery Fee
                 </Typography>
                 <Typography sx={{ ...getPriceTextStyles }}>
-                  Rs. {deliveryFees}
+                  Rs. {finalDeliveryFee}
                 </Typography>
               </Box>
             )}
