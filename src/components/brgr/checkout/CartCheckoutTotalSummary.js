@@ -3,6 +3,7 @@ import {
   Box, Card, Stack, Typography, CardContent,
 } from "@mui/material";
 import { fNumber } from "../../../utils/formatNumber";
+import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
 
 const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, setOrderData, getDescriptionStyles, getHeadingStyles, getOrderHeadingStyles, checkoutTotalSummaryBackground }) => {
 
@@ -95,8 +96,8 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
       updatedTotal += Number(serviceFee);
     }
     const platformFee = isPlatformFeeApplicableOnStore ? platformFees : 0;
-    const deliveryFee = (isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? deliveryFees : 0;
-    const grandTotal = Number(updatedTotal) + Number(platformFee) + Number(deliveryFee) + Number(taxAmount) + Number(selectedTip);
+    // const deliveryFee = (isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? deliveryFees : 0;
+    const grandTotal = Number(updatedTotal) + Number(platformFee) + Number(taxAmount) + Number(selectedTip);
     setTotal(grandTotal);
   }, [
     subTotal,
@@ -111,6 +112,15 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
     platformFees,
     deliveryFees
   ]);
+
+
+  let { finalDeliveryFee, reason } = calculeteDeliveryFee({ states, baseTotal: total })
+
+  useEffect(() => {
+    let updatedTotal = Number(total);
+    const grandTotal = Number(updatedTotal) + Number(finalDeliveryFee)
+    setTotal(grandTotal);
+  }, [finalDeliveryFee]);
 
   const renderServiceFee = () => {
     const service = serviceFeesObject?.[states.orderType]?.[states.paymentMethod];
@@ -137,6 +147,14 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
     let totalServiceValue = 0;
     let serviceFeesObj = {};
 
+    let deliveryFeesObject = {
+      reason: reason,
+      waiveOff: true,
+      waiveOffValue: deliveryFees ,
+      ...(reason === "highOrderAmount" && { orderThreshold: storeDeliveryMaxOrderThreshold }),
+      ...(reason === "lessDistanceOrder" && { distanceThreshold: storeDeliveryMaxDistanceThreshold })
+    }
+
     if (
       isServiceFeesApplicableOnStore &&
       isApplicable(serviceFeesObject?.[mode]?.[states.paymentMethod]?.applicable)
@@ -162,7 +180,8 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
       serviceFees: fNumber(totalServiceValue),
       location: states.latLong ? states.latLong : "2,2",
       platformFees: isPlatformFeeApplicableOnStore ? platformFees : 0,
-      deliveryFees: (isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? deliveryFees : 0,
+      deliveryFees: (isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? finalDeliveryFee : 0,
+       ...(isDeliveryFeeApplicableOnStore && orderType === "storeDelivery" && finalDeliveryFee === 0 && { deliveryFeesObject }),
       serviceFeesObject: serviceFeesObj,
     };
 
