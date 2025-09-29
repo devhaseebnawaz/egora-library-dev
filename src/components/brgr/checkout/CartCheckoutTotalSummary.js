@@ -8,7 +8,7 @@ import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
 const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, setOrderData, getDescriptionStyles, getHeadingStyles, getOrderHeadingStyles, checkoutTotalSummaryBackground }) => {
 
   const { cardItems, franchise, orderType } = states ?? {};
-  const { serviceFeesObject, configurations, storeTaxOnCash, storeTaxOnCard, platformFees, deliveryFees } = franchise ?? {};
+  const { serviceFeesObject, configurations, storeTaxOnCash, storeTaxOnCard, platformFees, deliveryFees,storeDeliveryMaxOrderThreshold,storeDeliveryMaxDistanceThreshold } = franchise ?? {};
   const { isServiceFeesApplicableOnStore, isTaxApplicableOnStore, isPlatformFeeApplicableOnStore, isCashAvailableOnPickUp, isCashAvailableOnDelivery, isDeliveryFeeApplicableOnStore } = configurations ?? {};
 
   const [subTotal, setSubTotal] = useState(0);
@@ -217,7 +217,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
             {isDeliveryFeeApplicableOnStore && orderType === "storeDelivery" && (
               <Stack direction="row" justifyContent="space-between">
                 <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Delivery Fee</Typography>
-                <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {deliveryFees}</Typography>
+                <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {finalDeliveryFee}</Typography>
               </Stack>
             )}
 
