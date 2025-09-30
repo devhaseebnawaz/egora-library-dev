@@ -10,11 +10,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { getScreenSizeCategory } from "src/components/brgr/utils/fontsize";
+import {  getScreenSizeCategory } from '../../../utils/fontsize';
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import FormProvider, { RHFTextField } from "../../../components/hook-form";
+import FormProvider, { RHFTextField } from "../../hook-form";
 
 export default function CustomerInfoModal({
   themeColors,
