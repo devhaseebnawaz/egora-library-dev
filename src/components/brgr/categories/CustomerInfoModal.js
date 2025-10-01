@@ -8,6 +8,8 @@ import {
   Box,
   Typography,
   useMediaQuery,
+  DialogTitle,
+  IconButton
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
@@ -15,6 +17,7 @@ import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import FormProvider, { RHFTextField } from "../../hook-form";
+import Iconify from '../iconify';
 
 export default function CustomerInfoModal({
   themeColors,
@@ -235,8 +238,45 @@ export default function CustomerInfoModal({
 
   const content = (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+       <DialogTitle
+        sx={{
+          m: 0,
+          p: 2,
+          display: "flex",
+          justifyContent: "flex-end",
+          alignItems: "center",
+        }}
+      >
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            minWidth: smDown
+              ? 30
+              : layout?.CustomerInfoModalLayout?.body[0].styles
+                ?.CustomerInfoModalCloseIconHeightWidth?.value,
+            height: smDown
+              ? 30
+              : layout?.CustomerInfoModalLayout?.body[0].styles
+                ?.CustomerInfoModalCloseIconHeightWidth?.value,
+            borderRadius: smDown
+              ? 8
+              : `${layout?.CustomerInfoModalLayout?.body[0].styles?.CustomerInfoModalCloseIconBorderRadius?.value}px`,
+            backgroundColor:
+              layout?.CustomerInfoModalLayout?.body[0].styles
+                ?.CustomerInfoModalCloseIconBackColor?.value || "#c9c7c7ff",
+            color:
+              layout?.CustomerInfoModalLayout?.body[0].styles
+                ?.CustomerInfoModalCloseIconColor?.value || "#fff",
+            fontWeight: "bold",
+            fontSize: smDown ? 16 : 20,
+          }}
+        >
+          <Iconify icon="mdi:close" width={24} height={24} />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
-        <Box sx={{ mt: 4 }}>
+        <Box>
           <Typography
             variant="body2"
             sx={{
