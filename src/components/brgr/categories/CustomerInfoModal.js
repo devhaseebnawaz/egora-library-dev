@@ -54,6 +54,11 @@ export default function CustomerInfoModal({
     setError
   } = methods;
 
+    const handleClose = () => {
+  methods.reset({ phone: '' }); 
+  onClose();
+};
+
   const onSubmit = async (values) => {
     try {
       const data = {
@@ -68,7 +73,7 @@ export default function CustomerInfoModal({
         if (onCustomerFound) {
           onCustomerFound(response);
         }
-        onClose();
+         handleClose();
       } else {
         setError("phone", {
           type: "manual",
@@ -249,7 +254,7 @@ export default function CustomerInfoModal({
       >
         <IconButton
           aria-label="close"
-          onClick={onClose}
+           onClick={handleClose}
           sx={{
             minWidth: smDown
               ? 30
@@ -405,7 +410,7 @@ export default function CustomerInfoModal({
   }
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       {content}
     </Dialog>
   );
