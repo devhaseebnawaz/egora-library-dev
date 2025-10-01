@@ -19,6 +19,7 @@ import MyLocationIcon from "@mui/icons-material/MyLocation";
 import RefineLocationModal from "./RefineLocationModal";
 import { getIconWidthHeight, getScreenSizeCategory } from '../../../utils/fontsize';
 import { useMediaQuery } from "@mui/material";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const modalStyle = (themeColors, layout) => {
     return {
@@ -49,6 +50,18 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     const filteredOutlets = states.outlets?.filter((outlet) =>
         outlet.name.toLowerCase().includes(states.searchQuery.toLowerCase())
     ) || [];
+    const branchRegions = states?.franchise?.branchRegions || {};
+    const allRegions = Object.entries(branchRegions).flatMap(([branchId, regions]) =>
+        regions.map(region => ({
+            ...region,
+            branchId,
+        }))
+    );
+    const uniqueVenues = Array.from(
+        new Map(
+            allRegions.map(item => [item.name.toLowerCase(), item])
+        ).values()
+    );
 
     let openModal;
 
@@ -328,9 +341,6 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
         }
     };
 
-    // const handleSelectedLocation = () => {
-    //     actions.handleSelectedLocation(states.userLocationLatlong)
-    // }
   function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
         const R = 6371e3;
         const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -346,7 +356,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     }
 
     const handleSelectedLocation = async () => {
-        if (states.franchise.configurations.isEnabledDeliveryLocation) {
+        if (states.franchise.configurations.isEnabledDeliveryLocation && !states.franchise.configurations.isRegionBasedDeliveryOnStore) {
             try {
                 const response = await actions.handleLocateMe();
                 if (response) {
@@ -364,6 +374,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             } catch (error) {
                 console.log("Error::", error);
             }
+        } else if (states.franchise.configurations.isRegionBasedDeliveryOnStore) {
+            actions.handleSelectedRegion(states?.selectedRegion);
         } else {
             actions.handleSelectedLocation(states.latLongForDelivery);
         }
@@ -724,63 +736,157 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
 
             {
-                states?.orderType === "storeDelivery" && (
-                    <>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                mb: 1,
-                            }}
-                        >
-                            <TextField
-                                placeholder="Search Location"
-                                variant="outlined"
-                                value={states?.value}
-                                onChange={(e) => actions?.handleInput(e)}
-                                autoComplete="off"
-                                fullWidth
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <ArrowForwardIcon sx={{ ...getSearchLocationIconStyles }} />
-                                        </InputAdornment>
-                                    ),
-                                    sx: {
-                                        backgroundColor:
-                                            layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value !== ""
-                                                ? layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value
-                                                : globalComponentStyles?.Button?.backgroundColor?.value != ""
-                                                    ? globalComponentStyles?.Button?.backgroundColor?.value
-                                                    : themeColors?.LocationModalSearchLocationButtonBackgroundColor?.value,
-                                        borderRadius:
-                                            layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value != 0
-                                                ? `${layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value}px`
-                                                : globalComponentStyles?.Button?.borderRadius?.value != 0
-                                                    ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
-                                                    : `${themeColors?.LocationModalSearchLocationButtonBorderRadius?.value}px`,
-                                        height: "44px",
-                                        "& .MuiOutlinedInput-notchedOutline": {
-                                            border: "none",
-                                        },
-                                        ...getSearchLocationStyles
-                                    },
+                (states?.orderType === "storeDelivery" && !states?.franchise?.configurations?.isRegionBasedDeliveryOnStore) ?
+                    (
+                        <>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mb: 1,
                                 }}
-                            />
-                        </Box>
+                            >
+                                <TextField
+                                    placeholder="Search Location"
+                                    variant="outlined"
+                                    value={states?.value}
+                                    onChange={(e) => actions?.handleInput(e)}
+                                    autoComplete="off"
+                                    fullWidth
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <ArrowForwardIcon sx={{ ...getSearchLocationIconStyles }} />
+                                            </InputAdornment>
+                                        ),
+                                        sx: {
+                                            backgroundColor:
+                                                layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value !== ""
+                                                    ? layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value
+                                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                                        ? globalComponentStyles?.Button?.backgroundColor?.value
+                                                        : themeColors?.LocationModalSearchLocationButtonBackgroundColor?.value,
+                                            borderRadius:
+                                                layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value != 0
+                                                    ? `${layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value}px`
+                                                    : globalComponentStyles?.Button?.borderRadius?.value != 0
+                                                        ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                                        : `${themeColors?.LocationModalSearchLocationButtonBorderRadius?.value}px`,
+                                            height: "44px",
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                                border: "none",
+                                            },
+                                            ...getSearchLocationStyles
+                                        },
+                                    }}
+                                />
+                            </Box>
 
-                        {states.value?.length > 0 && states.data?.length > 0 && (
-                            <SearchMenuList
-                                data={states.data}
-                                actions={actions}
-                                onSelect={(e) => actions?.handleSelect(e)}
-                                themeColors={themeColors}
-                                layout={layout}
-                                globalComponentStyles={globalComponentStyles}
-                            />
-                        )}
-                    </>
-                )
+                            {states.value?.length > 0 && states.data?.length > 0 && (
+                                <SearchMenuList
+                                    data={states.data}
+                                    actions={actions}
+                                    onSelect={(e) => actions?.handleSelect(e)}
+                                    themeColors={themeColors}
+                                    layout={layout}
+                                    globalComponentStyles={globalComponentStyles}
+                                />
+                            )}
+                        </>
+                    ) : (states?.orderType === "storeDelivery" && states?.franchise?.configurations?.isRegionBasedDeliveryOnStore) ? (
+                        <>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mb: 1,
+                                }}
+                            >
+                                <TextField
+                                    placeholder="Lahore"
+                                    variant="outlined"
+                                    value={states?.value}
+                                    autoComplete="off"
+                                    fullWidth
+                                    disabled
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor:
+                                                layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value !== ""
+                                                    ? layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value
+                                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                                        ? globalComponentStyles?.Button?.backgroundColor?.value
+                                                        : themeColors?.LocationModalSearchLocationButtonBackgroundColor?.value,
+                                            borderRadius:
+                                                layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value != 0
+                                                    ? `${layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value}px`
+                                                    : globalComponentStyles?.Button?.borderRadius?.value != 0
+                                                        ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                                        : `${themeColors?.LocationModalSearchLocationButtonBorderRadius?.value}px`,
+                                            height: "44px",
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                                border: "none",
+                                            },
+                                            ...getSearchLocationStyles
+                                        },
+                                    }}
+                                />
+                            </Box>
+
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mb: 1,
+                                }}
+                            >
+                                <Autocomplete
+                                    fullWidth
+                                    options={uniqueVenues}
+                                    getOptionLabel={(option) => option?.name || ""}
+                                    value={states?.selectedRegion || null}
+                                    onChange={(event, newValue) => actions?.handleSelectRegion(newValue)}
+                                    noOptionsText="No options found"
+                                    popupIcon={null} // hide default chevron
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            placeholder="Select Area / Sub Region"
+                                            variant="outlined"
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <ArrowDropDownIcon sx={{ ...getSearchLocationIconStyles }} />
+
+                                                    </InputAdornment>
+                                                ),
+                                                sx: {
+                                                    backgroundColor:
+                                                        layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value !== ""
+                                                            ? layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value
+                                                            : globalComponentStyles?.Button?.backgroundColor?.value !== ""
+                                                                ? globalComponentStyles?.Button?.backgroundColor?.value
+                                                                : themeColors?.LocationModalSearchLocationButtonBackgroundColor?.value,
+                                                    borderRadius:
+                                                        layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value !== 0
+                                                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value}px`
+                                                            : globalComponentStyles?.Button?.borderRadius?.value !== 0
+                                                                ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                                                : `${themeColors?.LocationModalSearchLocationButtonBorderRadius?.value}px`,
+                                                    height: "44px",
+                                                    "& .MuiOutlinedInput-notchedOutline": {
+                                                        border: "none",
+                                                    },
+                                                    ...getSearchLocationStyles,
+                                                },
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </Box>
+                        </>
+                    ) : null
             }
 
             {
@@ -869,7 +975,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             },
                             ...getSelectButtonStyles
                         }}
-                        disabled={!previewMode && !states.currentLocation}
+                        disabled={!previewMode && !states.currentLocation && !states?.selectedRegion?.name}
                     >
                         Confirm Selection
                     </Button>
