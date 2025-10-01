@@ -963,7 +963,10 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
             lastName: customer.lastName || defaultValues.lastName,
             phone: customer.phone || defaultValues.phone,
             email: customer.email || defaultValues.email,
-             area: customer.address.area || defaultValues.address.area
+               address: {
+            ...defaultValues.address, 
+           area: customer.address?.area || defaultValues.address.area,
+           },
           });
         }}
       />
