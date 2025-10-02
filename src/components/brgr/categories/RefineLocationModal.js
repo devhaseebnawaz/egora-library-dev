@@ -41,6 +41,7 @@ export default function RefineLocationModal({
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+        libraries: ["geometry"],
     });
 
     const [userLocation, setUserLocation] = useState(null);
