@@ -240,9 +240,9 @@ export default function UserInfoPage({ states, actions, layout, globalComponentS
                                 <Typography sx={{ ...getHeadingStyles, fontWeight: "700"}}>
                                     Your Address
                                 </Typography>
-                                <Typography sx={{ ...getHeadingStyles }}>
-                                    {states?.addressRegionCase}, {states?.selectedRegion?.name}
-                                </Typography>
+                                    {states?.addressRegionCase && <Typography sx={{ ...getHeadingStyles }}>
+                                        ${states?.addressRegionCase}, ${states?.selectedRegion?.name}
+                                    </Typography>}
 
                                 <Button
                                     disableRipple

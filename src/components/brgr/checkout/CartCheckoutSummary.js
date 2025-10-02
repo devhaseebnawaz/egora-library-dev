@@ -15,6 +15,7 @@ import CustomerInfoModal from '../categories/CustomerInfoModal';
 
 const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actions, prop, styles, states, PaymentComponent, previewMode = false }) => {
     layout = layout?.json ? layout?.json : layout
+    const { isRegionBasedDeliveryOnStore } = states.franchise.configurations ?? {}
     const getDescriptionStyles = {
         color:
             layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryDescriptionTextColor?.value !== ""
@@ -244,12 +245,12 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
         email: Yup.string().required("Email is required").email("Invalid email"),
         address: Yup.object().shape({
             street: Yup.string().when([], {
-                is: () => orderType === "storeDelivery",
+                is: () => orderType === 'storeDelivery' && !isRegionBasedDeliveryOnStore,
                 then: (schema) => schema.required("Delivery Address is required"),
                 otherwise: (schema) => schema.notRequired(),
             }),
             area: Yup.string().when([], {
-                is: () => orderType === "storeDelivery",
+                is: () => orderType === 'storeDelivery' && !isRegionBasedDeliveryOnStore,
                 then: (schema) => schema.required("Area is required"),
                 otherwise: (schema) => schema.notRequired(),
             }),
@@ -277,6 +278,10 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
     const { handleSubmit, formState: { isSubmitting } } = methods;
 
     const onSubmit = async (data) => {
+        if (isRegionBasedDeliveryOnStore && orderType === 'storeDelivery') {
+            data.address.street = states?.addressRegionCase;
+            data.address.area = states?.selectedRegion?.name;
+        }
         try {
             states.setCustomerInfo(data);
             if (states.paymentMethod === "cash") {
