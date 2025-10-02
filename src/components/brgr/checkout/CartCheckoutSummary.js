@@ -813,7 +813,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                     </Typography>
                   </Grid>
 
-                                <UserInfoPage states={states} layout={layout} globalComponentStyles={globalComponentStyles} themeColors={themeColors} />
+                                <UserInfoPage states={states} actions={actions} layout={layout} globalComponentStyles={globalComponentStyles} themeColors={themeColors} />
                                 {canShowPaymentMethods && (
                                     <Box mt={2}>
                                         <Typography fontWeight="bold" sx={{ ...getHeadingStyles }}  >

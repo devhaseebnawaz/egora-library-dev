@@ -24,14 +24,9 @@ const defaultCenter = {
 };
 
 
-export default function AddAddressModal({ states, layout, globalComponentStyles, themeColors, open, onClose }) {
-    const { isLoaded } = useJsApiLoader({
-        googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-        libraries: ["geometry"],
-    });
+export default function AddAddressModal({ states, actions, layout, globalComponentStyles, themeColors, open, onClose }) {
 
     const [position, setPosition] = useState(defaultCenter);
-    const [address, setAddress] = useState("");
     const [isInsidePolygon, setIsInsidePolygon] = useState(true);
     const mapRef = React.useRef(null);
 
@@ -45,7 +40,6 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
             });
         }
     }, []);
-    if (!isLoaded) return null;
 
     const getPlaceOrderButtonStyles = {
         color:
@@ -132,8 +126,8 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
                     fullWidth
                     size="small"
                     sx={{ mb: 2 }}
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    value={states?.addressRegion}
+                    onChange={(e) => states?.setAddressRegion(e.target.value)}
                 />
 
                 <Typography
@@ -242,7 +236,7 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
                     variant="contained"
                     type="submit"
                     fullWidth
-                    disabled={!address.trim() || !isInsidePolygon}
+                    disabled={!states.addressRegionCase.trim() || !isInsidePolygon}
                     sx={{
                         mt: 2,
                         '&:hover': {
@@ -257,6 +251,10 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
                                             ?.value,
                         },
                         ...getPlaceOrderButtonStyles,
+                    }}
+                    onClick={() => {
+                        actions?.handleRegionAddressChange(states?.addressRegion);
+                        onClose();
                     }}
                 >
                     Save Address

@@ -6,7 +6,7 @@ import AddAddressModal from "./AddAddressModal";
 
 const CountryCode = process.env.NEXT_PUBLIC_COUNTRY_CODE;
 
-export default function UserInfoPage({ states, layout, globalComponentStyles, themeColors }) {
+export default function UserInfoPage({ states, actions, layout, globalComponentStyles, themeColors }) {
     const { orderType } = states ?? {}
     const [open, setOpen] = useState(false);
     const { isRegionBasedDeliveryOnStore } = states.franchise.configurations ?? {}
@@ -237,12 +237,19 @@ export default function UserInfoPage({ states, layout, globalComponentStyles, th
                     <>
                         <Grid container spacing={2} item xs={12} sm={12}>
                             <Grid item xs={12} sm={12}>
+                                <Typography sx={{ ...getHeadingStyles, fontWeight: "700"}}>
+                                    Your Address
+                                </Typography>
+                                <Typography sx={{ ...getHeadingStyles }}>
+                                    {states?.addressRegionCase}, {states?.selectedRegion?.name}
+                                </Typography>
+
                                 <Button
                                     disableRipple
                                     disableElevation
                                     variant="contained"
                                     type="submit"
-                                    onClick={() => setOpen(true)} // modal open
+                                    onClick={() => setOpen(true)}
                                     sx={{
                                         mt: 2,
                                         '&:hover': {
@@ -283,7 +290,7 @@ export default function UserInfoPage({ states, layout, globalComponentStyles, th
                 </Grid>
             </Grid> */}
             </Grid>
-            <AddAddressModal states={states} layout={layout} globalComponentStyles={globalComponentStyles} themeColors={themeColors} open={open} onClose={() => setOpen(false)} />
+            <AddAddressModal states={states} actions={actions} layout={layout} globalComponentStyles={globalComponentStyles} themeColors={themeColors} open={open} onClose={() => setOpen(false)} />
         </>
     );
 }
