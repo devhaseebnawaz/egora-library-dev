@@ -11,6 +11,7 @@ import CartItems from '../header/CartItems';
 import CartCheckoutTotalSummary from './CartCheckoutTotalSummary';
 import PaymentMethods from './PaymentMethods';
 import { getScreenSizeCategory } from '../../../utils/fontsize';
+import CustomerInfoModal from '../categories/CustomerInfoModal';
 
 const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actions, prop, styles, states, PaymentComponent, previewMode = false }) => {
     layout = layout?.json ? layout?.json : layout
@@ -676,6 +677,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
         }
     }
     return (
+        <>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{
                 py: { xs: 4, sm: 4, md: 4 }, px: { xs: 2, sm: 2, md: 10 },
@@ -790,6 +792,26 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
 
                                 )
                                 }
+
+                                
+                                  <Grid item xs={12}>
+                    <Typography sx={{ mb: 4, ...getHeadingStyles }}>
+                      Have you ordered before?
+                      <Box
+                        component="span"
+                        sx={{
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          textDecoration: 'underline',
+                          '&:hover': { opacity: 0.8 },
+                        }}
+                        // onClick={() => states.setOpenCustomerInfoDialog(true)}
+                         onClick={() => !previewMode? states.setOpenCustomerInfoDialog(true) : null }
+                      >
+                        Click here
+                      </Box>
+                    </Typography>
+                  </Grid>
 
                                 <UserInfoPage states={states} layout={layout} globalComponentStyles={globalComponentStyles} themeColors={themeColors} />
                                 {canShowPaymentMethods && (
@@ -925,6 +947,31 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                 </Grid>
             </Box>
         </FormProvider >
+          <CustomerInfoModal
+        open={states.openCustomerInfoDialog}
+        onClose={() => states.setOpenCustomerInfoDialog(false)}
+        actions={actions}
+        states={states}
+        layout={layout}
+       styles={ styles}
+      previewMode={previewMode}
+        globalComponentStyles={globalComponentStyles}
+        themeColors={themeColors}
+        onCustomerFound={(customer) => {
+          methods.reset({
+            firstName: customer.firstName || defaultValues.firstName,
+            lastName: customer.lastName || defaultValues.lastName,
+            phone: customer.phone || defaultValues.phone,
+            email: customer.email || defaultValues.email,
+               address: {
+            ...defaultValues.address, 
+           area: customer.address?.area || defaultValues.address.area,
+           },
+          });
+        }}
+      />
+
+        </>
     );
 };
 
