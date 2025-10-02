@@ -25,12 +25,14 @@ const defaultCenter = {
 
 
 export default function AddAddressModal({ states, layout, globalComponentStyles, themeColors, open, onClose }) {
-    console.log("states", states?.selectedRegion)
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+        libraries: ["geometry"],
     });
 
     const [position, setPosition] = useState(defaultCenter);
+    const [address, setAddress] = useState("");
+    const [isInsidePolygon, setIsInsidePolygon] = useState(true);
     const mapRef = React.useRef(null);
 
     const handleCurrentLocation = useCallback(() => {
@@ -130,6 +132,8 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
                     fullWidth
                     size="small"
                     sx={{ mb: 2 }}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
                 />
 
                 <Typography
@@ -171,19 +175,29 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
                         onLoad={(map) => {
                             mapRef.current = map;
                         }}
-                        onDragEnd={() => { 
+                        onDragEnd={() => {
                             if (mapRef.current) {
                                 const newCenter = mapRef.current.getCenter();
                                 if (newCenter) {
                                     const lat = newCenter.lat();
                                     const lng = newCenter.lng();
+                                    const newPos = { lat, lng };
 
                                     setPosition((prev) => {
                                         if (prev.lat !== lat || prev.lng !== lng) {
-                                            return { lat, lng };
+                                            return newPos;
                                         }
                                         return prev;
                                     });
+
+                                    if (window.google && states?.selectedRegion?.polygon?.length) {
+                                        const poly = new window.google.maps.Polygon({
+                                            paths: states.selectedRegion.polygon,
+                                        });
+                                        const point = new window.google.maps.LatLng(lat, lng);
+                                        const inside = window.google.maps.geometry.poly.containsLocation(point, poly);
+                                        setIsInsidePolygon(inside);
+                                    }
                                 }
                             }
                         }}
@@ -228,6 +242,7 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
                     variant="contained"
                     type="submit"
                     fullWidth
+                    disabled={!address.trim() || !isInsidePolygon}
                     sx={{
                         mt: 2,
                         '&:hover': {
