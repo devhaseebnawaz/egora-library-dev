@@ -31,6 +31,7 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
     });
 
     const [position, setPosition] = useState(defaultCenter);
+    const mapRef = React.useRef(null);
 
     const handleCurrentLocation = useCallback(() => {
         if (navigator.geolocation) {
@@ -167,13 +168,29 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
                         mapContainerStyle={containerStyle}
                         center={position}
                         zoom={13}
-                    >
-                        {/* Marker */}
-                        <Marker position={position} />
+                        onLoad={(map) => {
+                            mapRef.current = map;
+                        }}
+                        onDragEnd={() => { 
+                            if (mapRef.current) {
+                                const newCenter = mapRef.current.getCenter();
+                                if (newCenter) {
+                                    const lat = newCenter.lat();
+                                    const lng = newCenter.lng();
 
-                        {/* Polygon */}
+                                    setPosition((prev) => {
+                                        if (prev.lat !== lat || prev.lng !== lng) {
+                                            return { lat, lng };
+                                        }
+                                        return prev;
+                                    });
+                                }
+                            }
+                        }}
+                    >
+                        <Marker position={position} />
                         <Polygon
-                            paths={ states?.selectedRegion?.polygon.map((p) => ({ lat: p.lat, lng: p.lng }))}
+                            paths={states?.selectedRegion?.polygon.map((p) => ({ lat: p.lat, lng: p.lng }))}
                             options={{
                                 fillColor: "#FF0000",
                                 fillOpacity: 0.3,
@@ -183,6 +200,24 @@ export default function AddAddressModal({ states, layout, globalComponentStyles,
                             }}
                         />
                     </GoogleMap>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        onClick={handleCurrentLocation}
+                        sx={{
+                            position: "absolute",
+                            top: "10%",
+                            left: "50%",
+                            transform: "translate(-50%, -50%)",
+                            backgroundColor: "#fff",
+                            color: "#000",
+                            textTransform: "none",
+                            fontSize: "0.8rem",
+                            "&:hover": { backgroundColor: "#f5f5f5" },
+                        }}
+                    >
+                        Current Location
+                    </Button>
                 </Box>
             </DialogContent>
 
