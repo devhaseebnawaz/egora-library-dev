@@ -236,7 +236,7 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                     variant="contained"
                     type="submit"
                     fullWidth
-                    disabled={!states.addressRegion.trim()}
+                    disabled={!states?.addressRegion?.trim()}
                     sx={{
                         mt: 2,
                         '&:hover': {
