@@ -890,7 +890,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
 
             {
-                states?.orderType === "storeDelivery" && (<Box
+                (states?.orderType === "storeDelivery" && !states?.franchise?.configurations?.isRegionBasedDeliveryOnStore) && (<Box
                     onClick={() => states?.setRefineModalOpen(true)}
                     sx={{
                         display: "flex",
