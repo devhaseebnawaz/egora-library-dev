@@ -233,7 +233,7 @@ export default function UserInfoPage({ states, actions, layout, globalComponentS
                             </Grid>
                         </Grid>
                     </>
-                ) : (
+                ) : (orderType === "storeDelivery" && isRegionBasedDeliveryOnStore) ? (
                     <>
                         <Grid container spacing={2} item xs={12} sm={12}>
                             <Grid item xs={12} sm={12}>
@@ -271,7 +271,7 @@ export default function UserInfoPage({ states, actions, layout, globalComponentS
                             </Grid>
                         </Grid>
                     </>
-                )
+                ) : null
                 }
                 {/* <Grid item xs={12} sm={12}>
                 <Grid container spacing={2}>
