@@ -197,8 +197,8 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                         }}
                     >
                         <Marker position={position} />
-                        {/* <Polygon
-                            paths={states?.selectedRegion?.polygon.map((p) => ({ lat: p.lat, lng: p.lng }))}
+                        <Polygon
+                            paths={states?.selectedRegion?.polygon?.map(p => ({ lat: p.lat, lng: p.lng }))}
                             options={{
                                 fillColor: "#FF0000",
                                 fillOpacity: 0.3,
@@ -206,7 +206,7 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                                 strokeOpacity: 0.8,
                                 strokeWeight: 2,
                             }}
-                        /> */}
+                        />
                     </GoogleMap>
                     <Button
                         variant="contained"
@@ -236,7 +236,7 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                     variant="contained"
                     type="submit"
                     fullWidth
-                    disabled={!states?.addressRegion?.trim()}
+                    disabled={!states?.addressRegion?.trim() || !isInsidePolygon}
                     sx={{
                         mt: 2,
                         '&:hover': {
