@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          
+
       - uses: actions/setup-node@v3
         with:
           node-version: 18.19.0
@@ -48,39 +48,26 @@ jobs:
 
           echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
 
-      - name: Setup git identity
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Bump version
-        run: |
-          npm version patch -m "Bump version [skip ci]"
-
       - name: Build package
         run: |
           rm -rf dist
           mv rollup.config.js rollup.config.mjs
           npm run build
 
-      - name: Prepare package.json for publish
+      - name: Temporarily modify package.json for publish
         run: |
-          # keep repo name as egora-library but change only for publish
+          cp package.json package.json.bak
           jq --arg name "$PUBLISH_NAME" '.name=$name' package.json > package.tmp.json
           mv package.tmp.json package.json
           cat package.json | grep '"name"'
-
-      - name: Push changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add package.json package-lock.json || true
-          git add dist/ -f
-          git commit -m "Update package version, dist [skip ci]" || echo "No changes to commit"
-          git push origin HEAD
 
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          npm version patch --no-git-tag-version
           npm publish --access public
+
+      - name: Revert package.json
+        run: |
+          mv package.json.bak package.json
