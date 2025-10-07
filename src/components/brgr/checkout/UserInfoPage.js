@@ -248,7 +248,6 @@ export default function UserInfoPage({ states, actions, layout, globalComponentS
                                     disableRipple
                                     disableElevation
                                     variant="contained"
-                                    type="submit"
                                     onClick={() => setOpen(true)}
                                     sx={{
                                         mt: 2,
