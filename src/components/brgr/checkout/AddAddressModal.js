@@ -33,13 +33,33 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
     const handleCurrentLocation = useCallback(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
-                setPosition({
-                    lat: pos.coords.latitude,
-                    lng: pos.coords.longitude,
-                });
+                const { latitude, longitude } = pos.coords;
+                setPosition({ lat: latitude, lng: longitude });
+                getAddressFromLatLng(latitude, longitude, states?.setAddressRegion);
             });
         }
     }, []);
+
+    const getAddressFromLatLng = async (lat, lng, setAddressRegion) => {
+        if (!window.google || !window.google.maps) return;
+
+        const geocoder = new window.google.maps.Geocoder();
+        const latlng = { lat, lng };
+
+        geocoder.geocode({ location: latlng }, (results, status) => {
+            if (status === "OK" && results[0]) {
+                const address = results[0].formatted_address;
+                setAddressRegion(address);
+            } else {
+                console.error("Geocoder failed due to:", status);
+            }
+        });
+    };
+
+    const handleChangeInput = (value) => {
+        states?.setAddressRegion(value)
+        actions?.handleDisplayRegion(true)
+    }
 
     const getPlaceOrderButtonStyles = {
         color:
@@ -127,7 +147,7 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                     size="small"
                     sx={{ mb: 2 }}
                     value={states?.addressRegion}
-                    onChange={(e) => states?.setAddressRegion(e.target.value)}
+                    onChange={(e) => handleChangeInput(e.target.value)}
                 />
 
                 <Typography
@@ -183,6 +203,8 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                                         }
                                         return prev;
                                     });
+                                    getAddressFromLatLng(lat, lng, states?.setAddressRegion);
+                                    actions?.handleDisplayRegion(false)
 
                                     if (window.google && states?.selectedRegion?.polygon?.length) {
                                         const poly = new window.google.maps.Polygon({
