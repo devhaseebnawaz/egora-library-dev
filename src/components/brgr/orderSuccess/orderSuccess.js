@@ -922,7 +922,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                         <Divider sx={{ mt: 1.5 }} />
                                         <Stack direction="row" justifyContent="space-between" mt={1}>
                                             <Typography sx={{ ...getOrderInformationKeyStyles }}>Delivery Address</Typography>
-                                            <Typography sx={{ ...getOrderInformationValueStyles }}>{`${street} , ${area}`}</Typography>
+                                            <Typography sx={{ ...getOrderInformationValueStyles }}>{`${street}${area ? `, ${area}` : ""}`}</Typography>
                                         </Stack>
                                     </>
                                 )}
