@@ -223,7 +223,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
         if (id) setFranchiseId(id);
     }, []);
 
-    const { orderType } = states;
+    const { orderType, addressRegionCase } = states;
     const { franchise } = states ?? {}
     const { configurations } = franchise ?? {}
     const { isCardAvailableOnStore, isCashAvailableOnStore, isCardAvailableOnDelivery, isCardAvailableOnPickUp, isCashAvailableOnDelivery, isCashAvailableOnPickUp } = configurations ?? {};
@@ -280,7 +280,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
     const onSubmit = async (data) => {
         if (isRegionBasedDeliveryOnStore && orderType === 'storeDelivery') {
             data.address.street = states?.addressRegionCase;
-            data.address.area = states?.selectedRegion?.name;
+            data.address.area = states?.displayRegion ? states?.selectedRegion?.name : "";
         }
         try {
             states.setCustomerInfo(data);
@@ -915,6 +915,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                                                     },
                                                     ...getPlaceOrderButtonStyles
                                                 }}
+                                                    disabled={isRegionBasedDeliveryOnStore && orderType == "storeDelivery" && !addressRegionCase ? true : false}
                                             >
                                                 {isSubmitting ? "Placing Order..." : "Place Order"}
                                             </Button>
