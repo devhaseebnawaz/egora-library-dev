@@ -11,9 +11,11 @@ import CartItems from '../header/CartItems';
 import CartCheckoutTotalSummary from './CartCheckoutTotalSummary';
 import PaymentMethods from './PaymentMethods';
 import { getScreenSizeCategory } from '../../../utils/fontsize';
+import CustomerInfoModal from '../categories/CustomerInfoModal';
 
 const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actions, prop, styles, states, PaymentComponent, previewMode = false }) => {
     layout = layout?.json ? layout?.json : layout
+    const { isRegionBasedDeliveryOnStore } = states.franchise.configurations ?? {}
     const getDescriptionStyles = {
         color:
             layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryDescriptionTextColor?.value !== ""
@@ -221,7 +223,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
         if (id) setFranchiseId(id);
     }, []);
 
-    const { orderType } = states;
+    const { orderType, addressRegionCase } = states;
     const { franchise } = states ?? {}
     const { configurations } = franchise ?? {}
     const { isCardAvailableOnStore, isCashAvailableOnStore, isCardAvailableOnDelivery, isCardAvailableOnPickUp, isCashAvailableOnDelivery, isCashAvailableOnPickUp } = configurations ?? {};
@@ -243,12 +245,12 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
         email: Yup.string().required("Email is required").email("Invalid email"),
         address: Yup.object().shape({
             street: Yup.string().when([], {
-                is: () => orderType === "storeDelivery",
+                is: () => orderType === 'storeDelivery' && !isRegionBasedDeliveryOnStore,
                 then: (schema) => schema.required("Delivery Address is required"),
                 otherwise: (schema) => schema.notRequired(),
             }),
             area: Yup.string().when([], {
-                is: () => orderType === "storeDelivery",
+                is: () => orderType === 'storeDelivery' && !isRegionBasedDeliveryOnStore,
                 then: (schema) => schema.required("Area is required"),
                 otherwise: (schema) => schema.notRequired(),
             }),
@@ -276,6 +278,10 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
     const { handleSubmit, formState: { isSubmitting } } = methods;
 
     const onSubmit = async (data) => {
+        if (isRegionBasedDeliveryOnStore && orderType === 'storeDelivery') {
+            data.address.street = states?.addressRegionCase;
+            data.address.area = states?.displayRegion ? states?.selectedRegion?.name : "";
+        }
         try {
             states.setCustomerInfo(data);
             if (states.paymentMethod === "cash") {
@@ -676,6 +682,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
         }
     }
     return (
+        <>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <Box sx={{
                 py: { xs: 4, sm: 4, md: 4 }, px: { xs: 2, sm: 2, md: 10 },
@@ -791,7 +798,27 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                                 )
                                 }
 
-                                <UserInfoPage states={states} layout={layout} globalComponentStyles={globalComponentStyles} themeColors={themeColors} />
+                                
+                                  <Grid item xs={12}>
+                    <Typography sx={{ mb: 4, ...getHeadingStyles }}>
+                      Have you ordered before?
+                      <Box
+                        component="span"
+                        sx={{
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          textDecoration: 'underline',
+                          '&:hover': { opacity: 0.8 },
+                        }}
+                        // onClick={() => states.setOpenCustomerInfoDialog(true)}
+                         onClick={() => !previewMode? states.setOpenCustomerInfoDialog(true) : null }
+                      >
+                        Click here
+                      </Box>
+                    </Typography>
+                  </Grid>
+
+                                <UserInfoPage states={states} actions={actions} layout={layout} globalComponentStyles={globalComponentStyles} themeColors={themeColors} />
                                 {canShowPaymentMethods && (
                                     <Box mt={2}>
                                         <Typography fontWeight="bold" sx={{ ...getHeadingStyles }}  >
@@ -888,6 +915,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                                                     },
                                                     ...getPlaceOrderButtonStyles
                                                 }}
+                                                    disabled={isRegionBasedDeliveryOnStore && orderType == "storeDelivery" && !addressRegionCase ? true : false}
                                             >
                                                 {isSubmitting ? "Placing Order..." : "Place Order"}
                                             </Button>
@@ -925,6 +953,31 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                 </Grid>
             </Box>
         </FormProvider >
+          <CustomerInfoModal
+        open={states.openCustomerInfoDialog}
+        onClose={() => states.setOpenCustomerInfoDialog(false)}
+        actions={actions}
+        states={states}
+        layout={layout}
+       styles={ styles}
+      previewMode={previewMode}
+        globalComponentStyles={globalComponentStyles}
+        themeColors={themeColors}
+        onCustomerFound={(customer) => {
+          methods.reset({
+            firstName: customer.firstName || defaultValues.firstName,
+            lastName: customer.lastName || defaultValues.lastName,
+            phone: customer.phone || defaultValues.phone,
+            email: customer.email || defaultValues.email,
+               address: {
+            ...defaultValues.address, 
+           area: customer.address?.area || defaultValues.address.area,
+           },
+          });
+        }}
+      />
+
+        </>
     );
 };
 

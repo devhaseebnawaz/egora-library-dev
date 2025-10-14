@@ -23,6 +23,7 @@ import {
   calculateFinalTotal,
 } from "../../../utils/cart";
 import { getScreenSizeCategory } from '../../../utils/fontsize';
+import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
 
 const CartDrawer = ({
   open,
@@ -739,6 +740,47 @@ const CartDrawer = ({
         : `2px solid  ${themeColors?.cartDrawerItemQtyBorderColor?.value}`,
   };
 
+  const getWaiveOffTextStyles = {
+    color:
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextColor
+        ?.value !== ""
+        ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextColor
+          ?.value
+        : globalComponentStyles?.Text?.color?.value != ""
+          ? globalComponentStyles?.Text?.color?.value
+          : themeColors?.cartDrawerWaiveOffTextColor?.value,
+    fontSize:
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextSize
+        ?.value[getScreenSizeCategory()] != 0
+        ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextSize
+          ?.value[getScreenSizeCategory()]
+        : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
+          ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
+          : themeColors?.cartDrawerWaiveOffTextSize?.value[getScreenSizeCategory()],
+    fontWeight:
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextWeight?.value != ""
+        ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextWeight?.value
+        : globalComponentStyles?.Text?.fontWeight?.value != ""
+          ? globalComponentStyles?.Text?.fontWeight?.value
+          : themeColors?.cartDrawerWaiveOffTextWeight?.value,
+    fontFamily:
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextFont
+        ?.value != ""
+        ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextFont
+          ?.value
+        : globalComponentStyles?.Text?.fontFamily?.value != ""
+          ? globalComponentStyles?.Text?.fontFamily?.value
+          : themeColors?.cartDrawerWaiveOffTextFont?.value,
+    fontStyle:
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextStyle
+        ?.value !== ""
+        ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerWaiveOffTextStyle
+          ?.value
+        : globalComponentStyles?.Text?.fontStyle?.value != ""
+          ? globalComponentStyles?.Text?.fontStyle?.value
+          : themeColors?.cartDrawerWaiveOffTextStyle?.value,
+  };
+
   const cardItems = states.cardItems?.items ?? [];
   const { orderType, franchise } = states ?? {};
   const { serviceFeesObject, configurations, storeTaxOnCash, platformFees, deliveryFees } = franchise ?? {};
@@ -792,6 +834,19 @@ const CartDrawer = ({
     }
     return null;
   };
+
+  const baseTotal = (
+    Number(calculateFinalTotal(cardItems, selectedTip, discount)) +
+    Number(taxAmount) +
+    Number(serviceFee) +
+    (isPlatformFeeApplicableOnStore ? Number(platformFees) : 0)
+  ).toFixed(2);
+
+  let { finalDeliveryFee, message } = calculeteDeliveryFee({ states, baseTotal })
+
+  const orderTotal = (
+    Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(finalDeliveryFee) : 0)
+  ).toFixed(2);
 
   const content = (
     <Box style={{ position: "relative", height: "100%", ...getDrawerStyles }}>
@@ -955,7 +1010,7 @@ const CartDrawer = ({
                   Delivery Fee
                 </Typography>
                 <Typography sx={{ ...getPriceTextStyles }}>
-                  Rs. {deliveryFees}
+                  Rs. {finalDeliveryFee}
                 </Typography>
               </Box>
             )}
@@ -982,22 +1037,7 @@ const CartDrawer = ({
                 Grand Total
               </Typography>
               <Typography sx={{ ...getTotalTextStyles }}>
-                Rs.{" "}
-                {fNumber(
-                  (
-                    Number(
-                      calculateFinalTotal(cardItems, selectedTip, discount)
-                    ) +
-                    Number(taxAmount) +
-                    Number(serviceFee) +
-                    (isPlatformFeeApplicableOnStore
-                      ? Number(platformFees)
-                      : 0) +
-                    ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery")
-                      ? Number(deliveryFees)
-                      : 0)
-                  ).toFixed(2)
-                )}
+                Rs.{" "} {fNumber(orderTotal)}
               </Typography>
             </Box>
           </Box>
@@ -1024,6 +1064,17 @@ const CartDrawer = ({
           >
             Checkout
           </Button>
+          <Box
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: 8,
+            }}
+          >
+            <Typography sx={{ ...getWaiveOffTextStyles }}>
+              {previewMode ? "Delivery waive off. " : message}
+            </Typography>
+          </Box>
         </>
       )}
     </Box>
