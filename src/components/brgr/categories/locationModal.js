@@ -51,7 +51,16 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
         outlet.name.toLowerCase().includes(states.searchQuery.toLowerCase())
     ) || [];
     const branchRegions = states?.franchise?.branchRegions || {};
-    const allRegions = Object.entries(branchRegions).flatMap(([branchId, regions]) =>
+    const linkedVenue = states?.franchise?.venues || [];
+
+    const filteredRegions = Object.keys(branchRegions)
+        .filter((key) => linkedVenue.includes(key))
+        .reduce((obj, key) => {
+            obj[key] = branchRegions[key];
+            return obj;
+        }, {});
+
+    const allRegions = Object.entries(filteredRegions).flatMap(([branchId, regions]) =>
         regions.map(region => ({
             ...region,
             branchId,
@@ -929,7 +938,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
 
             {
-                states?.currentLocation && states?.orderType === "storeDelivery" && <Box
+                states?.currentLocation && states?.orderType === "storeDelivery" && !states?.franchise?.configurations?.isRegionBasedDeliveryOnStore && <Box
                     sx={{
                         // backgroundColor: "#f9f9f9",
                         p: 2,
