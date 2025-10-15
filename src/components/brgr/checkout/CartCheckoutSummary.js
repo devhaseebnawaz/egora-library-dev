@@ -280,7 +280,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
     const onSubmit = async (data) => {
         if (isRegionBasedDeliveryOnStore && orderType === 'storeDelivery') {
             data.address.street = states?.addressRegionCase;
-            data.address.area = states?.displayRegion ? states?.selectedRegion?.name : "";
+            data.address.area = states?.selectedRegion?.name;
         }
         try {
             states.setCustomerInfo(data);
