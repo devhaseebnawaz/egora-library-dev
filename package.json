@@ -1,6 +1,6 @@
 {
   "name": "egora-library",
-  "version": "1.0.69",
+  "version": "1.0.70",
   "description": "Component library for Egora platform",
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
