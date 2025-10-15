@@ -52,11 +52,17 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     ) || [];
     const branchRegions = states?.franchise?.branchRegions || {};
     const linkedVenue = states?.franchise?.venues || [];
-
+    const venues = states?.outlets
     const filteredRegions = Object.keys(branchRegions)
         .filter((key) => linkedVenue.includes(key))
         .reduce((obj, key) => {
-            obj[key] = branchRegions[key];
+            const matchedVenue = venues.find(
+                (venue) =>
+                    venue.id === key && venue?.configurations?.isAvailableOnStore === true
+            );
+            if (matchedVenue) {
+                obj[key] = branchRegions[key];
+            }
             return obj;
         }, {});
 
