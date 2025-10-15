@@ -87,17 +87,17 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
       : 0
   ), [cardItems, subTotal, discount, states.orderType, states.paymentMethod]);
 
+
   useEffect(() => {
     let updatedTotal = Number(subTotal);
-    if (
-      isServiceFeesApplicableOnStore &&
-      isApplicable(serviceFeesObject?.[states.orderType]?.[states.paymentMethod]?.applicable)
-    ) {
+    if (isServiceFeesApplicableOnStore && isApplicable(serviceFeesObject?.[states.orderType]?.[states.paymentMethod]?.applicable)) {
       updatedTotal += Number(serviceFee);
     }
     const platformFee = isPlatformFeeApplicableOnStore ? platformFees : 0;
-    // const deliveryFee = (isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? deliveryFees : 0;
-    const grandTotal = Number(updatedTotal) + Number(platformFee) + Number(taxAmount) + Number(selectedTip);
+    const deliveryFee = isDeliveryFeeApplicableOnStore && orderType === "storeDelivery"
+      ? Number(calculeteDeliveryFee({ states, baseTotal: updatedTotal + platformFee + taxAmount + selectedTip }).finalDeliveryFee)
+      : 0;
+    const grandTotal = Number(updatedTotal) + Number(platformFee) + Number(taxAmount) + Number(selectedTip) + Number(deliveryFee);
     setTotal(grandTotal);
   }, [
     subTotal,
@@ -106,21 +106,17 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
     taxAmount,
     selectedTip,
     states.paymentMethod,
-    serviceFeesObject,
-    isServiceFeesApplicableOnStore,
     states.orderType,
+    isServiceFeesApplicableOnStore,
+    serviceFeesObject,
+    isPlatformFeeApplicableOnStore,
     platformFees,
-    deliveryFees
+    isDeliveryFeeApplicableOnStore,
+    orderType,
+    states,
   ]);
 
-
   let { finalDeliveryFee, reason } = calculeteDeliveryFee({ states, baseTotal: total })
-
-  useEffect(() => {
-    let updatedTotal = Number(total);
-    const grandTotal = Number(updatedTotal) + Number(finalDeliveryFee)
-    setTotal(grandTotal);
-  }, [finalDeliveryFee]);
 
   const renderServiceFee = () => {
     const service = serviceFeesObject?.[states.orderType]?.[states.paymentMethod];
