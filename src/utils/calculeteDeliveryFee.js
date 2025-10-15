@@ -10,7 +10,7 @@ export function calculeteDeliveryFee({ states, baseTotal }) {
 
     if (orderType !== "storeDelivery") { return { finalDeliveryFee: 0, reason: "none", message: "" } }
     if (!isDeliveryFeeApplicableOnStore) { return { finalDeliveryFee: 0, reason: "none", message: "" } }
-    if (!latLongForDelivery || !location) { return { finalDeliveryFee: 0, reason: "none", message: "" } }
+    if (!latLongForDelivery || !location) { return { finalDeliveryFee: deliveryFees, reason: "none", message: "" } }
 
     const userCoords = latLongForDelivery.split(",").map((v) => parseFloat(v.trim()));
     const venueCoords = location.split(",").map((v) => parseFloat(v.trim()));
