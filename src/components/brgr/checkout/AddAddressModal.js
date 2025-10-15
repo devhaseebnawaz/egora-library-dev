@@ -48,8 +48,14 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
 
         geocoder.geocode({ location: latlng }, (results, status) => {
             if (status === "OK" && results[0]) {
-                const address = results[0].formatted_address;
-                setAddressRegion(address);
+                const components = results[0].address_components;
+                const streetNumber = components.find(c => c.types.includes("street_number"))?.long_name || "";
+                const route = components.find(c => c.types.includes("route"))?.long_name || "";
+                const sublocality = components.find(c => c.types.includes("sublocality"))?.long_name || "";
+                const cleanedAddress = [streetNumber, route, sublocality]
+                    .filter(Boolean)
+                    .join(", ");
+                setAddressRegion(cleanedAddress);
             } else {
                 console.error("Geocoder failed due to:", status);
             }
@@ -137,12 +143,18 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
             <DialogContent dividers sx={{ px: 1, pt: 1 }}>
                 <Typography
                     variant="body2"
+                    sx={{ mb: 0.5, fontWeight: 500, fontSize: 14, color: "text.primary" }}
+                >
+                    Your Address : {states?.addressRegion}, {states?.selectedRegion?.name}
+                </Typography>
+                <Typography
+                    variant="body2"
                     sx={{ mb: 0.5, fontWeight: 500, fontSize: 16, color: "text.primary" }}
                 >
-                    Address (with post code if applicable)
+                    House / Street / Apartment No.
                 </Typography>
                 <TextField
-                    placeholder="Enter your complete street address"
+                    placeholder="Enter your address"
                     fullWidth
                     size="small"
                     sx={{ mb: 2 }}
