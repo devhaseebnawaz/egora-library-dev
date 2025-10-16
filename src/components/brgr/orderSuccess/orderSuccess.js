@@ -722,6 +722,9 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
         noShow: {
             storePickUp: "Your pickup order was canceled after being prepared",
             storeDelivery: "Your delivery order was canceled while being served"
+        },
+        delivered: {
+            storeDelivery: "Your delivery order is on the way"
         }
     };
 
