@@ -722,6 +722,9 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
         noShow: {
             storePickUp: "Your pickup order was canceled after being prepared",
             storeDelivery: "Your delivery order was canceled while being served"
+        },
+        delivered: {
+            storeDelivery: "Your delivery order is on the way"
         }
     };
 
@@ -922,7 +925,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                         <Divider sx={{ mt: 1.5 }} />
                                         <Stack direction="row" justifyContent="space-between" mt={1}>
                                             <Typography sx={{ ...getOrderInformationKeyStyles }}>Delivery Address</Typography>
-                                            <Typography sx={{ ...getOrderInformationValueStyles }}>{`${street}${area ? `, ${area}` : ""}`}</Typography>
+                                            <Typography sx={{ ...getOrderInformationValueStyles }}>{street}, {area}</Typography>
                                         </Stack>
                                     </>
                                 )}

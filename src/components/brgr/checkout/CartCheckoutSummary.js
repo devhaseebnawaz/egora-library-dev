@@ -280,7 +280,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
     const onSubmit = async (data) => {
         if (isRegionBasedDeliveryOnStore && orderType === 'storeDelivery') {
             data.address.street = states?.addressRegionCase;
-            data.address.area = states?.displayRegion ? states?.selectedRegion?.name : "";
+            data.address.area = states?.selectedRegion?.name;
         }
         try {
             states.setCustomerInfo(data);
@@ -291,6 +291,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                 });
                 if (response) {
                     actions.naviagateOrderSuccess(response.data.id);
+                    actions?.handleRegionAddressChange("");
                 }
             } else {
                 let response = await actions.handlePlaceOrderFromCard({
@@ -299,6 +300,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                 });
                 if (response) {
                     actions.naviagateOrderSuccess();
+                    actions?.handleRegionAddressChange("");
                 }
             }
         } catch (error) {

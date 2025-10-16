@@ -241,7 +241,7 @@ export default function UserInfoPage({ states, actions, layout, globalComponentS
                                     Your Address
                                 </Typography>
                                     {states?.addressRegionCase && <Typography sx={{ ...getHeadingStyles }}>
-                                        {states?.addressRegionCase} {states?.displayRegion ?", "+states?.selectedRegion?.name : null}
+                                        {states?.addressRegionCase}, {states?.selectedRegion?.name}
                                     </Typography>}
 
                                 <Button
