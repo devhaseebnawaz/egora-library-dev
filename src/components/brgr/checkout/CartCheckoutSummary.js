@@ -291,6 +291,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                 });
                 if (response) {
                     actions.naviagateOrderSuccess(response.data.id);
+                    actions?.handleRegionAddressChange("");
                 }
             } else {
                 let response = await actions.handlePlaceOrderFromCard({
@@ -299,6 +300,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                 });
                 if (response) {
                     actions.naviagateOrderSuccess();
+                    actions?.handleRegionAddressChange("");
                 }
             }
         } catch (error) {
