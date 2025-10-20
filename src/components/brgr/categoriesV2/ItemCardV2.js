@@ -299,7 +299,12 @@ export default function ItemCardV2({
                         disableElevation
                         sx={{
                             textTransform: "none",
-                            "&:hover": { backgroundColor: styles?.AllCategoriesCartAddHoverColorV2?.value },
+                            "&:hover": { 
+                                backgroundColor:  
+                                 styles?.AllCategoriesCartAddHoverColorV2?.value !== "" ? 
+                                    styles?.AllCategoriesCartAddHoverColorV2?.value
+                                      : themeColors?.AllCategoriesCartAddHoverColorV2?.value,
+                             },
                             marginTop: '5px',
                             ...getCartAddButtonStyles
                         }}

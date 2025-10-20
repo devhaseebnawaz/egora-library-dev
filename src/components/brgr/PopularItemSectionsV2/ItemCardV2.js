@@ -132,7 +132,7 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
           ? globalComponentStyles?.Button?.color?.value
           : themeColors?.PopularMenuSectionCartAddBackgroundcolorV2?.value,
     borderRadius:
-      styles?.PopularMenuSectionCartAddBorderRadiusV2?.value !== ""
+      styles?.PopularMenuSectionCartAddBorderRadiusV2?.value !== 0
         ? `${styles?.PopularMenuSectionCartAddBorderRadiusV2?.value}px`
         : `${themeColors?.PopularMenuSectionCartAddBorderRadiusV2?.value}px`,
     color:
@@ -177,7 +177,7 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
           ? globalComponentStyles?.Button?.color?.value
           : themeColors?.PopularMenuSectionItemCardBackgroundColorV2?.value,
     borderRadius:
-      styles?.PopularMenuSectionItemCardBorderRadiusV2?.value !== ""
+      styles?.PopularMenuSectionItemCardBorderRadiusV2?.value !== 0
         ? `${styles?.PopularMenuSectionItemCardBorderRadiusV2?.value}px`
         : `${themeColors?.PopularMenuSectionItemCardBorderRadiusV2?.value}px`,
    
@@ -291,7 +291,11 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
             sx={{
               textTransform: "none",
               marginTop: '5px',
-              "&:hover": { backgroundColor: styles?.PopularMenuSectionCartAddHovercolorV2?.value },
+              "&:hover": {  
+                backgroundColor: 
+                  styles?.PopularMenuSectionCartAddHovercolorV2?.value !== "" ? 
+                    styles?.PopularMenuSectionCartAddHovercolorV2?.value
+                      : themeColors?.PopularMenuSectionCartAddHovercolorV2?.value },
               ...getAddToCartButtontyles
             }}
             // onClick={() => {
