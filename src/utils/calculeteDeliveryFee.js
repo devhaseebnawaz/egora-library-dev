@@ -5,11 +5,12 @@ export function calculeteDeliveryFee({ states, baseTotal }) {
     const { franchise, latLongForDelivery, selectedVenue, orderType } = states ?? {}
     const { location } = selectedVenue ?? {};
     const { deliveryFees = 0, storeDeliveryMaxDistanceThreshold, storeDeliveryMaxOrderThreshold, configurations } = franchise ?? {};
-    const { isDeliveryFeeApplicableOnStore, isDeliveryFeeMaxOrderThresholdApplicableOnStore, isDeliveryFeeMaxDistanceThresholdApplicableOnStore } = configurations ?? {}
+    const { isDeliveryFeeApplicableOnStore, isDeliveryFeeMaxOrderThresholdApplicableOnStore, isDeliveryFeeMaxDistanceThresholdApplicableOnStore, isLocationRestrictedRegionBasedDeliveryOnStore } = configurations ?? {}
     const orderTotal = (Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(deliveryFees) : 0)).toFixed(2);
 
     if (orderType !== "storeDelivery") { return { finalDeliveryFee: 0, reason: "none", message: "" } }
     if (!isDeliveryFeeApplicableOnStore) { return { finalDeliveryFee: 0, reason: "none", message: "" } }
+    if (!isLocationRestrictedRegionBasedDeliveryOnStore) { return { finalDeliveryFee: deliveryFees, reason: "none", message: "" } }
     if (!latLongForDelivery || !location) { return { finalDeliveryFee: deliveryFees, reason: "none", message: "" } }
 
     const userCoords = latLongForDelivery.split(",").map((v) => parseFloat(v.trim()));
