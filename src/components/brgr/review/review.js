@@ -564,26 +564,7 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
         ? `${layout?.reviewLayout?.body[0].styles?.reviewPageImageBorderRadius?.value}px`
         : `${themeColors?.reviewPageImageBorderRadius?.value}px`,
   };
- 
-  const getItemImageStyles = {
-    width: layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value != ""
-      ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value
-      : themeColors?.reviewPageItemImageHeightWidth?.value,
-
-    height: layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value != ""
-      ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value
-      : themeColors?.reviewPageItemImageHeightWidth?.value,
-
-    backgroundColor: layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBackgroundColor?.value
-      ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBackgroundColor?.value
-      : themeColors?.reviewPageItemImageBackgroundColor?.value,
-
-    borderRadius:
-      layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBorderRadius?.value != ""
-        ? `${layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBorderRadius?.value}px`
-        : `${themeColors?.reviewPageItemImageBorderRadius?.value}px`,
-  };
-
+  
   const [ratings, setRatings] = useState({
     ambiance: 0,
     waitTime: 0,
@@ -900,14 +881,27 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                         >
                           <UniversalImage
                             src={
-                              imageURLs[index]
-                                ? imageURLs[index]
-                                : "/assets/placeholder.png"
+                              item?.photoURL
+                              ? `${states.storeImagesBaseUrl}/${item.photoURL}`
+                              : "/assets/placeholder.png"
                             }
                             alt={"Item Image"}
-                            style={{
-                              ...getItemImageStyles
-                            }}
+                            height={
+                              layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value != 0
+                                ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value
+                                : themeColors?.reviewPageItemImageHeightWidth?.value
+                            }
+                            width={layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value != 0
+                              ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value
+                              : themeColors?.reviewPageItemImageHeightWidth?.value}
+                            backgroundColor={layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBackgroundColor?.value
+                              ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBackgroundColor?.value
+                              : themeColors?.reviewPageItemImageBackgroundColor?.value}
+
+                            borderRadius={
+                              layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBorderRadius?.value != 0
+                                ? `${layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBorderRadius?.value}px`
+                                : `${themeColors?.reviewPageItemImageBorderRadius?.value}px`}
                           />
                           <Box>
                             <Typography sx={{ ...itemNameTextStyles }}>

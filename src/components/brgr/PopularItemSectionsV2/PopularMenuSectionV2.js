@@ -55,7 +55,7 @@ export default function PopularMenuSectionV2({ prop, actions, styles, states, th
 
             fontSize: styles?.PopularMenuSectionHeadingTextSizeV2?.value[getScreenSizeCategory()] != 0
               ? styles?.PopularMenuSectionHeadingTextSizeV2?.value[getScreenSizeCategory()]
-              : globalComponentStyles?.Text?.size?.value != [getScreenSizeCategory()]
+              :  globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] !=0
                 ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] :
                 themeColors?.PopularMenuSectionHeadingTextSizeV2?.value[getScreenSizeCategory()],
 
