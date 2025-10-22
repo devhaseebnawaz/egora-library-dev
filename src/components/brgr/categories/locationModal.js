@@ -390,7 +390,18 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 console.log("Error::", error);
             }
         } else if (states.franchise.configurations.isRegionBasedDeliveryOnStore) {
-            actions.handleSelectedRegion(states?.selectedRegion);
+            if (states.franchise.configurations.isLocationRestrictedRegionBasedDeliveryOnStore) {
+                try {
+                    const response = await actions.handleLocateMe();
+                    if (response) {
+                        actions.handleSelectedRegion(states?.selectedRegion);
+                    }
+                } catch (error) {
+                    console.log("Error::", error);
+                }
+            } else {
+                actions.handleSelectedRegion(states?.selectedRegion);
+            }
         } else {
             actions.handleSelectedLocation(states.latLongForDelivery);
         }
