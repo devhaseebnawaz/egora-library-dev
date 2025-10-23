@@ -129,7 +129,7 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
             }}
         >
             <DialogTitle
-                sx={{ fontWeight: "bold", fontSize: "1.1rem", pb: 1, pr: 4 }}
+                sx={{ fontWeight: "bold", fontSize: "1.1rem", px: 1, pb: 1, pt: 1 }}
             >
                 Add new Address
                 <IconButton
@@ -140,12 +140,15 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                 </IconButton>
             </DialogTitle>
 
-            <DialogContent dividers sx={{ px: 1, pt: 1 }}>
+            <DialogContent dividers sx={{ px: 1, pt: 1, pb: 1 }}>
                 <Typography
                     variant="body2"
-                    sx={{ mb: 0.5, fontWeight: 500, fontSize: 14, color: "text.primary" }}
+                    sx={{ mb: 0.5, fontSize: 16, color: "text.primary" }}
                 >
-                    Your Address : {states?.addressRegion}, {states?.selectedRegion?.name}
+                    <Box component="span" sx={{ fontWeight: 600 }}>
+                        Your Address:
+                    </Box>{" "}
+                    {states?.addressRegion}, {states?.selectedRegion?.name}, Lahore
                 </Typography>
                 <Typography
                     variant="body2"
@@ -263,7 +266,7 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                 </Box>
             </DialogContent>
 
-            <DialogActions sx={{ px: 1, pb: 1 }}>
+            <DialogActions sx={{ px: 1, pb: 1, pt: 1 }}>
                 <Button
                     disableRipple
                     disableElevation
