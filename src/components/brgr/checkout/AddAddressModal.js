@@ -154,9 +154,9 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
             <DialogContent dividers sx={{ px: 1, pt: 1, pb: 1 }}>
                 <Typography
                     variant="body2"
-                    sx={{ mb: 0.5, fontSize: 16, color: "text.primary" }}
+                    sx={{ mb: 1, fontSize: 16, color: "text.primary" }}
                 >
-                    <Box component="span" sx={{ fontWeight: 600 }}>
+                    <Box component="span" sx={{ fontWeight: "bold" }}>
                         Your Address:
                     </Box>{" "}
                     {states?.addressRegion}, {states?.selectedRegion?.name}, Lahore
