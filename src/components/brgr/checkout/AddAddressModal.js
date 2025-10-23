@@ -34,11 +34,22 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
                 const { latitude, longitude } = pos.coords;
-                setPosition({ lat: latitude, lng: longitude });
+                const newPosition = { lat: latitude, lng: longitude };
+                setPosition(newPosition);
                 getAddressFromLatLng(latitude, longitude, states?.setAddressRegion);
+                actions?.handleDisplayRegion(false);
+
+                if (window.google && states?.selectedRegion?.polygon?.length) {
+                    const poly = new window.google.maps.Polygon({
+                        paths: states.selectedRegion.polygon,
+                    });
+                    const point = new window.google.maps.LatLng(latitude, longitude);
+                    const inside = window.google.maps.geometry.poly.containsLocation(point, poly);
+                    setIsInsidePolygon(inside);
+                }
             });
         }
-    }, []);
+    }, [states?.selectedRegion?.polygon, actions]);
 
     const getAddressFromLatLng = async (lat, lng, setAddressRegion) => {
         if (!window.google || !window.google.maps) return;
