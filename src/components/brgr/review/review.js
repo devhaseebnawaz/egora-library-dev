@@ -853,8 +853,11 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                     onChange={() => setItemWiseReview(!itemWiseReview)}
                     sx={{
                       '& .MuiSwitch-switchBase.Mui-checked': {
-                        color: layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value || themeColors?.reviewEachItemToggleColor?.value,
-                      }
+                        color: layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value !="" ? layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value : themeColors?.reviewEachItemToggleColor?.value,
+                        '& + .MuiSwitch-track': {
+                          backgroundColor: layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value != "" ? layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value : themeColors?.reviewEachItemToggleColor?.value,
+                        },
+                      },
                     }}
                   />
                 </Box>
