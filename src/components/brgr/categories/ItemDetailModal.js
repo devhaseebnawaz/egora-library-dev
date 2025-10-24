@@ -607,7 +607,7 @@ export default function ItemDetailModal({
           style={{
             marginBottom: 20,
             with:"100%",
-            display: 'flex',
+             display: 'flex',
             justifyContent: 'center'
           }}
         >
@@ -636,6 +636,7 @@ export default function ItemDetailModal({
             <Stack spacing={1}>
               {states.itemForDetailedModal.hasVariant && (
                 <Variant
+                  themeColors={themeColors}
                   layout={layout}
                   getDescriptionStyles={getDescriptionStyles}
                   getHeadingStyles={getHeadingStyles}
@@ -647,6 +648,7 @@ export default function ItemDetailModal({
               <Divider color={layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalDividerColor?.value} />
               {filteredChoiceGroups.map((cg, index) => (
                 <Group
+                  themeColors={themeColors}
                   layout={layout}
                   getDescriptionStyles={getDescriptionStyles}
                   getHeadingStyles={getHeadingStyles}
@@ -692,18 +694,30 @@ export default function ItemDetailModal({
             <Button
               onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
               style={{
-                minWidth: smDown ? 30 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value,
-                height: smDown ? 30 :  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value,
-                borderRadius: smDown ? 8:  `${layout?.itemDetailModalLayout?.body[0].styles?.IItemDetailModalSubtractIconBorderRadius?.value}px`,
-                backgroundColor: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconBackColor?.value
-                  || '#ccc',
-                color: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconColor?.value
-                  || '#fff',
+                minWidth: smDown ? 30 :
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value != 0 ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value :
+                    themeColors?.ItemDetailModalSubtractIconHeightWidth?.value
+                ,
+                height: smDown ? 30 :
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value != 0 ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value :
+                    themeColors?.ItemDetailModalSubtractIconHeightWidth?.value,
+                borderRadius: smDown ? 8 :
+                  (layout?.itemDetailModalLayout?.body[0].styles?.IItemDetailModalSubtractIconBorderRadius?.value != 0 ?
+                    `${layout?.itemDetailModalLayout?.body[0].styles?.IItemDetailModalSubtractIconBorderRadius?.value}px` :
+                    `${themeColors?.IItemDetailModalSubtractIconBorderRadius?.value}px`),
+                backgroundColor:
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconBackColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconBackColor?.value}`
+                    : `${themeColors?.ItemDetailModalSubtractIconBackColor?.value}`,
+                color:
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconColor?.value}`
+                    : `${themeColors?.ItemDetailModalSubtractIconColor?.value}`,
                 fontWeight: 'bold',
-                 fontSize: smDown ? 16 : 20,
+                fontSize: smDown ? 16 : 20,
               }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#b0b0b0'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = '#ccc'}
             >
               –
             </Button>
@@ -713,18 +727,29 @@ export default function ItemDetailModal({
             <Button
               onClick={() => setQuantity((prev) => prev + 1)}
               style={{
-                minWidth: smDown ? 30 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value,
-                height: smDown ? 30 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value,
-                borderRadius: smDown ? 8 : `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBorderRadius?.value}px`,
-                backgroundColor: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBackgroundColor?.value
-                  || '#121212',
-                color: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconColor?.value
-                  || '#fff',
+                minWidth: smDown ? 30 :
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value != 0 ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value :
+                    themeColors?.ItemDetailModalAddIconHeightWidth?.value,
+                height: smDown ? 30 :
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value != 0 ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value :
+                    themeColors?.ItemDetailModalAddIconHeightWidth?.value,
+                borderRadius: smDown ? 8 :
+                  (layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBorderRadius?.value != "" ?
+                    `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBorderRadius?.value}px` :
+                    `${themeColors?.ItemDetailModalAddIconBorderRadius?.value}px`),
+                backgroundColor:
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBackgroundColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBackgroundColor?.value}`
+                    : `${themeColors?.ItemDetailModalAddIconBackgroundColor?.value}`,
+                color:
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconColor?.value}`
+                    : `${themeColors?.ItemDetailModalAddIconColor?.value}`,
                 fontWeight: 'bold',
                 fontSize: smDown ? 16 : 20,
               }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#000'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = '#121212'}
             >
               +
             </Button>

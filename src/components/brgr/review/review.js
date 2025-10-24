@@ -1049,7 +1049,15 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                   sx={{
                     width: "100%",
                     height: "40px",
-                    ...getSubmitButtonStyles
+                    ...getSubmitButtonStyles,
+                    '&:hover': {
+                      color:
+                        layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value !== ""
+                          ? layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value
+                          : globalComponentStyles?.Button?.fontStyle?.value != ""
+                            ? globalComponentStyles?.Button?.fontStyle?.value
+                            : themeColors?.reviewPageSubmitButtonBackgroundColor?.value 
+                    }
                   }}
                 >
                   Submit
