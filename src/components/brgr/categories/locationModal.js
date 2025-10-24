@@ -631,7 +631,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
 
                     }}
                 >
-                    Please select your location
+                    Please select your {states?.franchise?.configurations?.isRegionBasedDeliveryOnStore ? 'region' : 'location'} 
                 </Typography>
             }
             {
