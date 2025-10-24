@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState} from "react";
 import {
     Modal,
     Box,
@@ -10,7 +10,8 @@ import {
     FormControl,
     MenuItem,
     InputLabel,
-    Select
+    Select,
+    CircularProgress
 } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SearchMenuList from "./SearchMenuList";
@@ -20,6 +21,7 @@ import RefineLocationModal from "./RefineLocationModal";
 import { getIconWidthHeight, getScreenSizeCategory } from '../../../utils/fontsize';
 import { useMediaQuery } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { LoadingButton } from "@mui/lab";
 
 const modalStyle = (themeColors, layout) => {
     return {
@@ -47,6 +49,7 @@ const modalStyle = (themeColors, layout) => {
 export default function LocationModal({ themeColors, actions, prop, styles, states, isGoogleMapsLoaded, previewMode = false, globalComponentStyles, layout }) {
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
+    const [isConfirmingLocation, setIsConfirmingLocation] = useState(false);
     const filteredOutlets = states.outlets?.filter((outlet) =>
         outlet.name.toLowerCase().includes(states.searchQuery.toLowerCase())
     ) || [];
@@ -391,6 +394,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
         } else if (states.franchise.configurations.isRegionBasedDeliveryOnStore) {
             if (states.franchise.configurations.isLocationRestrictedRegionBasedDeliveryOnStore) {
+                setIsConfirmingLocation(true);
                 try {
                     const response = await actions.handleLocateMe();
                     if (response) {
@@ -398,6 +402,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                     }
                 } catch (error) {
                     console.log("Error::", error);
+                } finally {
+                    setIsConfirmingLocation(false);
                 }
             } else {
                 actions.handleSelectedRegion(states?.selectedRegion);
@@ -993,9 +999,11 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             {
                 states?.orderType === 'storeDelivery' &&
                 <>
-                    <Button
+                    <LoadingButton
                         fullWidth
                         onClick={handleSelectedLocation}
+                        loading={isConfirmingLocation}
+                        loadingIndicator={<CircularProgress color="inherit" size={22} />}
                         sx={{
                             py: 1.5,
                             textTransform: "none",
@@ -1009,7 +1017,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                         disabled={!previewMode && !states.currentLocation && !states?.selectedRegion?.name}
                     >
                         Confirm Selection
-                    </Button>
+                    </LoadingButton>
                     {states?.noVenueFound && (
                         <Typography
                             variant="body2"
