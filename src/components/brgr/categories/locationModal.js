@@ -882,7 +882,12 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                                             InputProps={{
                                                 ...params.InputProps,
                                                 endAdornment: (
-                                                    <InputAdornment position="end">
+                                                    <InputAdornment
+                                                        sx={{
+                                                            position: "absolute",
+                                                            right: 8,
+                                                            pointerEvents: "none",
+                                                        }}>
                                                         <ArrowDropDownIcon sx={{ ...getSearchLocationIconStyles }} />
 
                                                     </InputAdornment>
