@@ -3,6 +3,7 @@ import { Box, Button } from "@mui/material";
 import { fNumber } from "../../../utils/formatNumber";
 
 export default function Options({
+  themeColors,
   layout,
   choiceGroups,
   choiceGroupId,
@@ -40,13 +41,44 @@ export default function Options({
               flexGrow: { xs: 0, sm: 0, md: 0 },
               ml: { xs: 0, sm: 0, md: 0 },
               mb: 1,
-              ...getDescriptionStyles, 
-              border: `solid ${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderColor?.value}`, 
-              borderRadius: `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderRadius?.value}px` , 
-              backgroundColor: isSelected ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonSelectedBackgroundColor?.value : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBackgroundColor?.value,
-              color: isSelected ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSelectedDescriptionTextColor?.value  : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalDescriptionTextColor?.value, 
+              ...getDescriptionStyles,
+              border:
+                layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderColor?.value ?
+                  `solid ${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderColor?.value}`
+                  : `solid ${themeColors?.ItemDetailModalButtonBorderColor?.value}`,
+              borderRadius: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderRadius?.value ?
+                `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderRadius?.value}px` :
+                `${themeColors?.ItemDetailModalButtonBorderRadius?.value}px`,
+              backgroundColor: isSelected ?
+                (layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonSelectedBackgroundColor?.value != "" ?
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonSelectedBackgroundColor?.value :
+                  `${themeColors?.ItemDetailModalButtonSelectedBackgroundColor?.value}`) :
+                (layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBackgroundColor?.value != "" ?
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBackgroundColor?.value :
+                  `${themeColors?.ItemDetailModalButtonBackgroundColor?.value}`
+                ),
+              color: isSelected ?
+                (layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSelectedDescriptionTextColor?.value != "" ?
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSelectedDescriptionTextColor?.value :
+                  `${themeColors?.ItemDetailModalSelectedDescriptionTextColor?.value}`)
+                : (layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalDescriptionTextColor?.value != "" ?
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalDescriptionTextColor?.value :
+                  `${themeColors?.ItemDetailModalDescriptionTextColor?.value}`
+                ),
               '&:hover': {
-                backgroundColor: isSelected ?  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonSelectedHoverColor?.value : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonHoverColor?.value, 
+                backgroundColor: isSelected ?
+                  (layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonSelectedHoverColor?.value != "" ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonSelectedHoverColor?.value :
+                    `${themeColors?.ItemDetailModalButtonSelectedHoverColor?.value}`
+                  ) :
+                  (layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonHoverColor?.value != "" ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonHoverColor?.value :
+                    `${themeColors?.ItemDetailModalButtonHoverColor?.value}`
+                  ),
+                border:
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderColor?.value ?
+                    `solid ${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalButtonBorderColor?.value}`
+                    : `solid ${themeColors?.ItemDetailModalButtonBorderColor?.value}`,
               }
             }}
             variant={isSelected ? "contained" : "outlined"}
