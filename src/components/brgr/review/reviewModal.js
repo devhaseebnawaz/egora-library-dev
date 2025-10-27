@@ -133,7 +133,7 @@ const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyle
                 )}
                 {state === "completed" && (
                     <>
-                        <Typography variant="h6" component="h2" sx={{ mb: 2, ...orderCompletedStyles }}>
+                        <Typography variant="h6" component="h2" sx={{ mb: 2, ...orderCompletedStyles, mt:2 }}>
                             Your order has been completed.
                         </Typography>
                         <MuiLink
@@ -178,6 +178,7 @@ const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyle
                             borderRadius: 2,
                             boxShadow: 24,
                             p: 4,
+                            pt:7,
                             textAlign: "center",
                             backgroundColor: layout?.reviewModalLayout?.body[0].styles?.reviewModalBackgroundColor?.value || themeColors?.reviewModalBackgroundColor?.value
                         }}

@@ -763,7 +763,23 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
             size="large"
             type="submit"
             variant="contained"
-            sx={{ mt: 3, ...getGoHomeButtonStyles }}
+            sx={{
+              mt: 3, ...getGoHomeButtonStyles,
+              '&:hover': {
+                backgroundColor:
+                  layout?.reviewLayout?.body[0].styles?.reviewPageHomeButtonBackgroundColor?.value !== ""
+                    ? layout?.reviewLayout?.body[0].styles?.reviewPageHomeButtonBackgroundColor?.value
+                    : globalComponentStyles?.Button?.fontStyle?.value != ""
+                      ? globalComponentStyles?.Button?.fontStyle?.value
+                      : themeColors?.reviewPageHomeButtonBackgroundColor?.value,
+                color:
+                  layout?.reviewLayout?.body[0].styles?.reviewPageHomeTextColor?.value !== ""
+                    ? `${layout?.reviewLayout?.body[0].styles?.reviewPageHomeTextColor?.value}`
+                    : globalComponentStyles?.Button?.color?.value != ""
+                      ? globalComponentStyles?.Button?.color?.value
+                      : `${themeColors?.reviewPageHomeTextColor?.value}`
+              }
+            }}
           >
             Go to Home
           </LoadingButton>
@@ -1051,12 +1067,18 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                     height: "40px",
                     ...getSubmitButtonStyles,
                     '&:hover': {
-                      color:
+                      backgroundColor:
                         layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value !== ""
                           ? layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value
                           : globalComponentStyles?.Button?.fontStyle?.value != ""
                             ? globalComponentStyles?.Button?.fontStyle?.value
-                            : themeColors?.reviewPageSubmitButtonBackgroundColor?.value 
+                            : themeColors?.reviewPageSubmitButtonBackgroundColor?.value,
+                      color:
+                        layout?.reviewLayout?.body[0].styles?.reviewPageSubmitTextColor?.value !== ""
+                          ? `${layout?.reviewLayout?.body[0].styles?.reviewPageSubmitTextColor?.value}`
+                          : globalComponentStyles?.Button?.color?.value != ""
+                            ? globalComponentStyles?.Button?.color?.value
+                            : `${themeColors?.reviewPageSubmitTextColor?.value}`
                     }
                   }}
                 >
