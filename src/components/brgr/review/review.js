@@ -296,8 +296,8 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
     backgroundColor:
       layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value !== ""
         ? layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value
-        : globalComponentStyles?.Button?.fontStyle?.value != ""
-          ? globalComponentStyles?.Button?.fontStyle?.value
+        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+          ? globalComponentStyles?.Button?.backgroundColor?.value
           : themeColors?.reviewPageSubmitButtonBackgroundColor?.value,
     borderRadius:
       layout?.reviewLayout?.body[0].styles?.reviewPageSubmitBorderRadius?.value != ""
@@ -769,8 +769,8 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                 backgroundColor:
                   layout?.reviewLayout?.body[0].styles?.reviewPageHomeButtonBackgroundColor?.value !== ""
                     ? layout?.reviewLayout?.body[0].styles?.reviewPageHomeButtonBackgroundColor?.value
-                    : globalComponentStyles?.Button?.fontStyle?.value != ""
-                      ? globalComponentStyles?.Button?.fontStyle?.value
+                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                      ? globalComponentStyles?.Button?.backgroundColor?.value
                       : themeColors?.reviewPageHomeButtonBackgroundColor?.value,
                 color:
                   layout?.reviewLayout?.body[0].styles?.reviewPageHomeTextColor?.value !== ""
@@ -1070,8 +1070,8 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                       backgroundColor:
                         layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value !== ""
                           ? layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value
-                          : globalComponentStyles?.Button?.fontStyle?.value != ""
-                            ? globalComponentStyles?.Button?.fontStyle?.value
+                          : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                            ? globalComponentStyles?.Button?.backgroundColor?.value
                             : themeColors?.reviewPageSubmitButtonBackgroundColor?.value,
                       color:
                         layout?.reviewLayout?.body[0].styles?.reviewPageSubmitTextColor?.value !== ""
