@@ -34,11 +34,22 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
                 const { latitude, longitude } = pos.coords;
-                setPosition({ lat: latitude, lng: longitude });
+                const newPosition = { lat: latitude, lng: longitude };
+                setPosition(newPosition);
                 getAddressFromLatLng(latitude, longitude, states?.setAddressRegion);
+                actions?.handleDisplayRegion(false);
+
+                if (window.google && states?.selectedRegion?.polygon?.length) {
+                    const poly = new window.google.maps.Polygon({
+                        paths: states.selectedRegion.polygon,
+                    });
+                    const point = new window.google.maps.LatLng(latitude, longitude);
+                    const inside = window.google.maps.geometry.poly.containsLocation(point, poly);
+                    setIsInsidePolygon(inside);
+                }
             });
         }
-    }, []);
+    }, [states?.selectedRegion?.polygon, actions]);
 
     const getAddressFromLatLng = async (lat, lng, setAddressRegion) => {
         if (!window.google || !window.google.maps) return;
@@ -129,7 +140,7 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
             }}
         >
             <DialogTitle
-                sx={{ fontWeight: "bold", fontSize: "1.1rem", pb: 1, pr: 4 }}
+                sx={{ fontWeight: "bold", fontSize: "1.1rem", px: 1, pb: 1, pt: 1 }}
             >
                 Add new Address
                 <IconButton
@@ -140,12 +151,15 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                 </IconButton>
             </DialogTitle>
 
-            <DialogContent dividers sx={{ px: 1, pt: 1 }}>
+            <DialogContent dividers sx={{ px: 1, pt: 1, pb: 1 }}>
                 <Typography
                     variant="body2"
-                    sx={{ mb: 0.5, fontWeight: 500, fontSize: 14, color: "text.primary" }}
+                    sx={{ mb: 1, fontSize: 16, color: "text.primary" }}
                 >
-                    Your Address : {states?.addressRegion}, {states?.selectedRegion?.name}
+                    <Box component="span" sx={{ fontWeight: "bold" }}>
+                        Your Address:
+                    </Box>{" "}
+                    {states?.addressRegion}, {states?.selectedRegion?.name}, Lahore
                 </Typography>
                 <Typography
                     variant="body2"
@@ -263,7 +277,7 @@ export default function AddAddressModal({ states, actions, layout, globalCompone
                 </Box>
             </DialogContent>
 
-            <DialogActions sx={{ px: 1, pb: 1 }}>
+            <DialogActions sx={{ px: 1, pb: 1, pt: 1 }}>
                 <Button
                     disableRipple
                     disableElevation
