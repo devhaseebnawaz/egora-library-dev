@@ -799,15 +799,31 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
 
           {
             <>
-              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent:"center", gap: 2 }}>
                 <UniversalImage
                   src={
-                    venueImageURL ? venueImageURL : "/assets/placeholder.png"
+                    states?.orderData?.venueId?.photoURL
+                      ? `${states.storeImagesBaseUrl}/${states?.orderData?.venueId?.photoURL}`
+                      : "/assets/placeholder.png"
                   }
                   alt={"Venue Image"}
-                  style={{
-                    ...getMainImageStyles
-                  }}
+                  height={
+                    layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageHeightWidth?.value != 0
+                      ? layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageHeightWidth?.value
+                      : themeColors?.reviewPageVenueImageHeightWidth?.value
+                  }
+                  width={layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageHeightWidth?.value != 0
+                    ? layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageHeightWidth?.value
+                    : themeColors?.reviewPageVenueImageHeightWidth?.value}
+                  backgroundColor={layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageBackgroundColor?.value
+                    ? layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageBackgroundColor?.value
+                    : themeColors?.reviewPageVenueImageBackgroundColor?.value}
+
+                  borderRadius={
+                    layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageBorderRadius?.value != 0
+                      ? `${layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageBorderRadius?.value}px`
+                      : `${themeColors?.reviewPageVenueImageBorderRadius?.value}px`}
+
                 />
                 <Box>
                   <Typography sx={{ ...venueNameTextStyles }}
