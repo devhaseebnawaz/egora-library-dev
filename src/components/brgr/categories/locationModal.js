@@ -544,7 +544,12 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             minWidth: "100px",
                             ...getOrderTypeSelectorSelectedButtonStyles,
                                "&:hover": {
-                                backgroundColor: "transparent"
+                                backgroundColor: states.orderType === "storeDelivery" ?
+                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
+                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
+                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                        ? globalComponentStyles?.Button?.backgroundColor?.value
+                                        : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent"
                             },
                         }}
                     >
@@ -585,7 +590,12 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             minWidth: "100px",
                             ...getOrderTypeSelectorSelectedButtonStyles,
                                "&:hover": {
-                                backgroundColor: "transparent"
+                                backgroundColor: states.orderType === "storePickUp" ?
+                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
+                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
+                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                        ? globalComponentStyles?.Button?.backgroundColor?.value
+                                        : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent"
                             },
                         }}
                     >
