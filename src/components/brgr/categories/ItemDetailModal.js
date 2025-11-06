@@ -569,25 +569,42 @@ export default function ItemDetailModal({
                 }
               }}
               style={{
-                backgroundColor: '#121212',
-                color: '#fff',
-                width: 36,
-                height: 36,
-                // ...(!previewMode
-                //   ? {
-                //     position: 'absolute',
-                //     right: '0px',
-                //     top: '-10px',
-                //   }
-                //   : {
-                //     margin: "0 auto",
-                //   }),
-
-
+                backgroundColor: 
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
+                    : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`,
+                color: 
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconColor?.value}`
+                    : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalCloseIconColor?.value}`,
+                width: 
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value != ""
+                    ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value
+                    : globalComponentStyles?.Icon?.size?.value != ""
+                      ? globalComponentStyles?.Icon?.size?.value
+                      : themeColors?.ItemDetailModalCloseHeightWidth?.value,
+                height: 
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value != ""
+                    ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value
+                    : globalComponentStyles?.Icon?.size?.value != ""
+                      ? globalComponentStyles?.Icon?.size?.value
+                      : themeColors?.ItemDetailModalCloseHeightWidth?.value,
                 zIndex: 9999,
               }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#000'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = '#121212'}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
+                    : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
+                    : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`}
             >
               <Iconify icon="mdi:close" width={20} height={20} />
             </IconButton>
