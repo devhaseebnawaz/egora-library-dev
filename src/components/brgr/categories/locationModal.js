@@ -451,7 +451,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 />
             </Box>
 
-            { states?.franchise?.configurations?.isDeliveryAvailableOnStoreForWeb && states?.franchise?.configurations?.isPickUpAvailableOnStoreForWeb && 
+            { (states?.franchise?.configurations?.isDeliveryAvailableOnStoreForWeb && states?.franchise?.configurations?.isPickUpAvailableOnStoreForWeb) && 
                 <Typography
                     align="center"
                     sx={{
@@ -491,7 +491,16 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                     Select your order type
                 </Typography>
             } 
-
+            { (!states?.franchise?.configurations?.isDeliveryAvailableOnStoreForWeb || !states?.franchise?.configurations?.isPickUpAvailableOnStoreForWeb) && 
+                <Typography
+                    align="center"
+                    sx={{
+                        marginTop: "60px",
+                        marginBottom: "16px",
+                    }}
+                >
+                </Typography>
+            }
             {/* Order Type Buttons */}
             <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
                 <Box
