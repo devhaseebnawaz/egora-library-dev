@@ -192,7 +192,7 @@ export default function CustomFooterV2({
               Follow Us:
             </Typography>
             <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-              {socialLinks.map(({ name, url }) => {
+              {socialLinks.map(({ name, url }, index) => {
                 let icon = ""
                 if(name == "Facebook"){
                   icon = <FacebookIcon />
@@ -210,7 +210,7 @@ export default function CustomFooterV2({
 
                 return (
                   <IconButton
-                    key={name}
+                    key={`Footer2-${index}`}
                     size="small"
                     component="a"
                     href={url}
