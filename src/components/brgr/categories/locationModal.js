@@ -451,46 +451,56 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 />
             </Box>
 
-            {/* Content */}
-            <Typography
-                align="center"
-                sx={{
-                    color:
-                        layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingColor?.value !== ""
-                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingColor?.value}`
-                            : globalComponentStyles?.Text?.color?.value != ""
-                                ? globalComponentStyles?.Text?.color?.value
-                                : `${themeColors?.LocationModalOrderTypeHeadingColor?.value}`,
-                    fontSize:
-                        layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()] !== 0
-                            ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()]
-                            : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
-                                ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
-                                : themeColors?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()],
-                    fontWeight:
-                        layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextWeight?.value !== 0
-                            ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextWeight?.value
-                            : globalComponentStyles?.Text?.fontWeight?.value != 0
-                                ? globalComponentStyles?.Text?.fontWeight?.value
-                                : themeColors?.LocationModalOrderTypeHeadingTextWeight?.value,
+            { (states?.franchise?.configurations?.isDeliveryAvailableOnStoreForWeb && states?.franchise?.configurations?.isPickUpAvailableOnStoreForWeb) && 
+                <Typography
+                    align="center"
+                    sx={{
+                        color:
+                            layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingColor?.value !== ""
+                                ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingColor?.value}`
+                                : globalComponentStyles?.Text?.color?.value != ""
+                                    ? globalComponentStyles?.Text?.color?.value
+                                    : `${themeColors?.LocationModalOrderTypeHeadingColor?.value}`,
+                        fontSize:
+                            layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()] !== 0
+                                ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()]
+                                : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
+                                    ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
+                                    : themeColors?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()],
+                        fontWeight:
+                            layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextWeight?.value !== 0
+                                ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextWeight?.value
+                                : globalComponentStyles?.Text?.fontWeight?.value != 0
+                                    ? globalComponentStyles?.Text?.fontWeight?.value
+                                    : themeColors?.LocationModalOrderTypeHeadingTextWeight?.value,
 
-                    fontFamily: layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextFont?.value !== 0
-                        ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextFont?.value}`
-                        : globalComponentStyles?.Text?.fontFamily?.value != ""
-                            ? globalComponentStyles?.Text?.fontFamily?.value
-                            : `${themeColors?.LocationModalOrderTypeHeadingTextFont?.value}`,
+                        fontFamily: layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextFont?.value !== 0
+                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextFont?.value}`
+                            : globalComponentStyles?.Text?.fontFamily?.value != ""
+                                ? globalComponentStyles?.Text?.fontFamily?.value
+                                : `${themeColors?.LocationModalOrderTypeHeadingTextFont?.value}`,
 
-                    fontStyle: layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextStyle?.value !== ""
-                        ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextStyle?.value}`
-                        : `${themeColors?.LocationModalOrderTypeHeadingTextStyle?.value}`,
+                        fontStyle: layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextStyle?.value !== ""
+                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextStyle?.value}`
+                            : `${themeColors?.LocationModalOrderTypeHeadingTextStyle?.value}`,
 
-                    marginTop: "60px",
-                    marginBottom: "16px",
-                }}
-            >
-                Select your order type
-            </Typography>
-
+                        marginTop: "60px",
+                        marginBottom: "16px",
+                    }}
+                >
+                    Select your order type
+                </Typography>
+            } 
+            { (!states?.franchise?.configurations?.isDeliveryAvailableOnStoreForWeb || !states?.franchise?.configurations?.isPickUpAvailableOnStoreForWeb) && 
+                <Typography
+                    align="center"
+                    sx={{
+                        marginTop: "60px",
+                        marginBottom: "16px",
+                    }}
+                >
+                </Typography>
+            }
             {/* Order Type Buttons */}
             <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
                 <Box
@@ -511,45 +521,53 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                         p: "4px",
                     }}
                 >
-                    <Button
-                        onClick={() => actions.handleSetOrderType("storeDelivery")}
-                        sx={{
-                            borderRadius:
-                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value != 0
-                                    ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`
-                                    : globalComponentStyles?.Button?.borderRadius?.value != 0
-                                        ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
-                                        : `${themeColors?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`,
-                            px: 3,
-                            py: 1,
-                            bgcolor: states.orderType === "storeDelivery" ?
-                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
-                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
-                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
-                                        ? globalComponentStyles?.Button?.backgroundColor?.value
-                                        : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent",
-                            color: states.orderType === "storeDelivery" ?
-                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorTextColor?.value !== ""
-                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorTextColor?.value
-                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
-                                        ? globalComponentStyles?.Button?.backgroundColor?.value
-                                        : themeColors?.LocationModalOrderTypeSelectedSelectorTextColor?.value :
+                    { states?.franchise?.configurations?.isDeliveryAvailableOnStoreForWeb &&
+                        <Button
+                            onClick={() => actions.handleSetOrderType("storeDelivery")}
+                            sx={{
+                                borderRadius:
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value != 0
+                                        ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`
+                                        : globalComponentStyles?.Button?.borderRadius?.value != 0
+                                            ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                            : `${themeColors?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`,
+                                px: 3,
+                                py: 1,
+                                bgcolor: states.orderType === "storeDelivery" ?
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
+                                        ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
+                                        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                            ? globalComponentStyles?.Button?.backgroundColor?.value
+                                            : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent",
+                                color: states.orderType === "storeDelivery" ?
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorTextColor?.value !== ""
+                                        ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorTextColor?.value
+                                        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                            ? globalComponentStyles?.Button?.backgroundColor?.value
+                                            : themeColors?.LocationModalOrderTypeSelectedSelectorTextColor?.value :
 
-                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value !== ""
-                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value
-                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
-                                        ? globalComponentStyles?.Button?.backgroundColor?.value
-                                        : themeColors?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value,
-                            boxShadow: "none",
-                            minWidth: "100px",
-                            ...getOrderTypeSelectorSelectedButtonStyles,
-                               "&:hover": {
-                                backgroundColor: "transparent"
-                            },
-                        }}
-                    >
-                        DELIVERY
-                    </Button>
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value !== ""
+                                        ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value
+                                        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                            ? globalComponentStyles?.Button?.backgroundColor?.value
+                                            : themeColors?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value,
+                                boxShadow: "none",
+                                minWidth: "100px",
+                                ...getOrderTypeSelectorSelectedButtonStyles,
+                                "&:hover": {
+                                    backgroundColor: states.orderType === "storeDelivery" ?
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
+                                        ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
+                                        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                            ? globalComponentStyles?.Button?.backgroundColor?.value
+                                            : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent"
+                                },
+                            }}
+                        >
+                            DELIVERY
+                        </Button>
+                    }
+                    { states?.franchise?.configurations?.isPickUpAvailableOnStoreForWeb &&
                     <Button
                         onClick={() => actions.handleSetOrderType("storePickUp")}
                         sx={{
@@ -585,12 +603,18 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             minWidth: "100px",
                             ...getOrderTypeSelectorSelectedButtonStyles,
                                "&:hover": {
-                                backgroundColor: "transparent"
+                                backgroundColor: states.orderType === "storePickUp" ?
+                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
+                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
+                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                        ? globalComponentStyles?.Button?.backgroundColor?.value
+                                        : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent"
                             },
                         }}
                     >
                         PICKUP
                     </Button>
+                    }
                 </Box>
             </Box>
 
