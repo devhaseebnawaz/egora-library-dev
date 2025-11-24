@@ -50,6 +50,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const [isConfirmingLocation, setIsConfirmingLocation] = useState(false);
+    const [prevSelectedVenueForPickUp, setPrevSelectedVenueForPickUp] = useState(states.selectedOutlet?._id || "");
     const filteredOutlets = states.outlets?.filter((outlet) =>
         outlet.name.toLowerCase().includes(states.searchQuery.toLowerCase())
     ) || [];
@@ -342,7 +343,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                     states.setGetNewData(true);
                     actions.handleOpenLocationModal(false);
                     actions.handleOpenLocationModalOnClick(false);
-                    actions.handleDeleteCartBySessionId();
+                    if ( prevSelectedVenueForPickUp != states?.selectedOutlet?._id ){
+                        actions.handleDeleteCartBySessionId();
+                        setPrevSelectedVenueForPickUp(states.selectedOutlet)
+                    }
                     actions.handleSetSelectedVenue(states.selectedOutlet);
                 }
             } catch (err) {
@@ -354,7 +358,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             states.setGetNewData(true);
             actions.handleOpenLocationModal(false);
             actions.handleOpenLocationModalOnClick(false);
-            actions.handleDeleteCartBySessionId();
+            if ( prevSelectedVenueForPickUp != states?.selectedOutlet?._id ){
+                actions.handleDeleteCartBySessionId();
+                setPrevSelectedVenueForPickUp(states.selectedOutlet)
+            }
             actions.handleSetSelectedVenue(states.selectedOutlet);
         }
     };
