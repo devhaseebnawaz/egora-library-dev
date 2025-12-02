@@ -328,7 +328,7 @@ export default function ItemDetailModal({
       saucePrices = selectedSauces.items
         .map((sauce) => sauce.items)
         .flat()
-        .reduce((total, item) => total + parseFloat(states.itemForDetailedModal.price), 0);
+        .reduce((total, item) => total + parseFloat(item.price), 0);
     }
     const calTotalPrice = (basePrice + addOnPrices + saucePrices) * quantity;
     return `Rs. ${fNumber(calTotalPrice)}`;
