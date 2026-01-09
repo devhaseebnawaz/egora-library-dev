@@ -160,14 +160,19 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
     .filter(Boolean);
 
   return (
-    <Container style={{ marginTop: "30px", 
-    backgroundColor:
-    styles?.AllCategoriesBackgroundColorV2?.value != ""
-      ? styles?.AllCategoriesBackgroundColorV2?.value
-      : globalComponentStyles?.Background?.color?.value != ""
-        ? globalComponentStyles?.Background?.color?.value
-        : themeColors?.AllCategoriesBackgroundColorV2?.value,
-     }}>
+    <Container style={{
+      marginTop: "30px",
+      backgroundImage: prop?.editable?.backgroundImage?.value.length > 0 ? `url(${prop?.editable?.backgroundImage?.value[0]})` : "none",
+      backgroundRepeat: "no-repeat",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundColor:
+        styles?.AllCategoriesBackgroundColorV2?.value != ""
+          ? styles?.AllCategoriesBackgroundColorV2?.value
+          : globalComponentStyles?.Background?.color?.value != ""
+            ? globalComponentStyles?.Background?.color?.value
+            : themeColors?.AllCategoriesBackgroundColorV2?.value,
+    }}>
       {sortedCategory.map((category, index) => (
         <Box
           key={category.id}

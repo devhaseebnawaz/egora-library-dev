@@ -24,16 +24,20 @@ export default function PopularMenuSectionV2({ prop, actions, styles, states, th
   }, [query, displayItems]);
 
   return (
-    <Container 
-    style={{
-       marginTop: "30px", 
-       backgroundColor:
-       styles?.PopularMenuSectionBackgroundColorV2?.value != ""
-         ? styles?.PopularMenuSectionBackgroundColorV2?.value
-         : globalComponentStyles?.Background?.color?.value != ""
-           ? globalComponentStyles?.Background?.color?.value
-           : themeColors?.PopularMenuSectionBackgroundColorV2?.value,
-     }}>
+    <Container
+      style={{
+        marginTop: "30px",
+        backgroundImage: prop?.editable?.backgroundImage?.value.length > 0 ? `url(${prop?.editable?.backgroundImage?.value[0]})` : "none",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundColor:
+          styles?.PopularMenuSectionBackgroundColorV2?.value != ""
+            ? styles?.PopularMenuSectionBackgroundColorV2?.value
+            : globalComponentStyles?.Background?.color?.value != ""
+              ? globalComponentStyles?.Background?.color?.value
+              : themeColors?.PopularMenuSectionBackgroundColorV2?.value,
+      }}>
       <Box mb={4} mt={4}>
         <Typography
           variant="h4"

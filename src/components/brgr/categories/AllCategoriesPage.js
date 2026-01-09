@@ -161,7 +161,12 @@ export default function AllCategoriesPage({ prop, actions, styles, states, theme
     .filter(Boolean);
     
   return (
-    <Container style={{ marginTop: "30px" }}>
+    <Container style={{ marginTop: "30px", 
+      backgroundImage: prop?.editable?.backgroundImage?.value.length > 0 ? `url(${prop?.editable?.backgroundImage?.value[0]})` : "none",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+     }}>
       {sortedCategory.map((category, index) => (
         <Box
           key={category.id}

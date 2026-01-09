@@ -61,7 +61,10 @@ export default function PopularMenuSection({ prop, actions, styles, states, them
               : globalComponentStyles?.Text?.fontWeight?.value != ""
                 ? globalComponentStyles?.Text?.fontWeight?.value :
                 themeColors?.PopularMenuSectionHeadingTextStyle?.value,
-
+            backgroundImage: prop?.editable?.backgroundImage?.value.length > 0 ? `url(${prop?.editable?.backgroundImage?.value[0]})` : "none",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
         >
           {prop?.editable?.title?.value}
