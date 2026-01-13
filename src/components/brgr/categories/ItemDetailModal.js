@@ -17,7 +17,8 @@ import {
   DialogContent,
   Grid,
   Divider,
-  useMediaQuery
+  useMediaQuery,
+  MenuItem
 } from '@mui/material';
 import Iconify from '../iconify';
 import FormProvider, { RHFTextField } from "../../hook-form";
@@ -29,6 +30,9 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from '../../../utils/fontsize';
 import { fNumber } from "../../../utils/formatNumber";
+import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
+import { useSnackbar } from 'src/components/snackbar';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 
 export default function ItemDetailModal({
@@ -237,6 +241,50 @@ export default function ItemDetailModal({
   const [selectedSauces, setSelectedSauces] = useState({ items: [] });
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState(states.itemForDetailedModal?.notes ? states.itemForDetailedModal?.notes : "");
+  const { copy } = useCopyToClipboard();
+  const { enqueueSnackbar } = useSnackbar();
+  const sharePopover = usePopover();
+
+  // Share functions
+  const getCurrentUrl = () => {
+    if (typeof window !== 'undefined') {
+      return window.location.href;
+    }
+    return '';
+  };
+
+  const handleCopyLink = () => {
+    const currentUrl = getCurrentUrl();
+    copy(currentUrl);
+    enqueueSnackbar('Link copied to clipboard!');
+    sharePopover.onClose();
+  };
+
+  const handleShareFacebook = () => {
+    const currentUrl = encodeURIComponent(getCurrentUrl());
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`, '_blank', 'width=600,height=400');
+    sharePopover.onClose();
+  };
+
+  const handleShareWhatsApp = () => {
+    const currentUrl = encodeURIComponent(getCurrentUrl());
+    const text = encodeURIComponent(states.itemForDetailedModal?.name || 'Check this out!');
+    window.open(`https://wa.me/?text=${text}%20${currentUrl}`, '_blank');
+    sharePopover.onClose();
+  };
+
+  const handleShareTwitter = () => {
+    const currentUrl = encodeURIComponent(getCurrentUrl());
+    const text = encodeURIComponent(states.itemForDetailedModal?.name || 'Check this out!');
+    window.open(`https://twitter.com/intent/tweet?url=${currentUrl}&text=${text}`, '_blank', 'width=600,height=400');
+    sharePopover.onClose();
+  };
+
+  const handleShareLinkedIn = () => {
+    const currentUrl = encodeURIComponent(getCurrentUrl());
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${currentUrl}`, '_blank', 'width=600,height=400');
+    sharePopover.onClose();
+  };
   const [selectedVariant, setSelectedVariant] = useState(
     isItemEdit ?
       states.itemForDetailedModal.variants
@@ -498,38 +546,38 @@ export default function ItemDetailModal({
         </IconButton>
       </Box> */}
 
- {!mdDown && (
-      <Box
-        style={{
-          flex: 0.42,
-          // backgroundColor: themeColors?.ItemDetailModalImageDivBackgroundColor
-          //   || styles?.ItemDetailModalImageDivBackgroundColor
-          //   || '#f4f4f4',
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          margin: 20,
-        }}
-      >
+       {!mdDown && (
         <Box
-          component="img"
-          src={states.itemForDetailedModal?.photoURL
-            ? `${states.storeImagesBaseUrl}/${states.itemForDetailedModal.photoURL}`
-            : '/assets/placeholder.png'}
-          alt={states.itemForDetailedModal?.name || "Menu Item"}
-          loading="lazy"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = '/assets/placeholder.png';
-          }}
           style={{
-            objectFit: 'contain',
-            ...getItemDetailImageStyle()
+            flex: 0.42,
+            // backgroundColor: themeColors?.ItemDetailModalImageDivBackgroundColor
+            //   || styles?.ItemDetailModalImageDivBackgroundColor
+            //   || '#f4f4f4',
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            margin: 20,
           }}
-        />
-      </Box>
+        >
+          <Box
+            component="img"
+            src={states.itemForDetailedModal?.photoURL
+              ? `${states.storeImagesBaseUrl}/${states.itemForDetailedModal.photoURL}`
+              : '/assets/placeholder.png'}
+            alt={states.itemForDetailedModal?.name || "Menu Item"}
+            loading="lazy"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/assets/placeholder.png';
+            }}
+            style={{
+              objectFit: 'contain',
+              ...getItemDetailImageStyle()
+            }}
+          />
+        </Box>
 
-  )}
+      )}
 
       {/* <Box style={{ width: '1px', backgroundColor: '#e0e0e0' }} /> */}
 
@@ -575,59 +623,194 @@ export default function ItemDetailModal({
                 // position: 'absolute',
                 // right: '0px',
                 // top: '0px',
+                 display: 'flex',
+                  gap: '8px',
               }
               : {
-
+                display: 'flex',
+                  gap: '8px',
               }),
 
           }}>
-            <IconButton
-              onClick={() => {
-                if (!previewMode) {
-                  actions.handleOpenCard();
-                  isItemEdit && actions?.handleItemEditClose();
-                }
-              }}
-              style={{
-                backgroundColor: 
-                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
-                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
-                    : globalComponentStyles?.Icon?.color?.value != ""
+            {/* Share Button */}
+              <IconButton
+                onClick={sharePopover.onOpen}
+                style={{
+                  backgroundColor:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value !== ""
+                      ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value}`
+                      : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalShareIconBackgroundColor?.value}`,
+                  color:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconColor?.value !== ""
+                      ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconColor?.value}`
+                      : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalShareIconColor?.value}`,
+                  width:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareHeightWidth?.value != ""
+                      ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareHeightWidth?.value
+                      : globalComponentStyles?.Icon?.size?.value != ""
+                        ? globalComponentStyles?.Icon?.size?.value
+                        : themeColors?.ItemDetailModalShareHeightWidth?.value,
+                  height:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareHeightWidth?.value != ""
+                      ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareHeightWidth?.value
+                      : globalComponentStyles?.Icon?.size?.value != ""
+                        ? globalComponentStyles?.Icon?.size?.value
+                        : themeColors?.ItemDetailModalShareHeightWidth?.value,
+                  zIndex: 9999,
+                }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value !== ""
+                  ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value}`
+                  : globalComponentStyles?.Icon?.color?.value != ""
+                    ? globalComponentStyles?.Icon?.color?.value
+                    : `${themeColors?.ItemDetailModalShareIconBackgroundColor?.value}`}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value !== ""
+                  ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value}`
+                  : globalComponentStyles?.Icon?.color?.value != ""
+                    ? globalComponentStyles?.Icon?.color?.value
+                    : `${themeColors?.ItemDetailModalShareIconBackgroundColor?.value}`}
+                title="Share"
+              >
+                <Iconify icon="mdi:share-variant" width={20} height={20} />
+              </IconButton>
+
+              {/* Share Popover Menu */}
+              <CustomPopover
+                open={sharePopover.open}
+                onClose={sharePopover.onClose}
+                arrow="top-center"
+                PaperProps={{
+                  sx: {
+                    backgroundColor: 'none',   
+                    boxShadow: 'none',        
+                  }
+                }}
+
+              >
+                <Stack direction="column" spacing={1.5}>
+                  <IconButton
+                    onClick={handleCopyLink}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#4A90E2',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#357ABD' }
+                    }}
+                    title="Copy Link"
+                  >
+                    <Iconify icon="mdi:link-variant" width={24} height={24} />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleShareFacebook}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#1877F2',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#166FE5' }
+                    }}
+                    title="Facebook"
+                  >
+                    <Iconify icon="mdi:facebook" width={24} height={24} />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleShareWhatsApp}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#25D366',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#20BA5A' }
+                    }}
+                    title="WhatsApp"
+                  >
+                    <Iconify icon="mdi:whatsapp" width={24} height={24} />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleShareTwitter}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#1DA1F2',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#0D8BD9' }
+                    }}
+                    title="Twitter"
+                  >
+                    <Iconify icon="mdi:twitter" width={24} height={24} />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleShareLinkedIn}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#0077B5',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#006399' }
+                    }}
+                    title="LinkedIn"
+                  >
+                    <Iconify icon="mdi:linkedin" width={24} height={24} />
+                  </IconButton>
+                </Stack>
+              </CustomPopover>
+                 <IconButton
+                onClick={() => {
+                  if (!previewMode) {
+                    actions.handleOpenCard(null);
+                    isItemEdit && actions?.handleItemEditClose();
+                  }
+                }}
+                style={{
+                  backgroundColor:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
+                      ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
+                      : globalComponentStyles?.Icon?.color?.value != ""
                         ? globalComponentStyles?.Icon?.color?.value
                         : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`,
-                color: 
-                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconColor?.value !== ""
-                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconColor?.value}`
-                    : globalComponentStyles?.Icon?.color?.value != ""
+                  color:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconColor?.value !== ""
+                      ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconColor?.value}`
+                      : globalComponentStyles?.Icon?.color?.value != ""
                         ? globalComponentStyles?.Icon?.color?.value
                         : `${themeColors?.ItemDetailModalCloseIconColor?.value}`,
-                width: 
-                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value != ""
-                    ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value
-                    : globalComponentStyles?.Icon?.size?.value != ""
-                      ? globalComponentStyles?.Icon?.size?.value
-                      : themeColors?.ItemDetailModalCloseHeightWidth?.value,
-                height: 
-                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value != ""
-                    ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value
-                    : globalComponentStyles?.Icon?.size?.value != ""
-                      ? globalComponentStyles?.Icon?.size?.value
-                      : themeColors?.ItemDetailModalCloseHeightWidth?.value,
-                zIndex: 9999,
-              }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
-                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
-                    : globalComponentStyles?.Icon?.color?.value != ""
-                        ? globalComponentStyles?.Icon?.color?.value
-                        : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
-                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
-                    : globalComponentStyles?.Icon?.color?.value != ""
-                        ? globalComponentStyles?.Icon?.color?.value
-                        : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`}
-            >
-              <Iconify icon="mdi:close" width={20} height={20} />
-            </IconButton>
+                  width:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value != ""
+                      ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value
+                      : globalComponentStyles?.Icon?.size?.value != ""
+                        ? globalComponentStyles?.Icon?.size?.value
+                        : themeColors?.ItemDetailModalCloseHeightWidth?.value,
+                  height:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value != ""
+                      ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value
+                      : globalComponentStyles?.Icon?.size?.value != ""
+                        ? globalComponentStyles?.Icon?.size?.value
+                        : themeColors?.ItemDetailModalCloseHeightWidth?.value,
+                  zIndex: 9999,
+                }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
+                  ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
+                  : globalComponentStyles?.Icon?.color?.value != ""
+                    ? globalComponentStyles?.Icon?.color?.value
+                    : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
+                  ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
+                  : globalComponentStyles?.Icon?.color?.value != ""
+                    ? globalComponentStyles?.Icon?.color?.value
+                    : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`}
+                title="Close"
+              >
+                <Iconify icon="mdi:close" width={20} height={20} />
+              </IconButton>
           </Box>
         </Box>
 
