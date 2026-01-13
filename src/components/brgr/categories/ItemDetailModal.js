@@ -17,7 +17,8 @@ import {
   DialogContent,
   Grid,
   Divider,
-  useMediaQuery
+  useMediaQuery,
+  MenuItem
 } from '@mui/material';
 import Iconify from '../iconify';
 import FormProvider, { RHFTextField } from "../../hook-form";
@@ -28,6 +29,9 @@ import Group from '../options/Group';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from '../../../utils/fontsize';
+import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
+import { useSnackbar } from 'src/components/snackbar';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 
 
@@ -237,6 +241,50 @@ export default function ItemDetailModal({
   const [selectedSauces, setSelectedSauces] = useState({ items: [] });
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState(states.itemForDetailedModal?.notes ? states.itemForDetailedModal?.notes : "");
+  const { copy } = useCopyToClipboard();
+  const { enqueueSnackbar } = useSnackbar();
+  const sharePopover = usePopover();
+
+  // Share functions
+  const getCurrentUrl = () => {
+    if (typeof window !== 'undefined') {
+      return window.location.href;
+    }
+    return '';
+  };
+
+  const handleCopyLink = () => {
+    const currentUrl = getCurrentUrl();
+    copy(currentUrl);
+    enqueueSnackbar('Link copied to clipboard!');
+    sharePopover.onClose();
+  };
+
+  const handleShareFacebook = () => {
+    const currentUrl = encodeURIComponent(getCurrentUrl());
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`, '_blank', 'width=600,height=400');
+    sharePopover.onClose();
+  };
+
+  const handleShareWhatsApp = () => {
+    const currentUrl = encodeURIComponent(getCurrentUrl());
+    const text = encodeURIComponent(states.itemForDetailedModal?.name || 'Check this out!');
+    window.open(`https://wa.me/?text=${text}%20${currentUrl}`, '_blank');
+    sharePopover.onClose();
+  };
+
+  const handleShareTwitter = () => {
+    const currentUrl = encodeURIComponent(getCurrentUrl());
+    const text = encodeURIComponent(states.itemForDetailedModal?.name || 'Check this out!');
+    window.open(`https://twitter.com/intent/tweet?url=${currentUrl}&text=${text}`, '_blank', 'width=600,height=400');
+    sharePopover.onClose();
+  };
+
+  const handleShareLinkedIn = () => {
+    const currentUrl = encodeURIComponent(getCurrentUrl());
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${currentUrl}`, '_blank', 'width=600,height=400');
+    sharePopover.onClose();
+  };
   const [selectedVariant, setSelectedVariant] = useState(
     isItemEdit ?
       states.itemForDetailedModal.variants
@@ -477,138 +525,17 @@ export default function ItemDetailModal({
           <Iconify icon="mdi:close" width={20} height={20} />
         </IconButton>
       </Box> */}
-
- {!mdDown && (
-      <Box
-        style={{
-          flex: 0.42,
-          // backgroundColor: themeColors?.ItemDetailModalImageDivBackgroundColor
-          //   || styles?.ItemDetailModalImageDivBackgroundColor
-          //   || '#f4f4f4',
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          margin: 20,
-        }}
-      >
-        <Box
-          component="img"
-          src={states.itemForDetailedModal?.photoURL
-            ? `${states.storeImagesBaseUrl}/${states.itemForDetailedModal.photoURL}`
-            : '/assets/placeholder.png'}
-          alt={states.itemForDetailedModal?.name || "Menu Item"}
-          loading="lazy"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = '/assets/placeholder.png';
-          }}
-          style={{
-            objectFit: 'contain',
-            ...getItemDetailImageStyle()
-          }}
-        />
-      </Box>
-
-  )}
-
-      {/* <Box style={{ width: '1px', backgroundColor: '#e0e0e0' }} /> */}
-
-      <Box
-        style={{
-          flex: mdDown ? 1 : 0.58,
-          overflowY: 'auto',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
-          borderLeft: mdDown ? 'none' : '1px solid #dee2e6',
-          
-        }}
-      >
-          <Box
-    style={{
-      padding: smDown ? 10 : 20,
-      overflowY: 'auto',
-      flexGrow: 1,
-      paddingRight: smDown ? 10 : 20,
-    }}
-  >
-
-        {/* Title and Description */}
+{!mdDown && (
         <Box
           style={{
+            flex: 0.42,
+            // backgroundColor: themeColors?.ItemDetailModalImageDivBackgroundColor
+            //   || styles?.ItemDetailModalImageDivBackgroundColor
+            //   || '#f4f4f4',
             display: 'flex',
-            alignItems: mdDown ? "" :'center',
-            justifyContent: 'space-between',
-            position: "sticky",
-            top: 0,
-            zIndex: 1000,
-            backdropFilter: "blur(8px)",
-            backgroundColor: "rgba(255, 255, 255, 0.7)",
-          }}
-        >
-          <Typography variant="h6" fontWeight="bold" sx={{ ...getHeadingStyles }}>
-            {states.itemForDetailedModal.name}
-          </Typography>
-          <Box style={{
-            ...(previewMode
-              ? {
-                // position: 'absolute',
-                // right: '0px',
-                // top: '0px',
-              }
-              : {
-
-              }),
-
-          }}>
-            <IconButton
-              onClick={() => {
-                if (!previewMode) {
-                  actions.handleOpenCard();
-                  isItemEdit && actions?.handleItemEditClose();
-                }
-              }}
-              style={{
-                backgroundColor: '#121212',
-                color: '#fff',
-                width: 36,
-                height: 36,
-                // ...(!previewMode
-                //   ? {
-                //     position: 'absolute',
-                //     right: '0px',
-                //     top: '-10px',
-                //   }
-                //   : {
-                //     margin: "0 auto",
-                //   }),
-
-
-                zIndex: 9999,
-              }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#000'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = '#121212'}
-            >
-              <Iconify icon="mdi:close" width={20} height={20} />
-            </IconButton>
-          </Box>
-        </Box>
-
-        <Typography variant="h6" color="text.secondary" gutterBottom style={{ marginBottom: 15 , ...getHeadingStyles}} >
-          Rs. {states.itemForDetailedModal.price}
-        </Typography>
-        <Typography color="gray" style={{ marginBottom: 20, ...getDescriptionStyles }}  >
-          {states.itemForDetailedModal.description || ''}
-        </Typography>
-
-         {/* Mobile Image (below description, only on mdDown) */}
-      {mdDown && (
-        <Box
-          style={{
-            marginBottom: 20,
-            with:"100%",
-            display: 'flex',
-            justifyContent: 'center'
+            alignItems: 'flex-start',
+            justifyContent: 'center',
+            margin: 20,
           }}
         >
           <Box
@@ -628,51 +555,324 @@ export default function ItemDetailModal({
             }}
           />
         </Box>
+
       )}
+      {/* <Box style={{ width: '1px', backgroundColor: '#e0e0e0' }} /> */}
+
+      <Box
+        style={{
+          flex: mdDown ? 1 : 0.58,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+          borderLeft: mdDown ? 'none' : '1px solid #dee2e6',
+
+        }}
+      >
+        <Box
+          style={{
+            padding: smDown ? 10 : 20,
+            overflowY: 'auto',
+            flexGrow: 1,
+            paddingRight: smDown ? 10 : 20,
+          }}
+        >
+
+          {/* Title and Description */}
+          <Box
+            style={{
+              display: 'flex',
+              alignItems: mdDown ? "" : 'center',
+              justifyContent: 'space-between',
+              position: "sticky",
+              top: 0,
+              zIndex: 1000,
+              backdropFilter: "blur(8px)",
+              backgroundColor: "rgba(255, 255, 255, 0.7)",
+            }}
+          >
+            <Typography variant="h6" fontWeight="bold" sx={{ ...getHeadingStyles }}>
+              {states.itemForDetailedModal.name}
+            </Typography>
+            <Box style={{
+              ...(previewMode
+                ? {
+                  // position: 'absolute',
+                  // right: '0px',
+                  // top: '0px',
+                }
+                : {
+                  display: 'flex',
+                  gap: '8px',
+                }),
+
+            }}>
+              {/* Share Button */}
+              <IconButton
+                onClick={sharePopover.onOpen}
+                style={{
+                  backgroundColor:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value !== ""
+                      ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value}`
+                      : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalShareIconBackgroundColor?.value}`,
+                  color:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconColor?.value !== ""
+                      ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconColor?.value}`
+                      : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalShareIconColor?.value}`,
+                  width:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareHeightWidth?.value != ""
+                      ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareHeightWidth?.value
+                      : globalComponentStyles?.Icon?.size?.value != ""
+                        ? globalComponentStyles?.Icon?.size?.value
+                        : themeColors?.ItemDetailModalShareHeightWidth?.value,
+                  height:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareHeightWidth?.value != ""
+                      ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareHeightWidth?.value
+                      : globalComponentStyles?.Icon?.size?.value != ""
+                        ? globalComponentStyles?.Icon?.size?.value
+                        : themeColors?.ItemDetailModalShareHeightWidth?.value,
+                  zIndex: 9999,
+                }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value !== ""
+                  ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value}`
+                  : globalComponentStyles?.Icon?.color?.value != ""
+                    ? globalComponentStyles?.Icon?.color?.value
+                    : `${themeColors?.ItemDetailModalShareIconBackgroundColor?.value}`}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value !== ""
+                  ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value}`
+                  : globalComponentStyles?.Icon?.color?.value != ""
+                    ? globalComponentStyles?.Icon?.color?.value
+                    : `${themeColors?.ItemDetailModalShareIconBackgroundColor?.value}`}
+                title="Share"
+              >
+                <Iconify icon="mdi:share-variant" width={20} height={20} />
+              </IconButton>
+
+              {/* Share Popover Menu */}
+              <CustomPopover
+                open={sharePopover.open}
+                onClose={sharePopover.onClose}
+                arrow="top-center"
+                PaperProps={{
+                  sx: {
+                    backgroundColor: 'none',   
+                    boxShadow: 'none',        
+                  }
+                }}
+
+              >
+                <Stack direction="column" spacing={1.5}>
+                  <IconButton
+                    onClick={handleCopyLink}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#4A90E2',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#357ABD' }
+                    }}
+                    title="Copy Link"
+                  >
+                    <Iconify icon="mdi:link-variant" width={24} height={24} />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleShareFacebook}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#1877F2',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#166FE5' }
+                    }}
+                    title="Facebook"
+                  >
+                    <Iconify icon="mdi:facebook" width={24} height={24} />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleShareWhatsApp}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#25D366',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#20BA5A' }
+                    }}
+                    title="WhatsApp"
+                  >
+                    <Iconify icon="mdi:whatsapp" width={24} height={24} />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleShareTwitter}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#1DA1F2',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#0D8BD9' }
+                    }}
+                    title="Twitter"
+                  >
+                    <Iconify icon="mdi:twitter" width={24} height={24} />
+                  </IconButton>
+                  <IconButton
+                    onClick={handleShareLinkedIn}
+                    sx={{
+                      width: 36,
+                      height: 32,
+                      backgroundColor: '#0077B5',
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': { backgroundColor: '#006399' }
+                    }}
+                    title="LinkedIn"
+                  >
+                    <Iconify icon="mdi:linkedin" width={24} height={24} />
+                  </IconButton>
+                </Stack>
+              </CustomPopover>
+
+              {/* Close Button */}
+              <IconButton
+                onClick={() => {
+                  if (!previewMode) {
+                    actions.handleOpenCard(null);
+                    isItemEdit && actions?.handleItemEditClose();
+                  }
+                }}
+                style={{
+                  backgroundColor:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
+                      ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
+                      : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`,
+                  color:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconColor?.value !== ""
+                      ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconColor?.value}`
+                      : globalComponentStyles?.Icon?.color?.value != ""
+                        ? globalComponentStyles?.Icon?.color?.value
+                        : `${themeColors?.ItemDetailModalCloseIconColor?.value}`,
+                  width:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value != ""
+                      ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value
+                      : globalComponentStyles?.Icon?.size?.value != ""
+                        ? globalComponentStyles?.Icon?.size?.value
+                        : themeColors?.ItemDetailModalCloseHeightWidth?.value,
+                  height:
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value != ""
+                      ? layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseHeightWidth?.value
+                      : globalComponentStyles?.Icon?.size?.value != ""
+                        ? globalComponentStyles?.Icon?.size?.value
+                        : themeColors?.ItemDetailModalCloseHeightWidth?.value,
+                  zIndex: 9999,
+                }}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
+                  ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
+                  : globalComponentStyles?.Icon?.color?.value != ""
+                    ? globalComponentStyles?.Icon?.color?.value
+                    : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`}
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value !== ""
+                  ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalCloseIconBackgroundColor?.value}`
+                  : globalComponentStyles?.Icon?.color?.value != ""
+                    ? globalComponentStyles?.Icon?.color?.value
+                    : `${themeColors?.ItemDetailModalCloseIconBackgroundColor?.value}`}
+                title="Close"
+              >
+                <Iconify icon="mdi:close" width={20} height={20} />
+              </IconButton>
+            </Box>
+          </Box>
+
+          <Typography variant="h6" color="text.secondary" gutterBottom style={{ marginBottom: 15, ...getHeadingStyles }} >
+            Rs. {states.itemForDetailedModal.price}
+          </Typography>
+          <Typography color="gray" style={{ marginBottom: 20, ...getDescriptionStyles }}  >
+            {states.itemForDetailedModal.description || ''}
+          </Typography>
+
+          {/* Mobile Image (below description, only on mdDown) */}
+          {mdDown && (
+            <Box
+              style={{
+                marginBottom: 20,
+                with: "100%",
+                display: 'flex',
+                justifyContent: 'center'
+              }}
+            >
+              <Box
+                component="img"
+                src={states.itemForDetailedModal?.photoURL
+                  ? `${states.storeImagesBaseUrl}/${states.itemForDetailedModal.photoURL}`
+                  : '/assets/placeholder.png'}
+                alt={states.itemForDetailedModal?.name || "Menu Item"}
+                loading="lazy"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = '/assets/placeholder.png';
+                }}
+                style={{
+                  objectFit: 'contain',
+                  ...getItemDetailImageStyle()
+                }}
+              />
+            </Box>
+          )}
 
 
-        <CardContent sx={{ padding: "0" }}>
-          <FormProvider methods={methods}>
-            <Stack spacing={1}>
-              {states.itemForDetailedModal.hasVariant && (
-                <Variant
-                  layout={layout}
-                  getDescriptionStyles={getDescriptionStyles}
-                  getHeadingStyles={getHeadingStyles}
-                  variants={states.itemForDetailedModal.variants}
-                  hanldeSelectOption={toggleVariantSelect}
-                  selectedVariant={selectedVariant}
-                />
-              )}
-              <Divider color={layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalDividerColor?.value} />
-              {filteredChoiceGroups.map((cg, index) => (
-                <Group
-                  layout={layout}
-                  getDescriptionStyles={getDescriptionStyles}
-                  getHeadingStyles={getHeadingStyles}
-                  key={index}
-                  choiceGroup={cg}
-                  hanldeSelectOption={toggleSauce}
-                  selectedSauces={selectedSauces}
-                  selectedVariant={selectedVariant}
-                />
-              ))}
-              <Stack direction="row" justifyContent="left">
-                <RHFTextField
-                  sx={{ mt: 3 }}
-                  name="description"
-                  label="Kitchen Notes"
-                  multiline
-                  rows={2}
-                  value={notes}
-                  onChange={(e) => {
-                    setNotes(e.target.value);
-                  }}
-                />
+          <CardContent sx={{ padding: "0" }}>
+            <FormProvider methods={methods}>
+              <Stack spacing={1}>
+                {states.itemForDetailedModal.hasVariant && (
+                  <Variant
+                    themeColors={themeColors}
+                    layout={layout}
+                    getDescriptionStyles={getDescriptionStyles}
+                    getHeadingStyles={getHeadingStyles}
+                    variants={states.itemForDetailedModal.variants}
+                    hanldeSelectOption={toggleVariantSelect}
+                    selectedVariant={selectedVariant}
+                  />
+                )}
+                <Divider color={layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalDividerColor?.value} />
+                {filteredChoiceGroups.map((cg, index) => (
+                  <Group
+                    themeColors={themeColors}
+                    layout={layout}
+                    getDescriptionStyles={getDescriptionStyles}
+                    getHeadingStyles={getHeadingStyles}
+                    key={index}
+                    choiceGroup={cg}
+                    hanldeSelectOption={toggleSauce}
+                    selectedSauces={selectedSauces}
+                    selectedVariant={selectedVariant}
+                  />
+                ))}
+                <Stack direction="row" justifyContent="left">
+                  <RHFTextField
+                    sx={{ mt: 3 }}
+                    name="description"
+                    label="Kitchen Notes"
+                    multiline
+                    rows={2}
+                    value={notes}
+                    onChange={(e) => {
+                      setNotes(e.target.value);
+                    }}
+                  />
+                </Stack>
               </Stack>
-            </Stack>
-          </FormProvider>
-        </CardContent>
+            </FormProvider>
+          </CardContent>
 
         </Box>
 
@@ -692,39 +892,62 @@ export default function ItemDetailModal({
             <Button
               onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
               style={{
-                minWidth: smDown ? 30 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value,
-                height: smDown ? 30 :  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value,
-                borderRadius: smDown ? 8:  `${layout?.itemDetailModalLayout?.body[0].styles?.IItemDetailModalSubtractIconBorderRadius?.value}px`,
-                backgroundColor: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconBackColor?.value
-                  || '#ccc',
-                color: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconColor?.value
-                  || '#fff',
+                minWidth: smDown ? 30 :
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value != 0 ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value :
+                    themeColors?.ItemDetailModalSubtractIconHeightWidth?.value
+                ,
+                height: smDown ? 30 :
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value != 0 ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconHeightWidth?.value :
+                    themeColors?.ItemDetailModalSubtractIconHeightWidth?.value,
+                borderRadius: smDown ? 8 :
+                  (layout?.itemDetailModalLayout?.body[0].styles?.IItemDetailModalSubtractIconBorderRadius?.value != 0 ?
+                    `${layout?.itemDetailModalLayout?.body[0].styles?.IItemDetailModalSubtractIconBorderRadius?.value}px` :
+                    `${themeColors?.IItemDetailModalSubtractIconBorderRadius?.value}px`),
+                backgroundColor:
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconBackColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconBackColor?.value}`
+                    : `${themeColors?.ItemDetailModalSubtractIconBackColor?.value}`,
+                color:
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalSubtractIconColor?.value}`
+                    : `${themeColors?.ItemDetailModalSubtractIconColor?.value}`,
                 fontWeight: 'bold',
-                 fontSize: smDown ? 16 : 20,
+                fontSize: smDown ? 16 : 20,
               }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#b0b0b0'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = '#ccc'}
             >
               –
             </Button>
             <Typography fontWeight="bold" sx={{
-             ...getAddedQuantityStyles
+              ...getAddedQuantityStyles
             }}>{quantity}</Typography>
             <Button
               onClick={() => setQuantity((prev) => prev + 1)}
               style={{
-                minWidth: smDown ? 30 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value,
-                height: smDown ? 30 : layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value,
-                borderRadius: smDown ? 8 : `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBorderRadius?.value}px`,
-                backgroundColor: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBackgroundColor?.value
-                  || '#121212',
-                color: layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconColor?.value
-                  || '#fff',
+                minWidth: smDown ? 30 :
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value != 0 ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value :
+                    themeColors?.ItemDetailModalAddIconHeightWidth?.value,
+                height: smDown ? 30 :
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value != 0 ?
+                    layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconHeightWidth?.value :
+                    themeColors?.ItemDetailModalAddIconHeightWidth?.value,
+                borderRadius: smDown ? 8 :
+                  (layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBorderRadius?.value != "" ?
+                    `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBorderRadius?.value}px` :
+                    `${themeColors?.ItemDetailModalAddIconBorderRadius?.value}px`),
+                backgroundColor:
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBackgroundColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconBackgroundColor?.value}`
+                    : `${themeColors?.ItemDetailModalAddIconBackgroundColor?.value}`,
+                color:
+                  layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconColor?.value !== ""
+                    ? `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddIconColor?.value}`
+                    : `${themeColors?.ItemDetailModalAddIconColor?.value}`,
                 fontWeight: 'bold',
                 fontSize: smDown ? 16 : 20,
               }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#000'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = '#121212'}
             >
               +
             </Button>
@@ -737,8 +960,8 @@ export default function ItemDetailModal({
               display: 'flex',
               justifyContent: states.loadingForAddUpdateItemCart ? 'center' : 'space-between',
               alignItems: 'center',
-              borderRadius:  `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddToCartButtonBorderRadius?.value}px`,
-              padding: smDown ? '12px' :'12px 24px',
+              borderRadius: `${layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalAddToCartButtonBorderRadius?.value}px`,
+              padding: smDown ? '12px' : '12px 24px',
               fontWeight: 'bold',
               fontSize: smDown ? 12 : 16,
               backgroundColor: areAllRequiredGroupsSelected ? getAddToCartEnabledStyles.backgroundColor : getAddToCartDisabledStyles.backgroundColor,
@@ -752,12 +975,12 @@ export default function ItemDetailModal({
             {states.loadingForAddUpdateItemCart ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
-                <>
-                  <span>Rs. {(selectedVariant?.price ? selectedVariant.price : states.itemForDetailedModal?.price) * quantity}</span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    {isItemEdit ? "Update cart" : "Add to Cart"}
-                  </span>
-                </>
+              <>
+                <span>{calculateTotalPrice()}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  {isItemEdit ? "Update cart" : "Add to Cart"}
+                </span>
+              </>
             )}
           </Button>
 
@@ -766,7 +989,6 @@ export default function ItemDetailModal({
       </Box>
     </Box>
   );
-
 
   return previewMode ? (
     <Box
