@@ -24,7 +24,8 @@ export default function CustomNavbar({
   const isMobile = useMediaQuery('(max-width:600px)');
   const truncateLength = isMobile ? 10 : 25;
   const isBelow850 = useMediaQuery('(max-width:850px)');
-  const { selectedVenue, currentLocation, orderType,selectedOutlet } = states ?? {}
+  const { selectedVenue, selectedRegion, currentLocation, orderType, selectedOutlet } = states ?? {}
+  const { isRegionBasedDeliveryOnStore } = states?.franchise?.configurations
   const { venueAddressOne, venueAddressTwo } = selectedVenue ?? {}
     
   let showCurrentLocation 
@@ -48,7 +49,7 @@ export default function CustomNavbar({
 
   const venueAddress = `${venueAddressOne ?? ""} ${venueAddressTwo ?? ""}`.trim();
   const addressMap = {
-    storeDelivery: currentLocation ?? "",
+    storeDelivery: currentLocation ? currentLocation : selectedRegion ? selectedRegion?.name : "",
     storePickUp: venueAddress,
   };
 
@@ -56,7 +57,7 @@ export default function CustomNavbar({
   (orderType === "storePickUp" && selectedOutlet)
    ? (addressMap[orderType] ?? "Address") 
    :  (orderType === "storeDelivery" && currentLocation)
-  ? (addressMap[orderType] ?? "Address") : "" ,truncateLength);
+       ? (addressMap[orderType] ?? "Address") : (orderType === "storeDelivery" && selectedRegion) ? (addressMap[orderType] ?? "Region") : "", truncateLength);
 
   return (
     <>
@@ -167,8 +168,7 @@ export default function CustomNavbar({
                         : themeColors?.AppBarChangeLocationTextStyle?.value,
                   }}
                 >
-                  Current {states.orderType === "storeDelivery" ? "Location" : "Branch"}
-
+                  Current {states.orderType === "storeDelivery" && !isRegionBasedDeliveryOnStore ? "Location" :states.orderType === "storeDelivery" && isRegionBasedDeliveryOnStore ? "Region" : "Branch"}
                 </Typography>
                 <Typography
                   variant="caption"

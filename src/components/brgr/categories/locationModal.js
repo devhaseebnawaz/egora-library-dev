@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useState} from "react";
 import {
     Modal,
     Box,
@@ -10,7 +10,8 @@ import {
     FormControl,
     MenuItem,
     InputLabel,
-    Select
+    Select,
+    CircularProgress
 } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import SearchMenuList from "./SearchMenuList";
@@ -19,6 +20,8 @@ import MyLocationIcon from "@mui/icons-material/MyLocation";
 import RefineLocationModal from "./RefineLocationModal";
 import { getIconWidthHeight, getScreenSizeCategory } from '../../../utils/fontsize';
 import { useMediaQuery } from "@mui/material";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { LoadingButton } from "@mui/lab";
 
 const modalStyle = (themeColors, layout) => {
     return {
@@ -46,9 +49,38 @@ const modalStyle = (themeColors, layout) => {
 export default function LocationModal({ themeColors, actions, prop, styles, states, isGoogleMapsLoaded, previewMode = false, globalComponentStyles, layout }) {
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
+    const [isConfirmingLocation, setIsConfirmingLocation] = useState(false);
+    const [prevSelectedVenueForPickUp, setPrevSelectedVenueForPickUp] = useState(states.selectedOutlet?._id || "");
     const filteredOutlets = states.outlets?.filter((outlet) =>
         outlet.name.toLowerCase().includes(states.searchQuery.toLowerCase())
     ) || [];
+    const branchRegions = states?.franchise?.branchRegions || {};
+    const linkedVenue = states?.franchise?.venues || [];
+    const venues = states?.outlets
+    const filteredRegions = Object.keys(branchRegions)
+        .filter((key) => linkedVenue.includes(key))
+        .reduce((obj, key) => {
+            const matchedVenue = venues.find(
+                (venue) =>
+                    venue.id === key && venue?.configurations?.isAvailableOnStore === true
+            );
+            if (matchedVenue) {
+                obj[key] = branchRegions[key];
+            }
+            return obj;
+        }, {});
+
+    const allRegions = Object.entries(filteredRegions).flatMap(([branchId, regions]) =>
+        regions.map(region => ({
+            ...region,
+            branchId,
+        }))
+    );
+    const uniqueVenues = Array.from(
+        new Map(
+            allRegions.map(item => [item.name.toLowerCase(), item])
+        ).values()
+    );
 
     let openModal;
 
@@ -311,7 +343,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                     states.setGetNewData(true);
                     actions.handleOpenLocationModal(false);
                     actions.handleOpenLocationModalOnClick(false);
-                    actions.handleDeleteCartBySessionId();
+                    if ( prevSelectedVenueForPickUp != states?.selectedOutlet?._id ){
+                        actions.handleDeleteCartBySessionId();
+                        setPrevSelectedVenueForPickUp(states.selectedOutlet)
+                    }
                     actions.handleSetSelectedVenue(states.selectedOutlet);
                 }
             } catch (err) {
@@ -323,14 +358,14 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             states.setGetNewData(true);
             actions.handleOpenLocationModal(false);
             actions.handleOpenLocationModalOnClick(false);
-            actions.handleDeleteCartBySessionId();
+            if ( prevSelectedVenueForPickUp != states?.selectedOutlet?._id ){
+                actions.handleDeleteCartBySessionId();
+                setPrevSelectedVenueForPickUp(states.selectedOutlet)
+            }
             actions.handleSetSelectedVenue(states.selectedOutlet);
         }
     };
 
-    // const handleSelectedLocation = () => {
-    //     actions.handleSelectedLocation(states.userLocationLatlong)
-    // }
   function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
         const R = 6371e3;
         const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -346,7 +381,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     }
 
     const handleSelectedLocation = async () => {
-        if (states.franchise.configurations.isEnabledDeliveryLocation) {
+        if (states.franchise.configurations.isEnabledDeliveryLocation && !states.franchise.configurations.isRegionBasedDeliveryOnStore) {
             try {
                 const response = await actions.handleLocateMe();
                 if (response) {
@@ -363,6 +398,22 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 }
             } catch (error) {
                 console.log("Error::", error);
+            }
+        } else if (states.franchise.configurations.isRegionBasedDeliveryOnStore) {
+            if (states.franchise.configurations.isLocationRestrictedRegionBasedDeliveryOnStore) {
+                setIsConfirmingLocation(true);
+                try {
+                    const response = await actions.handleLocateMe();
+                    if (response) {
+                        actions.handleSelectedRegion(states?.selectedRegion);
+                    }
+                } catch (error) {
+                    console.log("Error::", error);
+                } finally {
+                    setIsConfirmingLocation(false);
+                }
+            } else {
+                actions.handleSelectedRegion(states?.selectedRegion);
             }
         } else {
             actions.handleSelectedLocation(states.latLongForDelivery);
@@ -407,46 +458,56 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 />
             </Box>
 
-            {/* Content */}
-            <Typography
-                align="center"
-                sx={{
-                    color:
-                        layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingColor?.value !== ""
-                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingColor?.value}`
-                            : globalComponentStyles?.Text?.color?.value != ""
-                                ? globalComponentStyles?.Text?.color?.value
-                                : `${themeColors?.LocationModalOrderTypeHeadingColor?.value}`,
-                    fontSize:
-                        layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()] !== 0
-                            ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()]
-                            : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
-                                ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
-                                : themeColors?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()],
-                    fontWeight:
-                        layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextWeight?.value !== 0
-                            ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextWeight?.value
-                            : globalComponentStyles?.Text?.fontWeight?.value != 0
-                                ? globalComponentStyles?.Text?.fontWeight?.value
-                                : themeColors?.LocationModalOrderTypeHeadingTextWeight?.value,
+            { (states?.franchise?.configurations?.isDeliveryAvailableOnStoreForWeb && states?.franchise?.configurations?.isPickUpAvailableOnStoreForWeb) && 
+                <Typography
+                    align="center"
+                    sx={{
+                        color:
+                            layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingColor?.value !== ""
+                                ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingColor?.value}`
+                                : globalComponentStyles?.Text?.color?.value != ""
+                                    ? globalComponentStyles?.Text?.color?.value
+                                    : `${themeColors?.LocationModalOrderTypeHeadingColor?.value}`,
+                        fontSize:
+                            layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()] !== 0
+                                ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()]
+                                : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
+                                    ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
+                                    : themeColors?.LocationModalOrderTypeHeadingTextSize?.value[getScreenSizeCategory()],
+                        fontWeight:
+                            layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextWeight?.value !== 0
+                                ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextWeight?.value
+                                : globalComponentStyles?.Text?.fontWeight?.value != 0
+                                    ? globalComponentStyles?.Text?.fontWeight?.value
+                                    : themeColors?.LocationModalOrderTypeHeadingTextWeight?.value,
 
-                    fontFamily: layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextFont?.value !== 0
-                        ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextFont?.value}`
-                        : globalComponentStyles?.Text?.fontFamily?.value != ""
-                            ? globalComponentStyles?.Text?.fontFamily?.value
-                            : `${themeColors?.LocationModalOrderTypeHeadingTextFont?.value}`,
+                        fontFamily: layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextFont?.value !== 0
+                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextFont?.value}`
+                            : globalComponentStyles?.Text?.fontFamily?.value != ""
+                                ? globalComponentStyles?.Text?.fontFamily?.value
+                                : `${themeColors?.LocationModalOrderTypeHeadingTextFont?.value}`,
 
-                    fontStyle: layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextStyle?.value !== ""
-                        ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextStyle?.value}`
-                        : `${themeColors?.LocationModalOrderTypeHeadingTextStyle?.value}`,
+                        fontStyle: layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextStyle?.value !== ""
+                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeHeadingTextStyle?.value}`
+                            : `${themeColors?.LocationModalOrderTypeHeadingTextStyle?.value}`,
 
-                    marginTop: "60px",
-                    marginBottom: "16px",
-                }}
-            >
-                Select your order type
-            </Typography>
-
+                        marginTop: "60px",
+                        marginBottom: "16px",
+                    }}
+                >
+                    Select your order type
+                </Typography>
+            } 
+            { (!states?.franchise?.configurations?.isDeliveryAvailableOnStoreForWeb || !states?.franchise?.configurations?.isPickUpAvailableOnStoreForWeb) && 
+                <Typography
+                    align="center"
+                    sx={{
+                        marginTop: "60px",
+                        marginBottom: "16px",
+                    }}
+                >
+                </Typography>
+            }
             {/* Order Type Buttons */}
             <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
                 <Box
@@ -467,45 +528,53 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                         p: "4px",
                     }}
                 >
-                    <Button
-                        onClick={() => actions.handleSetOrderType("storeDelivery")}
-                        sx={{
-                            borderRadius:
-                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value != 0
-                                    ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`
-                                    : globalComponentStyles?.Button?.borderRadius?.value != 0
-                                        ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
-                                        : `${themeColors?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`,
-                            px: 3,
-                            py: 1,
-                            bgcolor: states.orderType === "storeDelivery" ?
-                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
-                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
-                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
-                                        ? globalComponentStyles?.Button?.backgroundColor?.value
-                                        : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent",
-                            color: states.orderType === "storeDelivery" ?
-                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorTextColor?.value !== ""
-                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorTextColor?.value
-                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
-                                        ? globalComponentStyles?.Button?.backgroundColor?.value
-                                        : themeColors?.LocationModalOrderTypeSelectedSelectorTextColor?.value :
+                    { states?.franchise?.configurations?.isDeliveryAvailableOnStoreForWeb &&
+                        <Button
+                            onClick={() => actions.handleSetOrderType("storeDelivery")}
+                            sx={{
+                                borderRadius:
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value != 0
+                                        ? `${layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`
+                                        : globalComponentStyles?.Button?.borderRadius?.value != 0
+                                            ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                            : `${themeColors?.LocationModalOrderTypeSelectorButtonBorderRadius?.value}px`,
+                                px: 3,
+                                py: 1,
+                                bgcolor: states.orderType === "storeDelivery" ?
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
+                                        ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
+                                        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                            ? globalComponentStyles?.Button?.backgroundColor?.value
+                                            : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent",
+                                color: states.orderType === "storeDelivery" ?
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorTextColor?.value !== ""
+                                        ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorTextColor?.value
+                                        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                            ? globalComponentStyles?.Button?.backgroundColor?.value
+                                            : themeColors?.LocationModalOrderTypeSelectedSelectorTextColor?.value :
 
-                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value !== ""
-                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value
-                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
-                                        ? globalComponentStyles?.Button?.backgroundColor?.value
-                                        : themeColors?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value,
-                            boxShadow: "none",
-                            minWidth: "100px",
-                            ...getOrderTypeSelectorSelectedButtonStyles,
-                               "&:hover": {
-                                backgroundColor: "transparent"
-                            },
-                        }}
-                    >
-                        DELIVERY
-                    </Button>
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value !== ""
+                                        ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value
+                                        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                            ? globalComponentStyles?.Button?.backgroundColor?.value
+                                            : themeColors?.LocationModalOrderTypeUnSelectedSelectorTextColor?.value,
+                                boxShadow: "none",
+                                minWidth: "100px",
+                                ...getOrderTypeSelectorSelectedButtonStyles,
+                                "&:hover": {
+                                    backgroundColor: states.orderType === "storeDelivery" ?
+                                    layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
+                                        ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
+                                        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                            ? globalComponentStyles?.Button?.backgroundColor?.value
+                                            : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent"
+                                },
+                            }}
+                        >
+                            DELIVERY
+                        </Button>
+                    }
+                    { states?.franchise?.configurations?.isPickUpAvailableOnStoreForWeb &&
                     <Button
                         onClick={() => actions.handleSetOrderType("storePickUp")}
                         sx={{
@@ -541,12 +610,18 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             minWidth: "100px",
                             ...getOrderTypeSelectorSelectedButtonStyles,
                                "&:hover": {
-                                backgroundColor: "transparent"
+                                backgroundColor: states.orderType === "storePickUp" ?
+                                layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value !== ""
+                                    ? layout?.locationLayout?.body[0].styles?.LocationModalOrderTypeSelectedSelectorColor?.value
+                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                        ? globalComponentStyles?.Button?.backgroundColor?.value
+                                        : themeColors?.LocationModalOrderTypeSelectedSelectorColor?.value : "transparent"
                             },
                         }}
                     >
                         PICKUP
                     </Button>
+                    }
                 </Box>
             </Box>
 
@@ -587,7 +662,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
 
                     }}
                 >
-                    Please select your location
+                    Please select your {states?.franchise?.configurations?.isRegionBasedDeliveryOnStore ? 'region' : 'location'} 
                 </Typography>
             }
             {
@@ -724,67 +799,166 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
 
             {
-                states?.orderType === "storeDelivery" && (
-                    <>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                mb: 1,
-                            }}
-                        >
-                            <TextField
-                                placeholder="Search Location"
-                                variant="outlined"
-                                value={states?.value}
-                                onChange={(e) => actions?.handleInput(e)}
-                                autoComplete="off"
-                                fullWidth
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <ArrowForwardIcon sx={{ ...getSearchLocationIconStyles }} />
-                                        </InputAdornment>
-                                    ),
-                                    sx: {
-                                        backgroundColor:
-                                            layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value !== ""
-                                                ? layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value
-                                                : globalComponentStyles?.Button?.backgroundColor?.value != ""
-                                                    ? globalComponentStyles?.Button?.backgroundColor?.value
-                                                    : themeColors?.LocationModalSearchLocationButtonBackgroundColor?.value,
-                                        borderRadius:
-                                            layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value != 0
-                                                ? `${layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value}px`
-                                                : globalComponentStyles?.Button?.borderRadius?.value != 0
-                                                    ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
-                                                    : `${themeColors?.LocationModalSearchLocationButtonBorderRadius?.value}px`,
-                                        height: "44px",
-                                        "& .MuiOutlinedInput-notchedOutline": {
-                                            border: "none",
-                                        },
-                                        ...getSearchLocationStyles
-                                    },
+                (states?.orderType === "storeDelivery" && !states?.franchise?.configurations?.isRegionBasedDeliveryOnStore) ?
+                    (
+                        <>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mb: 1,
                                 }}
-                            />
-                        </Box>
+                            >
+                                <TextField
+                                    placeholder="Search Location"
+                                    variant="outlined"
+                                    value={states?.value}
+                                    onChange={(e) => actions?.handleInput(e)}
+                                    autoComplete="off"
+                                    fullWidth
+                                    InputProps={{
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <ArrowForwardIcon sx={{ ...getSearchLocationIconStyles }} />
+                                            </InputAdornment>
+                                        ),
+                                        sx: {
+                                            backgroundColor:
+                                                layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value !== ""
+                                                    ? layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value
+                                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                                        ? globalComponentStyles?.Button?.backgroundColor?.value
+                                                        : themeColors?.LocationModalSearchLocationButtonBackgroundColor?.value,
+                                            borderRadius:
+                                                layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value != 0
+                                                    ? `${layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value}px`
+                                                    : globalComponentStyles?.Button?.borderRadius?.value != 0
+                                                        ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                                        : `${themeColors?.LocationModalSearchLocationButtonBorderRadius?.value}px`,
+                                            height: "44px",
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                                border: "none",
+                                            },
+                                            ...getSearchLocationStyles
+                                        },
+                                    }}
+                                />
+                            </Box>
 
-                        {states.value?.length > 0 && states.data?.length > 0 && (
-                            <SearchMenuList
-                                data={states.data}
-                                actions={actions}
-                                onSelect={(e) => actions?.handleSelect(e)}
-                                themeColors={themeColors}
-                                layout={layout}
-                                globalComponentStyles={globalComponentStyles}
-                            />
-                        )}
-                    </>
-                )
+                            {states.value?.length > 0 && states.data?.length > 0 && (
+                                <SearchMenuList
+                                    data={states.data}
+                                    actions={actions}
+                                    onSelect={(e) => actions?.handleSelect(e)}
+                                    themeColors={themeColors}
+                                    layout={layout}
+                                    globalComponentStyles={globalComponentStyles}
+                                />
+                            )}
+                        </>
+                    ) : (states?.orderType === "storeDelivery" && states?.franchise?.configurations?.isRegionBasedDeliveryOnStore) ? (
+                        <>
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mb: 1,
+                                }}
+                            >
+                                <TextField
+                                    placeholder="Lahore"
+                                    variant="outlined"
+                                    value={states?.value}
+                                    autoComplete="off"
+                                    fullWidth
+                                    disabled
+                                    InputProps={{
+                                        sx: {
+                                            backgroundColor:
+                                                layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value !== ""
+                                                    ? layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value
+                                                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                                                        ? globalComponentStyles?.Button?.backgroundColor?.value
+                                                        : themeColors?.LocationModalSearchLocationButtonBackgroundColor?.value,
+                                            borderRadius:
+                                                layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value != 0
+                                                    ? `${layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value}px`
+                                                    : globalComponentStyles?.Button?.borderRadius?.value != 0
+                                                        ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                                        : `${themeColors?.LocationModalSearchLocationButtonBorderRadius?.value}px`,
+                                            height: "44px",
+                                            "& .MuiOutlinedInput-notchedOutline": {
+                                                border: "none",
+                                            },
+                                            ...getSearchLocationStyles
+                                        },
+                                    }}
+                                />
+                            </Box>
+
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mb: 1,
+                                }}
+                            >
+                                <Autocomplete
+                                    fullWidth
+                                    options={uniqueVenues}
+                                    getOptionLabel={(option) => option?.name || ""}
+                                    value={states?.selectedRegion || null}
+                                    onChange={(event, newValue) => actions?.handleSelectRegion(newValue)}
+                                    noOptionsText="No options found"
+                                    popupIcon={null} // hide default chevron
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            placeholder="Select Area / Sub Region"
+                                            variant="outlined"
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                endAdornment: (
+                                                    <InputAdornment
+                                                        sx={{
+                                                            position: "absolute",
+                                                            right: 8,
+                                                            pointerEvents: "none",
+                                                        }}>
+                                                        <ArrowDropDownIcon sx={{ ...getSearchLocationIconStyles }} />
+
+                                                    </InputAdornment>
+                                                ),
+                                                sx: {
+                                                    backgroundColor:
+                                                        layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value !== ""
+                                                            ? layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBackgroundColor?.value
+                                                            : globalComponentStyles?.Button?.backgroundColor?.value !== ""
+                                                                ? globalComponentStyles?.Button?.backgroundColor?.value
+                                                                : themeColors?.LocationModalSearchLocationButtonBackgroundColor?.value,
+                                                    borderRadius:
+                                                        layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value !== 0
+                                                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalSearchLocationButtonBorderRadius?.value}px`
+                                                            : globalComponentStyles?.Button?.borderRadius?.value !== 0
+                                                                ? `${globalComponentStyles?.Button?.borderRadius?.value}px`
+                                                                : `${themeColors?.LocationModalSearchLocationButtonBorderRadius?.value}px`,
+                                                    height: "44px",
+                                                    "& .MuiOutlinedInput-notchedOutline": {
+                                                        border: "none",
+                                                    },
+                                                    ...getSearchLocationStyles,
+                                                },
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </Box>
+                        </>
+                    ) : null
             }
 
             {
-                states?.orderType === "storeDelivery" && (<Box
+                (states?.orderType === "storeDelivery" && !states?.franchise?.configurations?.isRegionBasedDeliveryOnStore) && (<Box
                     onClick={() => states?.setRefineModalOpen(true)}
                     sx={{
                         display: "flex",
@@ -823,7 +997,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
 
             {
-                states?.currentLocation && states?.orderType === "storeDelivery" && <Box
+                states?.currentLocation && states?.orderType === "storeDelivery" && !states?.franchise?.configurations?.isRegionBasedDeliveryOnStore && <Box
                     sx={{
                         // backgroundColor: "#f9f9f9",
                         p: 2,
@@ -856,9 +1030,11 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             {
                 states?.orderType === 'storeDelivery' &&
                 <>
-                    <Button
+                    <LoadingButton
                         fullWidth
                         onClick={handleSelectedLocation}
+                        loading={isConfirmingLocation}
+                        loadingIndicator={<CircularProgress color="inherit" size={22} />}
                         sx={{
                             py: 1.5,
                             textTransform: "none",
@@ -869,10 +1045,10 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             },
                             ...getSelectButtonStyles
                         }}
-                        disabled={!previewMode && !states.currentLocation}
+                        disabled={!previewMode && !states.currentLocation && !states?.selectedRegion?.name}
                     >
                         Confirm Selection
-                    </Button>
+                    </LoadingButton>
                     {states?.noVenueFound && (
                         <Typography
                             variant="body2"

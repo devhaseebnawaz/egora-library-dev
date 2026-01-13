@@ -12,7 +12,7 @@ import {
   IconButton
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import {  getScreenSizeCategory } from '../../../utils/fontsize';
+import { getScreenSizeCategory } from "../../../utils/fontsize";
 import * as Yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -51,6 +51,7 @@ export default function CustomerInfoModal({
   const {
     handleSubmit,
     formState: { isValid, isSubmitting },
+    setError
   } = methods;
 
     const handleClose = () => {
@@ -74,11 +75,17 @@ export default function CustomerInfoModal({
         }
          handleClose();
       } else {
-        console.log("Customer not found for phone:", values.phone);
-        onClose();
+        setError("phone", {
+          type: "manual",
+          message: "No customer found with this phone number",
+        });
       }
     } catch (error) {
       console.error("Error fetching customer info:", error);
+      setError("phone", {
+        type: "manual",
+        message: "Something went wrong. Please try again.",
+      });
     }
   };
 
@@ -383,7 +390,7 @@ export default function CustomerInfoModal({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          height: "30vh",
+          height: "40vh",
           backgroundColor:
             themeColors?.CustomerInfoModalBackgroundColor ||
             styles?.CustomerInfoModalBackgroundColor ||
@@ -394,7 +401,7 @@ export default function CustomerInfoModal({
           border: "2px solid #e0e0e0",
           width: "50%",
           margin: "auto",
-          mt: 20,
+          mt: 14,
         }}
       >
         {content}

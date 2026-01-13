@@ -296,8 +296,8 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
     backgroundColor:
       layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value !== ""
         ? layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value
-        : globalComponentStyles?.Button?.fontStyle?.value != ""
-          ? globalComponentStyles?.Button?.fontStyle?.value
+        : globalComponentStyles?.Button?.backgroundColor?.value != ""
+          ? globalComponentStyles?.Button?.backgroundColor?.value
           : themeColors?.reviewPageSubmitButtonBackgroundColor?.value,
     borderRadius:
       layout?.reviewLayout?.body[0].styles?.reviewPageSubmitBorderRadius?.value != ""
@@ -564,26 +564,7 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
         ? `${layout?.reviewLayout?.body[0].styles?.reviewPageImageBorderRadius?.value}px`
         : `${themeColors?.reviewPageImageBorderRadius?.value}px`,
   };
- 
-  const getItemImageStyles = {
-    width: layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value != ""
-      ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value
-      : themeColors?.reviewPageItemImageHeightWidth?.value,
-
-    height: layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value != ""
-      ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value
-      : themeColors?.reviewPageItemImageHeightWidth?.value,
-
-    backgroundColor: layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBackgroundColor?.value
-      ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBackgroundColor?.value
-      : themeColors?.reviewPageItemImageBackgroundColor?.value,
-
-    borderRadius:
-      layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBorderRadius?.value != ""
-        ? `${layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBorderRadius?.value}px`
-        : `${themeColors?.reviewPageItemImageBorderRadius?.value}px`,
-  };
-
+  
   const [ratings, setRatings] = useState({
     ambiance: 0,
     waitTime: 0,
@@ -782,7 +763,23 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
             size="large"
             type="submit"
             variant="contained"
-            sx={{ mt: 3, ...getGoHomeButtonStyles }}
+            sx={{
+              mt: 3, ...getGoHomeButtonStyles,
+              '&:hover': {
+                backgroundColor:
+                  layout?.reviewLayout?.body[0].styles?.reviewPageHomeButtonBackgroundColor?.value !== ""
+                    ? layout?.reviewLayout?.body[0].styles?.reviewPageHomeButtonBackgroundColor?.value
+                    : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                      ? globalComponentStyles?.Button?.backgroundColor?.value
+                      : themeColors?.reviewPageHomeButtonBackgroundColor?.value,
+                color:
+                  layout?.reviewLayout?.body[0].styles?.reviewPageHomeTextColor?.value !== ""
+                    ? `${layout?.reviewLayout?.body[0].styles?.reviewPageHomeTextColor?.value}`
+                    : globalComponentStyles?.Button?.color?.value != ""
+                      ? globalComponentStyles?.Button?.color?.value
+                      : `${themeColors?.reviewPageHomeTextColor?.value}`
+              }
+            }}
           >
             Go to Home
           </LoadingButton>
@@ -802,15 +799,31 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
 
           {
             <>
-              <Box sx={{ display: "flex", alignItems: "flex-start", gap: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "center", justifyContent:"center", gap: 2 }}>
                 <UniversalImage
                   src={
-                    venueImageURL ? venueImageURL : "/assets/placeholder.png"
+                    states?.orderData?.venueId?.photoURL
+                      ? `${states.storeImagesBaseUrl}/${states?.orderData?.venueId?.photoURL}`
+                      : "/assets/placeholder.png"
                   }
                   alt={"Venue Image"}
-                  style={{
-                    ...getMainImageStyles
-                  }}
+                  height={
+                    layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageHeightWidth?.value != 0
+                      ? layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageHeightWidth?.value
+                      : themeColors?.reviewPageVenueImageHeightWidth?.value
+                  }
+                  width={layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageHeightWidth?.value != 0
+                    ? layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageHeightWidth?.value
+                    : themeColors?.reviewPageVenueImageHeightWidth?.value}
+                  backgroundColor={layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageBackgroundColor?.value
+                    ? layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageBackgroundColor?.value
+                    : themeColors?.reviewPageVenueImageBackgroundColor?.value}
+
+                  borderRadius={
+                    layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageBorderRadius?.value != 0
+                      ? `${layout?.reviewLayout?.body[0].styles?.reviewPageVenueImageBorderRadius?.value}px`
+                      : `${themeColors?.reviewPageVenueImageBorderRadius?.value}px`}
+
                 />
                 <Box>
                   <Typography sx={{ ...venueNameTextStyles }}
@@ -872,8 +885,11 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                     onChange={() => setItemWiseReview(!itemWiseReview)}
                     sx={{
                       '& .MuiSwitch-switchBase.Mui-checked': {
-                        color: layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value || themeColors?.reviewEachItemToggleColor?.value,
-                      }
+                        color: layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value !="" ? layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value : themeColors?.reviewEachItemToggleColor?.value,
+                        '& + .MuiSwitch-track': {
+                          backgroundColor: layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value != "" ? layout?.reviewLayout?.body[0].styles?.reviewEachItemToggleColor?.value : themeColors?.reviewEachItemToggleColor?.value,
+                        },
+                      },
                     }}
                   />
                 </Box>
@@ -900,14 +916,27 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                         >
                           <UniversalImage
                             src={
-                              imageURLs[index]
-                                ? imageURLs[index]
-                                : "/assets/placeholder.png"
+                              item?.photoURL
+                              ? `${states.storeImagesBaseUrl}/${item.photoURL}`
+                              : "/assets/placeholder.png"
                             }
                             alt={"Item Image"}
-                            style={{
-                              ...getItemImageStyles
-                            }}
+                            height={
+                              layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value != 0
+                                ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value
+                                : themeColors?.reviewPageItemImageHeightWidth?.value
+                            }
+                            width={layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value != 0
+                              ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageHeightWidth?.value
+                              : themeColors?.reviewPageItemImageHeightWidth?.value}
+                            backgroundColor={layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBackgroundColor?.value
+                              ? layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBackgroundColor?.value
+                              : themeColors?.reviewPageItemImageBackgroundColor?.value}
+
+                            borderRadius={
+                              layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBorderRadius?.value != 0
+                                ? `${layout?.reviewLayout?.body[0].styles?.reviewPageItemImageBorderRadius?.value}px`
+                                : `${themeColors?.reviewPageItemImageBorderRadius?.value}px`}
                           />
                           <Box>
                             <Typography sx={{ ...itemNameTextStyles }}>
@@ -1052,7 +1081,21 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                   sx={{
                     width: "100%",
                     height: "40px",
-                    ...getSubmitButtonStyles
+                    ...getSubmitButtonStyles,
+                    '&:hover': {
+                      backgroundColor:
+                        layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value !== ""
+                          ? layout?.reviewLayout?.body[0].styles?.reviewPageSubmitButtonBackgroundColor?.value
+                          : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                            ? globalComponentStyles?.Button?.backgroundColor?.value
+                            : themeColors?.reviewPageSubmitButtonBackgroundColor?.value,
+                      color:
+                        layout?.reviewLayout?.body[0].styles?.reviewPageSubmitTextColor?.value !== ""
+                          ? `${layout?.reviewLayout?.body[0].styles?.reviewPageSubmitTextColor?.value}`
+                          : globalComponentStyles?.Button?.color?.value != ""
+                            ? globalComponentStyles?.Button?.color?.value
+                            : `${themeColors?.reviewPageSubmitTextColor?.value}`
+                    }
                   }}
                 >
                   Submit

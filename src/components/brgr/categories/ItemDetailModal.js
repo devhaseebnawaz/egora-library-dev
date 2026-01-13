@@ -362,6 +362,26 @@ export default function ItemDetailModal({
 
   }, [choiceGroups, states.itemForDetailedModal, selectedVariant]);
 
+  const calculateTotalPrice = () => {
+    const basePrice = selectedVariant
+      ? parseFloat(selectedVariant.price)
+      : parseFloat(states.itemForDetailedModal?.price);
+    const addOnPrices = (states.itemForDetailedModal?.addOns || []).reduce((total, addon) => {
+      const addonPrice = parseFloat(addon.price.replace("Rs. ", ""));
+      return total + addonPrice;
+    }, 0);
+
+    let saucePrices = 0;
+    if (selectedSauces?.items?.length > 0) {
+      saucePrices = selectedSauces.items
+        .map((sauce) => sauce.items)
+        .flat()
+        .reduce((total, item) => total + parseFloat(item.price), 0);
+    }
+    const calTotalPrice = (basePrice + addOnPrices + saucePrices) * quantity;
+    return `Rs. ${fNumber(calTotalPrice)}`;
+  };
+
 
   const toggleSauce = (elem, sauce) => {
 

@@ -3,6 +3,9 @@ import { Typography, Box, Link, IconButton , Container} from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 
 export default function CustomFooterV2({
@@ -17,31 +20,70 @@ export default function CustomFooterV2({
 }) {
   const footerPhone = prop?.editable?.footerPhone?.value;
   const footerEmail = prop?.editable?.footerEmail?.value;
+  const linksArray = prop?.editable?.link?.value || [];
+  const schedule = prop?.editable?.openingTimings?.value || [];
+  const socialLinks = prop?.editable?.socialLinks?.value || [];
 
   const [isShort, setIsShort] = useState(false);
 
   const getFooterStyles = (type) => ({
     fontWeight:
-      styles?.[type + "Weight"]?.value ||
+      styles?.[type + "WeightV2"]?.value ||
       globalComponentStyles?.Text?.fontWeight?.value ||
-      themeColors?.[type + "Weight"]?.value,
+      themeColors?.[type + "WeightV2"]?.value,
     color:
-      styles?.[type + "Color"]?.value ||
+      styles?.[type + "ColorV2"]?.value ||
       globalComponentStyles?.Text?.color?.value ||
-      themeColors?.[type + "Color"]?.value,
+      themeColors?.[type + "ColorV2"]?.value,
     fontSize:
-      styles?.[type + "Size"]?.value[getScreenSizeCategory()] ||
+      styles?.[type + "SizeV2"]?.value[getScreenSizeCategory()] ||
       globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] ||
-      themeColors?.[type + "Size"]?.value[getScreenSizeCategory()],
+      themeColors?.[type + "SizeV2"]?.value[getScreenSizeCategory()],
     fontFamily:
-      styles?.[type + "Font"]?.value ||
+      styles?.[type + "FontV2"]?.value ||
       globalComponentStyles?.Text?.fontFamily?.value ||
-      themeColors?.[type + "Font"]?.value,
+      themeColors?.[type + "FontV2"]?.value,
     fontStyle:
-      styles?.[type + "Style"]?.value ||
+      styles?.[type + "StyleV2"]?.value ||
       globalComponentStyles?.Text?.fontStyle?.value ||
-      themeColors?.[type + "Style"]?.value,
+      themeColors?.[type + "StyleV2"]?.value,
   });
+  
+  const getImageStyles = () => {
+    const screen = getScreenSizeCategory();
+    let size =
+      styles?.FooterImageHeightWidthV2?.value != 0
+        ? styles?.FooterImageHeightWidthV2?.value
+          : themeColors?.FooterImageHeightWidthV2?.value;
+
+    size = size > 500 ? 500 : size;
+
+    const borderRadius =
+      styles?.FooterImageBorderRadiusV2?.value !== ""
+        ? `${styles?.FooterImageBorderRadiusV2?.value}px`
+          : `${themeColors?.FooterImageBorderRadiusV2?.value}px`;
+    return {
+      height: size,
+      width: size,
+      borderRadius,
+    };
+  };
+
+   const getFollowUsIconStyles = () => {
+    let size =
+      styles?.FooterFollowUsIconHeightWidthV2?.value != 0
+        ? styles?.FooterFollowUsIconHeightWidthV2?.value
+          : themeColors?.FooterFollowUsIconHeightWidthV2?.value;
+    const color =
+      styles?.FooterFollowUsIconColorV2?.value !== ""
+        ? styles?.FooterFollowUsIconColorV2?.value
+          : themeColors?.FooterFollowUsIconColorV2?.value;
+    return {
+      height: size,
+      width: size,
+      color,
+    };
+  };
 
   useEffect(() => {
     const checkHeight = () => {

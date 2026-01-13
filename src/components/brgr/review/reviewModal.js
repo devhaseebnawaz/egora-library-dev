@@ -16,10 +16,55 @@ import Iconify from '../iconify';
 import { getIconWidthHeight, getScreenSizeCategory } from '../../../utils/fontsize';
 
 const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyles, themeColors, actions }) => {
-    console.log("previewMode ReviewModal", previewMode)
     const goToOrder = () => {
         const orderId = states?.orderData?.id;
         actions.naviagateReviewPage(`${orderId}`)
+    };
+
+    const getCloseButtonStyles = {
+        color:
+            layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextColor?.value !== ""
+                ? `${layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextColor?.value}`
+                : globalComponentStyles?.Button?.color?.value != ""
+                    ? globalComponentStyles?.Button?.color?.value
+                    : `${themeColors?.reviewModalCloseButtonTextColor?.value}`,
+        fontSize:
+            layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextSize?.value[getScreenSizeCategory()] != 0
+                ? layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextSize?.value[getScreenSizeCategory()]
+                : globalComponentStyles?.Button?.size?.value[getScreenSizeCategory()] != 0
+                    ? globalComponentStyles?.Button?.size?.value[getScreenSizeCategory()]
+                    : themeColors?.reviewModalCloseButtonTextSize?.value[getScreenSizeCategory()],
+        fontWeight:
+            layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextWeight?.value != ""
+                ? layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextWeight?.value
+                : globalComponentStyles?.Button?.fontWeight?.value != ""
+                    ? globalComponentStyles?.Button?.fontWeight?.value
+                    : themeColors?.reviewModalCloseButtonTextWeight?.value,
+        fontFamily:
+            layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextFont?.value != ""
+                ? layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextFont?.value
+                : globalComponentStyles?.Button?.fontFamily?.value != ""
+                    ? globalComponentStyles?.Button?.fontFamily?.value
+                    : themeColors?.reviewModalCloseButtonTextFont?.value,
+        fontStyle:
+            layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextStyle?.value !== ""
+                ? layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonTextStyle?.value
+                : globalComponentStyles?.Button?.fontStyle?.value != ""
+                    ? globalComponentStyles?.Button?.fontStyle?.value
+                    : themeColors?.reviewModalCloseButtonTextStyle?.value,
+        backgroundColor:
+            layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonBackgroundColor?.value !== ""
+                ? layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonBackgroundColor?.value
+                : globalComponentStyles?.Button?.backgroundColor?.value != ""
+                    ? globalComponentStyles?.Button?.backgroundColor?.value
+                    : themeColors?.reviewModalCloseButtonBackgroundColor?.value,
+        borderRadius:
+            layout?.reviewModalLayout?.body[0].styles?.revieModalCloseButtontBorderRadius?.value != ""
+                ? `${layout?.reviewModalLayout?.body[0].styles?.revieModalCloseButtontBorderRadius?.value}px`
+                : `${themeColors?.revieModalCloseButtontBorderRadius?.value}px`,
+        border: `2px solid ${layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonBorderColor?.value != ""
+        ? layout?.reviewModalLayout?.body[0].styles?.reviewModalCloseButtonBorderColor?.value 
+        : themeColors?.reviewModalCloseButtonBorderColor?.value}`
     };
 
     const orderCompletedStyles = {
@@ -133,7 +178,7 @@ const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyle
                 )}
                 {state === "completed" && (
                     <>
-                        <Typography variant="h6" component="h2" sx={{ mb: 2, ...orderCompletedStyles }}>
+                        <Typography variant="h6" component="h2" sx={{ mb: 2, ...orderCompletedStyles, mt:2 }}>
                             Your order has been completed.
                         </Typography>
                         <MuiLink
@@ -178,11 +223,26 @@ const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyle
                             borderRadius: 2,
                             boxShadow: 24,
                             p: 4,
+                            pt:7,
                             textAlign: "center",
                             backgroundColor: layout?.reviewModalLayout?.body[0].styles?.reviewModalBackgroundColor?.value || themeColors?.reviewModalBackgroundColor?.value
                         }}
                     >
                         {renderOrderContent()}
+
+                        <Button
+                            onClick={() => { states.setOpenReviewModal(false) }}
+                            variant="outlined"
+                            sx={{
+                                textTransform: 'none',
+                                ...getCloseButtonStyles,
+                                '&:hover': {
+                                    ...getCloseButtonStyles
+                                }
+                            }}
+                        >
+                            Close
+                        </Button>
                     </Box>
                 </Box>
                 </>
@@ -224,13 +284,10 @@ const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyle
                             onClick={()=>{ states.setOpenReviewModal(false) }}
                             variant="outlined"
                             sx={{
-                                borderColor: '#fca92e',
-                                color: '#fca92e',
                                 textTransform: 'none',
+                                ...getCloseButtonStyles,
                                 '&:hover': {
-                                    backgroundColor: 'transparent',
-                                    borderColor: '#fca92e',
-                                    opacity: 0.8,
+                                    ...getCloseButtonStyles
                                 }
                             }}
                         >
@@ -238,12 +295,9 @@ const ReviewModal = ({ states, previewMode = false, layout, globalComponentStyle
                         </Button>
                     </DialogActions>
                 </Dialog>
-
-
             )}
         </>
     );
-
 };
 
 

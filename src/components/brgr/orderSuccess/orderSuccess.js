@@ -566,6 +566,39 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                 : `${themeColors?.OrderSuccessCallUsTextStyle?.value}`,
     };
 
+     const getViewLocationtyles = {
+        color:
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessViewLocationTextColor?.value !== ""
+                ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessViewLocationTextColor?.value}`
+                : globalComponentStyles?.Text?.color?.value != ""
+                    ? globalComponentStyles?.Text?.color?.value
+                    : `${themeColors?.OrderSuccessViewLocationTextColor?.value}`,
+        fontSize:
+            layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessViewLocationTextSize?.value[getScreenSizeCategory()] != 0
+                ? layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessViewLocationTextSize?.value[getScreenSizeCategory()]
+                : globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()] != 0
+                    ? globalComponentStyles?.Text?.size?.value[getScreenSizeCategory()]
+                    : themeColors?.OrderSuccessViewLocationTextSize?.value[getScreenSizeCategory()],
+        fontWeight:
+            layout?.orderSuccessLayout?.body[0].styles?.CartCheckoutSummaryViewLocationTextWeight?.value != ""
+                ? layout?.orderSuccessLayout?.body[0].styles?.CartCheckoutSummaryViewLocationTextWeight?.value
+                : globalComponentStyles?.Text?.fontWeight?.value != ""
+                    ? globalComponentStyles?.Text?.fontWeight?.value
+                    : themeColors?.CartCheckoutSummaryViewLocationTextWeight?.value,
+
+        fontFamily: layout?.orderSuccessLayout?.body[0].styles?.CartCheckoutSummaryViewLocationTextFont?.value != ""
+            ? `${layout?.orderSuccessLayout?.body[0].styles?.CartCheckoutSummaryViewLocationTextFont?.value}`
+            : globalComponentStyles?.Text?.fontFamily?.value != ""
+                ? globalComponentStyles?.Text?.fontFamily?.value
+                : `${themeColors?.CartCheckoutSummaryViewLocationTextFont?.value}`,
+
+        fontStyle: layout?.orderSuccessLayout?.body[0].styles?.CartCheckoutSummaryViewLocationTextStyle?.value !== ""
+            ? `${layout?.orderSuccessLayout?.body[0].styles?.CartCheckoutSummaryViewLocationTextStyle?.value}`
+            : globalComponentStyles?.Text?.fontWeight?.value != ""
+                ? globalComponentStyles?.Text?.fontWeight?.value
+                : `${themeColors?.CartCheckoutSummaryViewLocationTextStyle?.value}`,
+    };
+    
     const getInquiryStyles = {
         color:
             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessInquiryTextColor?.value !== ""
@@ -722,6 +755,9 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
         noShow: {
             storePickUp: "Your pickup order was canceled after being prepared",
             storeDelivery: "Your delivery order was canceled while being served"
+        },
+        delivered: {
+            storeDelivery: "Your delivery order is on the way"
         }
     };
 
@@ -856,7 +892,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                         underline="hover"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        sx={{ fontSize: 14 }}
+                                        sx={{ ...getViewLocationtyles }}
                                     >
                                         View Location 📍
                                     </Link>
@@ -922,7 +958,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                         <Divider sx={{ mt: 1.5 }} />
                                         <Stack direction="row" justifyContent="space-between" mt={1}>
                                             <Typography sx={{ ...getOrderInformationKeyStyles }}>Delivery Address</Typography>
-                                            <Typography sx={{ ...getOrderInformationValueStyles }}>{`${street} , ${area}`}</Typography>
+                                            <Typography sx={{ ...getOrderInformationValueStyles }}>{street}, {area}, Lahore</Typography>
                                         </Stack>
                                     </>
                                 )}
