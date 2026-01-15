@@ -196,8 +196,9 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         height: 170,
       }}
       onClick={() => {
-        actions.handleOpenCard();
-        states.setItemForDetailedModal(item);
+        actions.handleOpenCard(item);
+        // actions.handleOpenCard();
+        // states.setItemForDetailedModal(item);
       }}
     >
       <CardMedia
