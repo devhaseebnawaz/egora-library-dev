@@ -30,7 +30,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from '../../../utils/fontsize';
 import { fNumber } from "../../../utils/formatNumber";
-import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
+import { useCopyToClipboard } from '../../../hooks/use-copy-to-clipboard';
 import { useSnackbar } from 'src/components/snackbar';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
