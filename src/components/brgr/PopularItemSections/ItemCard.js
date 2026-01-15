@@ -117,8 +117,9 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
           },
         }}
         onClick={() => {
-          actions.handleOpenCard();
-          states.setItemForDetailedModal(item);
+          // actions.handleOpenCard();
+          // states.setItemForDetailedModal(item);
+          actions.handleOpenCard(item);
         }}
       >
         <Box
