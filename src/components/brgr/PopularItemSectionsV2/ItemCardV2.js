@@ -85,8 +85,6 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
           : themeColors?.PopularMenuSectionItemDescriptionTextStyleV2?.value,
   };
 
-
-  console.log("getItemNameStyles getItemNameStyles", themeColors)
   const getPriceTagStyles = {
     color:
       styles?.PopularMenuSectionPriceTagTextColorV2?.value !== ""
@@ -196,7 +194,7 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         height: 170,
       }}
       onClick={() => {
-        
+
         actions.handleOpenCard(item);
         // actions.handleOpenCard();
         // states.setItemForDetailedModal(item);
