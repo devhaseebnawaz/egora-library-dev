@@ -634,13 +634,9 @@ export default function ItemDetailModal({
           }}>
             {/* Share Button */}
               <IconButton
-                // onClick={sharePopover.onOpen}
-
-                 onClick={() => {
+               onClick={(e) => {
                   if (!previewMode) {
-                    {sharePopover.onOpen}
-                    // actions.handleOpenCard(null);
-                    // isItemEdit && actions?.handleItemEditClose();
+                    sharePopover.onOpen(e);
                   }
                 }}
                 style={{
