@@ -31,7 +31,6 @@ import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from '../../../utils/fontsize';
 import { fNumber } from "../../../utils/formatNumber";
 import { useCopyToClipboard } from '../../../hooks/use-copy-to-clipboard';
-import { useSnackbar } from 'src/components/snackbar';
 import CustomPopover , {usePopover} from '../../custom-popover';
 
 
@@ -242,7 +241,6 @@ export default function ItemDetailModal({
   const [quantity, setQuantity] = useState(1);
   const [notes, setNotes] = useState(states.itemForDetailedModal?.notes ? states.itemForDetailedModal?.notes : "");
   const { copy } = useCopyToClipboard();
-  const { enqueueSnackbar } = useSnackbar();
   const sharePopover = usePopover();
 
   // Share functions
@@ -256,7 +254,6 @@ export default function ItemDetailModal({
   const handleCopyLink = () => {
     const currentUrl = getCurrentUrl();
     copy(currentUrl);
-    enqueueSnackbar('Link copied to clipboard!');
     sharePopover.onClose();
   };
 
