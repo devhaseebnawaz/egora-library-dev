@@ -634,7 +634,15 @@ export default function ItemDetailModal({
           }}>
             {/* Share Button */}
               <IconButton
-                onClick={sharePopover.onOpen}
+                // onClick={sharePopover.onOpen}
+
+                 onClick={() => {
+                  if (!previewMode) {
+                    {sharePopover.onOpen}
+                    // actions.handleOpenCard(null);
+                    // isItemEdit && actions?.handleItemEditClose();
+                  }
+                }}
                 style={{
                   backgroundColor:
                     layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalShareIconBackgroundColor?.value !== ""
