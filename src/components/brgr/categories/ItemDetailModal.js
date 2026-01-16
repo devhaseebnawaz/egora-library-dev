@@ -32,7 +32,7 @@ import { getFontSize, getScreenSizeCategory } from '../../../utils/fontsize';
 import { fNumber } from "../../../utils/formatNumber";
 import { useCopyToClipboard } from '../../../hooks/use-copy-to-clipboard';
 import { useSnackbar } from 'src/components/snackbar';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import CustomPopover , {usePopover} from '../../custom-popover';
 
 
 export default function ItemDetailModal({
