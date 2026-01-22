@@ -151,9 +151,7 @@ export default function CustomFooterV2({
 
 
         <Box sx={{ display: "flex", flex: "1 1 300px", flexDirection: 'column', alignContent: "center" }}>
-            <Typography >
               <Typography sx={{ ...getFooterStyles("FooterVenueNameText") }} >{previewMode ? "Venue Name " : `${states.selectedVenue.name}`}</Typography>
-            </Typography>
             <Typography
               sx={{ display: "flex", gap: 0.5, alignItems: "center" }}
             >
@@ -163,7 +161,7 @@ export default function CustomFooterV2({
               >
                 Phone:
               </Typography>
-              <Typography sx={{ ...getFooterStyles("FooterPhoneText") }}>
+              <Typography component="span" sx={{ ...getFooterStyles("FooterPhoneText") }}>
                 {/* {previewMode
                   ? "000-111-222"
                   : footerPhone || states.selectedVenue.pointOfContactNumber} */}
@@ -181,7 +179,7 @@ export default function CustomFooterV2({
                 Email:
               </Typography>
               {/* < Typography sx={{ ...getFooterStyles("FooterEmailText") }}> {previewMode ? "info@example.com" : `${states.selectedVenue.ownerEmail}`}</Typography> */}
-              <Typography sx={{ ...getFooterStyles("FooterEmailText") }}>
+              <Typography component="span" sx={{ ...getFooterStyles("FooterEmailText") }}>
                 {/* {previewMode
                   ? "info@example.com"
                   : footerEmail || states.selectedVenue.ownerEmail} */}
@@ -201,7 +199,7 @@ export default function CustomFooterV2({
                 Address:
               </Typography>
 
-              < Typography sx={{ ...getFooterStyles("FooterAddressText") }}> {previewMode ? "Dummy Plaza, Block A, Dummy City" : `${states.selectedVenue.venueAddressOne} ${states.selectedVenue.venueAddressTwo}`}</Typography>
+              <Typography component="span" sx={{ ...getFooterStyles("FooterAddressText") }}> {previewMode ? "Dummy Plaza, Block A, Dummy City" : `${states.selectedVenue.venueAddressOne} ${states.selectedVenue.venueAddressTwo}`}</Typography>
 
             </Typography>
 
