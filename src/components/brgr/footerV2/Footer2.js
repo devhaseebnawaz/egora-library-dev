@@ -7,6 +7,7 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
+import UniversalImage from "../../../UniversalImage";
 
 export default function CustomFooterV2({
   themeColors,
@@ -62,6 +63,26 @@ export default function CustomFooterV2({
       styles?.FooterImageBorderRadiusV2?.value !== ""
         ? `${styles?.FooterImageBorderRadiusV2?.value}px`
           : `${themeColors?.FooterImageBorderRadiusV2?.value}px`;
+    return {
+      height: size,
+      width: size,
+      borderRadius,
+    };
+  };
+
+  const getImageStylesForCusomIcons = () => {
+    const screen = getScreenSizeCategory();
+    let size =
+      styles?.FooterImageHeightWidthCustomIconV2?.value != 0
+        ? styles?.FooterImageHeightWidthCustomIconV2?.value
+        : themeColors?.FooterImageHeightWidthCustomIconV2?.value;
+
+    size = size > 500 ? 500 : size;
+
+    const borderRadius =
+      styles?.FooterImageBorderRadiusCustomIconV2?.value !== ""
+        ? `${styles?.FooterImageBorderRadiusCustomIconV2?.value}px`
+        : `${themeColors?.FooterImageBorderRadiusCustomIconV2?.value}px`;
     return {
       height: size,
       width: size,
@@ -151,9 +172,7 @@ export default function CustomFooterV2({
 
 
         <Box sx={{ display: "flex", flex: "1 1 300px", flexDirection: 'column', alignContent: "center" }}>
-            <Typography >
               <Typography sx={{ ...getFooterStyles("FooterVenueNameText") }} >{previewMode ? "Venue Name " : `${states.selectedVenue.name}`}</Typography>
-            </Typography>
             <Typography
               sx={{ display: "flex", gap: 0.5, alignItems: "center" }}
             >
@@ -163,7 +182,7 @@ export default function CustomFooterV2({
               >
                 Phone:
               </Typography>
-              <Typography sx={{ ...getFooterStyles("FooterPhoneText") }}>
+              <Typography component="span" sx={{ ...getFooterStyles("FooterPhoneText") }}>
                 {/* {previewMode
                   ? "000-111-222"
                   : footerPhone || states.selectedVenue.pointOfContactNumber} */}
@@ -181,7 +200,7 @@ export default function CustomFooterV2({
                 Email:
               </Typography>
               {/* < Typography sx={{ ...getFooterStyles("FooterEmailText") }}> {previewMode ? "info@example.com" : `${states.selectedVenue.ownerEmail}`}</Typography> */}
-              <Typography sx={{ ...getFooterStyles("FooterEmailText") }}>
+              <Typography component="span" sx={{ ...getFooterStyles("FooterEmailText") }}>
                 {/* {previewMode
                   ? "info@example.com"
                   : footerEmail || states.selectedVenue.ownerEmail} */}
@@ -201,7 +220,7 @@ export default function CustomFooterV2({
                 Address:
               </Typography>
 
-              < Typography sx={{ ...getFooterStyles("FooterAddressText") }}> {previewMode ? "Dummy Plaza, Block A, Dummy City" : `${states.selectedVenue.venueAddressOne} ${states.selectedVenue.venueAddressTwo}`}</Typography>
+              <Typography component="span" sx={{ ...getFooterStyles("FooterAddressText") }}> {previewMode ? "Dummy Plaza, Block A, Dummy City" : `${states.selectedVenue.venueAddressOne} ${states.selectedVenue.venueAddressTwo}`}</Typography>
 
             </Typography>
 
@@ -232,45 +251,52 @@ export default function CustomFooterV2({
               </Box>
             ))}
           </Box>
-
-        <Box mt={2}>
-            <Typography sx={{ ...getFooterStyles("FooterFollowUsText") }}>
-              Follow Us:
-            </Typography>
-            <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
-              {socialLinks.map(({ name, url }, index) => {
-                let icon = ""
-                if(name == "Facebook"){
-                  icon = <FacebookIcon />
-                } else if (name == "Instagram"){
-                  icon =  <InstagramIcon />
-                } else if(name == "LinkedIn"){
-                  icon =  <LinkedInIcon />
-                } else if(name == "WhatsApp"){
-                  icon =  <WhatsAppIcon />
-                } else if(name == "Twitter"){
-                  icon =  <TwitterIcon />
-                } else if(name == "SanpChat"){
-                  icon =  <CameraAltIcon />
-                } 
-
-                return (
-                  <IconButton
-                    key={`Footer2-${index}`}
-                    size="small"
-                    component="a"
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={name}
-                    sx={{ ...getFollowUsIconStyles(), ml: 1 }}
-                  >
-                    {icon}
-                  </IconButton>
-              )})}
+          <Box mt={2}>
+              <Typography sx={{ ...getFooterStyles("FooterFollowUsText") }}>
+                Follow Us:
+              </Typography>
+              <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
+                {socialLinks.map(({ name, url, addCustomIcon, customIcon }, index) => {
+                  if (addCustomIcon && customIcon) {
+                    return (
+                        <UniversalImage
+                          src={customIcon}
+                          alt="Custom Icon"
+                          layout="fill"
+                          // objectFit="contain"
+                          onError={() => console.log("Image failed to load")}
+                          width="1em"
+                          height="1em"
+                          style={{ ...getImageStylesForCusomIcons() }}
+                        />
+                    );
+                  }
+                 let icon = null;
+                  if (!addCustomIcon) {
+                    if (name === "Facebook") icon = <FacebookIcon />;
+                    else if (name === "Instagram") icon = <InstagramIcon />;
+                    else if (name === "LinkedIn") icon = <LinkedInIcon />;
+                    else if (name === "WhatsApp") icon = <WhatsAppIcon />;
+                    else if (name === "Twitter") icon = <TwitterIcon />;
+                    else if (name === "SanpChat") icon = <CameraAltIcon />;
+                  }
+                  return !addCustomIcon ? (
+                    <IconButton
+                      key={`Footer2-${index}`}
+                      size="small"
+                      component="a"
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={name}
+                      sx={{ ...getFollowUsIconStyles(), ml: 1 }}
+                    >
+                      {icon}
+                    </IconButton>
+                  ) : null;
+                })}
+              </Box>
             </Box>
-          </Box>
-
           <Box mt={2} sx={{ display: "flex", gap: 2 }}>
             {linksArray.map((link, index) => (
               <React.Fragment key={index}>
