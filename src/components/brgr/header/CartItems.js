@@ -166,7 +166,7 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
                                         // onClick={() => handleMenuItemClick(cartItem)}
                                         onClick={() => {
                                             if (!previewMode) {
-                                                // actions.handleOpenCard(); actions.handleItemEditOpen(), states.setItemForDetailedModal(cartItem)
+                                                actions.handleOpenCard(cartItem); actions.handleItemEditOpen(), states.setItemForDetailedModal(cartItem)
                                             }
                                         }}
                                         sx={{

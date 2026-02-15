@@ -167,8 +167,9 @@ export default function ItemCard({
           },
         }}
         onClick={() => {
-          actions.handleOpenCard();
-          states.setItemForDetailedModal(item);
+          // actions.handleOpenCard();
+          // states.setItemForDetailedModal(item);
+          actions.handleOpenCard(item);
         }}
       >
         <CardMedia
