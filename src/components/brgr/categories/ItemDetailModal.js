@@ -614,7 +614,7 @@ const handleShare = (type) => {
         <Box
           style={{
             display: 'flex',
-            alignItems: mdDown ? "" :'center',
+            alignItems: mdDown ? "flex-start" :'center',
             justifyContent: 'space-between',
             position: "sticky",
             top: 0,
