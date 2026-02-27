@@ -11,7 +11,6 @@ import { getScreenSizeCategory, getIconWidthHeight } from '../../../utils/fontsi
 import ReviewModal from "../review/reviewModal";
 
 export default function OrderSuccessPage({ open, onClose, themeColors, actions, prop, styles, states, globalComponentStyles, layout }) {
-    console.log("states.openReviewModal  ::", states.openReviewModal )
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const { orderData } = states ?? {}
@@ -21,7 +20,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
     const { street, area } = address ?? {}
     const redirectHome = () => {
         const baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
-        const urlsToAppendId = ["http://localhost:3031", "http://stores.dev.egora.pk", "http://stores.stg.egora.pk", "http://stores.test.egora.pk", "http://stores.egora.pk"];
+        const urlsToAppendId = ["http://localhost:3031", "https://stores.dev.egora.pk", "https://stores.stg.egora.pk", "https://stores.test.egora.pk", "https://stores.egora.pk"];
         if (urlsToAppendId.includes(baseUrl)) {
             actions.navigateToHome(`${baseUrl}/?${franchiseId.id}`)
         } else {

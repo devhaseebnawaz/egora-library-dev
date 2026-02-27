@@ -178,11 +178,14 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
                                                 whiteSpace: "nowrap",
                                                 overflow: "hidden",
                                                 textOverflow: "ellipsis",
-                                                width: "210px"
+                                                width: "150px"
                                             },
 
-                                            "@media (max-width: 330px)": {
-                                                maxWidth: "100px",
+                                            "@media (max-width: 400px)": {
+                                                maxWidth: "110px",
+                                            },
+                                            "@media (max-width: 320px)": {
+                                                maxWidth: "90px",
                                             },
                                             ...getItemNameStyles
                                         }}
