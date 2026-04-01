@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Box, Card, Stack, Typography, CardContent,
 } from "@mui/material";
-import { fNumber, fNumberRound, formatTo2 } from "../utils/formatNumber";
+import { fNumber, fNumberRound, formatTo2 } from "../../../utils/formatNumber";
 import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
 
 const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, setOrderData, getDescriptionStyles, getHeadingStyles, getOrderHeadingStyles, checkoutTotalSummaryBackground }) => {
