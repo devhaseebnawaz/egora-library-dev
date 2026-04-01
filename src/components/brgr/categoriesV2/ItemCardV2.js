@@ -13,7 +13,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
-import { getStoreDisplayPrice } from "../utils/formatNumber";
+import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 
 
 export default function ItemCardV2({

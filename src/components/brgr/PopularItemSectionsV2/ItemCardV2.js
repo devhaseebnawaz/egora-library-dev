@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
-import { getStoreDisplayPrice } from "../utils/formatNumber";
+import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 

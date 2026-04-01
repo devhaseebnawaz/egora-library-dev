@@ -16,7 +16,7 @@ import { useState } from "react";
 // import { useSelector, useDispatch } from "react-redux";
 // import { updateItemsToCard,} from "src/redux/slices/cardSlice";
 // import useSession from "src/utils/useSession";
-import { fNumber , formatTo2} from "../utils/formatNumber";
+import { fNumber , formatTo2} from "../../../utils/formatNumber";
 // import { fetchImage } from "src/utils/fetchImage";
 // import capitalizeWords from "src/utils/capitalizeWords";
 
