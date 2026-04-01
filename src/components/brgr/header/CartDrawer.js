@@ -14,7 +14,7 @@ import deleteIcon from "@iconify-icons/mdi/delete";
 import plusIcon from "@iconify-icons/mdi/plus";
 import closeIcon from "@iconify-icons/mdi/close";
 import CartItems from "./CartItems";
-import { fNumber, fNumberRound, formatTo2 } from "../utils/formatNumber";
+import { fNumber, fNumberRound, formatTo2 } from "../../../utils/formatNumber";
 import { calculateAndRoundTax } from "../../../utils/tax";
 import {
   calculateSubTotal,
