@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Box, Card, Stack, Typography, CardContent,
 } from "@mui/material";
-import { fNumber } from "../../../utils/formatNumber";
+import { fNumber, fNumberRound, formatTo2 } from "../utils/formatNumber";
 import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
 
 const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, setOrderData, getDescriptionStyles, getHeadingStyles, getOrderHeadingStyles, checkoutTotalSummaryBackground }) => {
@@ -199,7 +199,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
             </Typography>
             <Stack direction="row" justifyContent="space-between">
               <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Sub Total</Typography>
-              <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {fNumber(subTotal)}</Typography>
+              <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {formatTo2(subTotal)}</Typography>
             </Stack>
             {isPlatformFeeApplicableOnStore && (
               <Stack direction="row" justifyContent="space-between">
@@ -239,7 +239,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
             <Stack direction="row" justifyContent="space-between">
               <Typography sx={{ color: "#FCA92E", fontWeight: "600", ...getHeadingStyles }}>Total Amount</Typography>
               <Typography variant="subtitle2" sx={{ color: "#FCA92E", ...getDescriptionStyles }}>
-                Rs. {fNumber(total.toFixed(2))}
+                Rs. {fNumberRound(total)}
               </Typography>
             </Stack>
           </Stack>

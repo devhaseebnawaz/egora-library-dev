@@ -18,7 +18,7 @@ export const calculateSubTotal = (cart) => {
         return total + itemTotal;
     }, 0);
 
-    return `${grandTotal.toFixed(0)}`;
+    return `${grandTotal}`;
 };
 
 export const isApplicable = (applicable) => {

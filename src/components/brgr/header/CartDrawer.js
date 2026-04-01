@@ -14,7 +14,7 @@ import deleteIcon from "@iconify-icons/mdi/delete";
 import plusIcon from "@iconify-icons/mdi/plus";
 import closeIcon from "@iconify-icons/mdi/close";
 import CartItems from "./CartItems";
-import { fNumber } from "../../../utils/formatNumber";
+import { fNumber, fNumberRound, formatTo2 } from "../utils/formatNumber";
 import { calculateAndRoundTax } from "../../../utils/tax";
 import {
   calculateSubTotal,
@@ -986,7 +986,7 @@ const CartDrawer = ({
                 Sub Total
               </Typography>
               <Typography sx={{ ...getPriceTextStyles }}>
-                Rs. {fNumber(calculateSubTotal(cardItems))}
+                Rs. {formatTo2(calculateSubTotal(cardItems))}
               </Typography>
             </Box>
             {isPlatformFeeApplicableOnStore && (
@@ -1037,7 +1037,7 @@ const CartDrawer = ({
                 Grand Total
               </Typography>
               <Typography sx={{ ...getTotalTextStyles }}>
-                Rs.{" "} {fNumber(orderTotal)}
+                Rs.{" "} {fNumberRound(orderTotal)}
               </Typography>
             </Box>
           </Box>

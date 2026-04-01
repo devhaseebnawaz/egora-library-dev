@@ -43,7 +43,37 @@ import numeral from "numeral";
 // export function fNumber(number) {
 //   return numeral(number).format();
 // }
+export const truncateTo2 = (value) => {
+  const num = Number(value || 0);
+  return Math.trunc(num * 100) / 100;
+};
 
+export const formatTo2 = (value) => {
+  return Number(value || 0).toFixed(2);
+};
+
+export const getStoreDisplayPrice = ({
+  price,
+  showTaxWithPrice,
+  storeTaxOnCash,
+}) => {
+  const basePrice = truncateTo2(price);
+
+  if (!showTaxWithPrice) {
+    return fNumberRound(basePrice);
+  }
+
+  const taxPercentage = Number(storeTaxOnCash || 0);
+  const priceWithTax = basePrice + (basePrice * taxPercentage) / 100;
+
+  return fNumberRound(priceWithTax);
+};
+export function fNumberRound(number) {
+  if (number === null || number === undefined) return 0;
+
+  const rounded = Math.round(Number(number));
+  return numeral(rounded).format("0,0");
+}
 
 export function fNumber(number) {
   if (Number.isInteger(number)) {
