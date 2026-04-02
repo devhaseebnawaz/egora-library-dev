@@ -57,13 +57,16 @@ export const getStoreDisplayPrice = ({
   showTaxWithPrice,
   storeTaxOnCash,
 }) => {
-  const basePrice = truncateTo2(price);
+  const numericPrice = Number(String(price ?? 0).replace(/,/g, "").trim()) || 0;
+  const basePrice = truncateTo2(numericPrice);
 
   if (!showTaxWithPrice) {
     return fNumberRound(basePrice);
   }
 
-  const taxPercentage = Number(storeTaxOnCash || 0);
+  const taxPercentage =
+    Number(String(storeTaxOnCash ?? 0).replace(/,/g, "").trim()) || 0;
+
   const priceWithTax = basePrice + (basePrice * taxPercentage) / 100;
 
   return fNumberRound(priceWithTax);

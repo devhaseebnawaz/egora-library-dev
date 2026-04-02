@@ -3,6 +3,7 @@ import { Box, Button } from "@mui/material";
 import { fNumber } from "../../../utils/formatNumber";
 
 export default function Options({
+  states,
   themeColors,
   layout,
   choiceGroups,
@@ -13,7 +14,9 @@ export default function Options({
   getDescriptionStyles,
   ...other
 }) {
-
+  const { franchise } = states ?? {};
+  const storeTaxOnCash = franchise?.storeTaxOnCash;
+  const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
   return (
     <Box 
       sx={{ 
@@ -85,7 +88,7 @@ export default function Options({
             key={item.id}
             onClick={() => hanldeSelectOption(choiceGroups, item)}
           >
-            {item?.item} (Rs. { fNumber(item?.price)})
+            {item?.item} (Rs. { getStoreDisplayPrice({ price: item.price, showTaxWithPrice, storeTaxOnCash })})
           </Button>
         );
       })}

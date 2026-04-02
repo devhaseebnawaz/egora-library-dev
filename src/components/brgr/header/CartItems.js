@@ -271,7 +271,7 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
                                                     {sauce?.items?.map((sauceItem, sauceIndex) => (
                                                         <span key={sauceIndex}>
                                                             {sauceItem?.item}
-                                                            {` (Rs. ${fNumber(
+                                                            {` (Rs. ${formatTo2(
                                                                 sauceItem.price * cartItem.qty
                                                             )})`}
                                                             {sauceIndex !== sauce?.items?.length - 1 &&

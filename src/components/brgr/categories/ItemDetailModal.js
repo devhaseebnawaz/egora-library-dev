@@ -29,7 +29,7 @@ import Group from '../options/Group';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from '../../../utils/fontsize';
-import { fNumber } from "../../../utils/formatNumber";
+import { fNumber, getStoreDisplayPrice } from "../../../utils/formatNumber";
 import { useCopyToClipboard } from '../../../hooks/use-copy-to-clipboard';
 import CustomPopover , {usePopover} from '../../custom-popover';
 
@@ -388,8 +388,9 @@ const handleShare = (type) => {
         .reduce((total, item) => total + parseFloat(item.price), 0);
     }
     const calTotalPrice = (basePrice + addOnPrices + saucePrices) * quantity;
-    return `Rs. ${fNumber(calTotalPrice)}`;
+    return fNumber(calTotalPrice);
   };
+  const totalPrice = calculateTotalPrice();
 
 
   const toggleSauce = (elem, sauce) => {
@@ -767,7 +768,7 @@ const handleShare = (type) => {
         </Box>
 
         <Typography variant="h6" color="text.secondary" gutterBottom style={{ marginBottom: 15 , ...getHeadingStyles}} >
-          Rs. {states.itemForDetailedModal.price}
+            Rs. {getStoreDisplayPrice({ price: selectedVariant?.price ? selectedVariant?.price : states.itemForDetailedModal.price, showTaxWithPrice, storeTaxOnCash })}
         </Typography>
         <Typography color="gray" style={{ marginBottom: 20, ...getDescriptionStyles }}  >
           {states.itemForDetailedModal.description || ''}
@@ -808,6 +809,7 @@ const handleShare = (type) => {
             <Stack spacing={1}>
               {states.itemForDetailedModal.hasVariant && (
                 <Variant
+                  states={states}
                   themeColors={themeColors}
                   layout={layout}
                   getDescriptionStyles={getDescriptionStyles}
@@ -820,6 +822,7 @@ const handleShare = (type) => {
               <Divider color={layout?.itemDetailModalLayout?.body[0].styles?.ItemDetailModalDividerColor?.value} />
               {filteredChoiceGroups.map((cg, index) => (
                 <Group
+                  states={states}
                   themeColors={themeColors}
                   layout={layout}
                   getDescriptionStyles={getDescriptionStyles}
@@ -950,7 +953,7 @@ const handleShare = (type) => {
               <CircularProgress size={24} color="inherit" />
             ) : (
                 <>
-                  <span>{calculateTotalPrice()}</span>
+                 <span>Rs. {getStoreDisplayPrice({ price: totalPrice, showTaxWithPrice, storeTaxOnCash })}</span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     {isItemEdit ? "Update cart" : "Add to Cart"}
                   </span>
