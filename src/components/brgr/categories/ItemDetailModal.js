@@ -46,6 +46,9 @@ export default function ItemDetailModal({
   globalComponentStyles,
   layout
 }) {
+  const { franchise } = states ?? {};
+  const storeTaxOnCash = franchise?.storeTaxOnCash;
+  const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
  layout = layout?.json ? layout?.json : layout
   const theme = useTheme();
   const mdDown = useMediaQuery(theme.breakpoints.down("md")); 
