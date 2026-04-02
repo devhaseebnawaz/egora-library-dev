@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Box, Button } from "@mui/material";
-import { fNumber } from "../../../utils/formatNumber";
+import { fNumber, getStoreDisplayPrice } from "../../../utils/formatNumber";
 
 export default function Options({
   states,
