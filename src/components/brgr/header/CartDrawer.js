@@ -840,13 +840,13 @@ const CartDrawer = ({
     Number(taxAmount) +
     Number(serviceFee) +
     (isPlatformFeeApplicableOnStore ? Number(platformFees) : 0)
-  ).toFixed(2);
+  );
 
   let { finalDeliveryFee, message } = calculeteDeliveryFee({ states, baseTotal })
 
   const orderTotal = (
     Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(finalDeliveryFee) : 0)
-  ).toFixed(2);
+  );
 
   const content = (
     <Box style={{ position: "relative", height: "100%", ...getDrawerStyles }}>
