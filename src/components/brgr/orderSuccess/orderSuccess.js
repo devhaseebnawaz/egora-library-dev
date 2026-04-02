@@ -4,7 +4,7 @@ import cartIcon from "@iconify-icons/mdi/cart";
 import creditCardIcon from '@iconify-icons/mdi/credit-card-outline';
 import locationIcon from '@iconify-icons/mdi/map-marker';
 import { Icon } from "@iconify/react";
-import { fNumber } from "../../../utils/formatNumber";
+import { fNumber, fNumberRound, formatTo2 } from "../../../utils/formatNumber";
 import UniversalImage from "../../../UniversalImage";
 import { formatTime, formatDate } from "../../../utils/formatDateTime";
 import { getScreenSizeCategory, getIconWidthHeight } from '../../../utils/fontsize';
@@ -1072,7 +1072,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                     <Divider sx={{ mt: 1.5 }} />
                                     <Stack direction="row" justifyContent="space-between" mt={1}>
                                         <Typography sx={{ ...getPaymentInformationKeyStyles }} >Grand Total</Typography>
-                                        <Typography sx={{ ...getPaymentInformationValueStyles }}>Rs. {total}</Typography>
+                                        <Typography sx={{ ...getPaymentInformationValueStyles }}>Rs. {fNumberRound(total)}</Typography>
                                     </Stack>
 
                                     <Divider sx={{ mt: 1.5 }} />
@@ -1182,7 +1182,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                                                         >
                                                                             {sauce?.items?.map((sauceItem, sauceIndex) => (
                                                                                 <span key={sauceIndex}>
-                                                                                    {sauceItem?.item} {`(Rs. ${fNumber(sauceItem.price * item.qty)})`}
+                                                                                    {sauceItem?.item} {`(Rs. ${formatTo2(sauceItem.price * item.qty)})`}
                                                                                     {sauceIndex !== sauce?.items?.length - 1 && ", "}
                                                                                 </span>
                                                                             ))}
@@ -1217,7 +1217,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                                         )}
                                                     </TableCell>
                                                     <TableCell align="center" sx={{ ...getProductInformationValueStyles }} >{item.qty}</TableCell>
-                                                    <TableCell align="right" sx={{ ...getProductInformationValueStyles }} >Rs. {Number(item.qty) * Number(item.price)}</TableCell>
+                                                    <TableCell align="right" sx={{ ...getProductInformationValueStyles }} >Rs. {formatTo2(Number(item.qty) * Number(item.price))}</TableCell>
                                                 </TableRow>
 
                                             ))}

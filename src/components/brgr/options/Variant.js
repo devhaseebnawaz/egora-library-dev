@@ -3,6 +3,7 @@ import { Typography, Box, Button } from "@mui/material";
 import { fNumber } from "../../../utils/formatNumber";
 
 export default function Variant({
+    states,
     themeColors,
     layout,
     variants,
@@ -11,6 +12,9 @@ export default function Variant({
     getDescriptionStyles,
     getHeadingStyles
 }) {
+    const { franchise } = states ?? {};
+    const storeTaxOnCash = franchise?.storeTaxOnCash;
+    const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
     return (
         <>
             {variants && (
@@ -86,7 +90,7 @@ export default function Variant({
                                     key={index}
                                     onClick={() => hanldeSelectOption(variant)}
                                 >
-                                    {variant.name} (Rs.  {fNumber(variant?.price)})
+                                {variant.name} (Rs.  {getStoreDisplayPrice({ price: variant.price, showTaxWithPrice, storeTaxOnCash })})
                                 </Button>
                             );
                         })}
