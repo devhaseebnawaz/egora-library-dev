@@ -16,7 +16,7 @@ import { useState } from "react";
 // import { useSelector, useDispatch } from "react-redux";
 // import { updateItemsToCard,} from "src/redux/slices/cardSlice";
 // import useSession from "src/utils/useSession";
-import { fNumber } from "../../../utils/formatNumber";
+import { fNumber , formatTo2,truncateTo2} from "../../../utils/formatNumber";
 // import { fetchImage } from "src/utils/fetchImage";
 // import capitalizeWords from "src/utils/capitalizeWords";
 
@@ -81,8 +81,7 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
                 itemTotal += parseFloat(addon.price.replace("Rs. ", ""));
             });
         }
-        itemTotal = itemTotal.toFixed(0);
-        return `Rs. ${fNumber(itemTotal)}`;
+        return `Rs. ${truncateTo2(itemTotal)}`;
     };
 
 
@@ -178,11 +177,14 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
                                                 whiteSpace: "nowrap",
                                                 overflow: "hidden",
                                                 textOverflow: "ellipsis",
-                                                width: "210px"
+                                                width: "150px"
                                             },
 
-                                            "@media (max-width: 330px)": {
-                                                maxWidth: "100px",
+                                            "@media (max-width: 400px)": {
+                                                maxWidth: "110px",
+                                            },
+                                            "@media (max-width: 320px)": {
+                                                maxWidth: "90px",
                                             },
                                             ...getItemNameStyles
                                         }}
@@ -269,7 +271,7 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
                                                     {sauce?.items?.map((sauceItem, sauceIndex) => (
                                                         <span key={sauceIndex}>
                                                             {sauceItem?.item}
-                                                            {` (Rs. ${fNumber(
+                                                            {` (Rs. ${formatTo2(
                                                                 sauceItem.price * cartItem.qty
                                                             )})`}
                                                             {sauceIndex !== sauce?.items?.length - 1 &&

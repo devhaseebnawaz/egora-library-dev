@@ -13,6 +13,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
+import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 
 
 export default function ItemCardV2({
@@ -26,6 +27,9 @@ export default function ItemCardV2({
 }) {
     const theme = useTheme();
     const smDown = useMediaQuery(theme.breakpoints.down("sm"));
+    const { franchise } = states ?? {};
+    const storeTaxOnCash = franchise?.storeTaxOnCash;
+    const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
     
     const getCardStyles = {
         backgroundColor:
@@ -293,7 +297,11 @@ export default function ItemCardV2({
                             ...getPriceTagStyles
                         }}
                     >
-                        Rs. {item.price}
+                        Rs. {getStoreDisplayPrice({
+                            price: item.price,
+                            showTaxWithPrice,
+                            storeTaxOnCash,
+                        })}
                     </Typography>
                     <Button
                         variant="contained"
