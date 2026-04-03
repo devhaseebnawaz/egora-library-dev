@@ -18,7 +18,7 @@ export const calculateSubTotal = (cart) => {
         return total + itemTotal;
     }, 0);
 
-    return `${grandTotal.toFixed(0)}`;
+    return `${grandTotal}`;
 };
 
 export const isApplicable = (applicable) => {
@@ -79,5 +79,5 @@ export const calculateServiceFee = (
     }, 0);
 
     const grandTotal = itemsTotal + parseFloat(tip > 0 ? tip : tip > 0 ? tip : 0);
-    return `${grandTotal.toFixed(0)}`;
+    return `${grandTotal}`;
   };

@@ -3,10 +3,14 @@ import { Card, Typography, Box ,useMediaQuery} from "@mui/material";
 import ItemDetailModal from "../categories/ItemDetailModal";
 import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
+import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 
 export default function ItemCard ({ item, themeColors, styles, actions, states, globalComponentStyles }) {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm")); 
+  const { franchise } = states ?? {};
+  const storeTaxOnCash = franchise?.storeTaxOnCash;
+  const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
   const getItemNameStyles = {
     backgroundColor:
       styles?.PopularMenuSectionItemNameTextBackgroundColor?.value !== ""
@@ -176,7 +180,7 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
             ...getPriceTagStyles
           }}
         >
-          Rs. {item?.price}
+          Rs. {getStoreDisplayPrice({ price: item?.price, showTaxWithPrice, storeTaxOnCash })}
         </Box>
       </Card>
     </>

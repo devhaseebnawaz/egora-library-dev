@@ -10,11 +10,15 @@ import {
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
+import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 export default function ItemCardV2({ item, themeColors, styles, actions, states, globalComponentStyles }) {
   const theme = useTheme();
+  const { franchise } = states ?? {};
+  const storeTaxOnCash = franchise?.storeTaxOnCash;
+  const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
   const getItemNameStyles = {
     color:
       styles?.PopularMenuSectionItemNameTextColorV2?.value !== ""
@@ -283,7 +287,12 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
               ...getPriceTagStyles
             }}
           >
-            Rs. {item.price}
+            Rs.{" "}
+            {getStoreDisplayPrice({
+              price: item.price,
+              showTaxWithPrice,
+              storeTaxOnCash,
+            })}
           </Typography>
           <Button
             variant="contained"

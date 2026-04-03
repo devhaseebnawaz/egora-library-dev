@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
+import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 
 
 
@@ -24,6 +25,9 @@ export default function ItemCard({
 }) {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm"));
+  const { franchise } = states ?? {};
+  const storeTaxOnCash = franchise?.storeTaxOnCash;
+  const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
   const getItemNameStyles = {
     color:
       styles?.AllCategoriesItemNameTextColor?.value !== ""
@@ -243,7 +247,11 @@ export default function ItemCard({
                   ...getPriceTagStyles,
                 }}
               >
-                Rs. {item.price}
+                Rs. {getStoreDisplayPrice({
+                  price: item.price,
+                  showTaxWithPrice,
+                  storeTaxOnCash,
+                })}
               </Button>
             </Box>
 
