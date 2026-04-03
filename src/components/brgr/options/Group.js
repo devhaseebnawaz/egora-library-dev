@@ -3,6 +3,7 @@ import { Typography } from "@mui/material";
 import Options from "./Options";
 
 export default function Group({
+  states,
   themeColors,
   layout,
   choiceGroup,
@@ -27,6 +28,7 @@ export default function Group({
           </Typography>
 
           <Options
+            states={states}
             themeColors={themeColors}
             layout={layout}
             getDescriptionStyles={getDescriptionStyles}

@@ -4,7 +4,7 @@ export function calculeteDeliveryFee({ states, baseTotal }) {
     const { location } = selectedVenue ?? {};
     const { deliveryFees = 0, storeDeliveryMaxDistanceThreshold, storeDeliveryMaxOrderThreshold, configurations } = franchise ?? {};
     const { isDeliveryFeeApplicableOnStore, isDeliveryFeeMaxOrderThresholdApplicableOnStore, isDeliveryFeeMaxDistanceThresholdApplicableOnStore, isLocationRestrictedRegionBasedDeliveryOnStore, isRegionBasedDeliveryOnStore } = configurations ?? {}
-    const orderTotal = (Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(deliveryFees) : 0)).toFixed(2);
+    const orderTotal = (Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(deliveryFees) : 0));
     if (orderType !== "storeDelivery") { return { finalDeliveryFee: 0, reason: "none", message: "" } }
     if (!isDeliveryFeeApplicableOnStore) { return { finalDeliveryFee: 0, reason: "none", message: "" } }
 

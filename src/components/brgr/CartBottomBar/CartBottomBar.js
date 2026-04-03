@@ -4,7 +4,7 @@ import { Box, Typography, IconButton } from '@mui/material';
 import {
     calculateSubTotal,
 } from "../../../utils/cart";
-import { fNumber } from "../../../utils/formatNumber";
+import { fNumber, getStoreDisplayPrice } from "../../../utils/formatNumber";
 // import { useCart } from '../CartContext';
 // import CartDrawer from '../header/CartDrawer';
 // import { useUI } from './ScrollContext';
@@ -18,6 +18,9 @@ export default function CartBottomBar({
     layout,
     themeColors
 }) {
+    const { franchise } = states ?? {};
+    const storeTaxOnCash = franchise?.storeTaxOnCash;
+    const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
     layout = layout?.json ? layout?.json : layout
     // console.log("CartBottomBar layout", layout);
     // console.log("CartBottomBar globalComponentStyles", globalComponentStyles);
@@ -31,6 +34,7 @@ export default function CartBottomBar({
     //     0
     // );
     const cardItems = states?.cardItems?.items ?? [];
+    const subTotal = calculateSubTotal(cardItems);
 
 
     useEffect(() => {
@@ -135,7 +139,7 @@ export default function CartBottomBar({
                             View Cart
                         </Typography>
                         <Typography style={{ fontWeight: 'bold' }}>
-                            Rs. {fNumber(calculateSubTotal(cardItems))}
+                            Rs. {getStoreDisplayPrice({ price: subTotal, showTaxWithPrice, storeTaxOnCash })}
                         </Typography>
                     </Box>
                 )}
