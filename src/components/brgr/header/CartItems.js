@@ -16,7 +16,7 @@ import { useState } from "react";
 // import { useSelector, useDispatch } from "react-redux";
 // import { updateItemsToCard,} from "src/redux/slices/cardSlice";
 // import useSession from "src/utils/useSession";
-import { fNumber , formatTo2} from "../../../utils/formatNumber";
+import { fNumber , formatTo2,truncateTo2} from "../../../utils/formatNumber";
 // import { fetchImage } from "src/utils/fetchImage";
 // import capitalizeWords from "src/utils/capitalizeWords";
 
@@ -81,7 +81,7 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
                 itemTotal += parseFloat(addon.price.replace("Rs. ", ""));
             });
         }
-        return `Rs. ${formatTo2(itemTotal)}`;
+        return `Rs. ${truncateTo2(itemTotal)}`;
     };
 
 
