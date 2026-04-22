@@ -161,12 +161,12 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
 
   return (
     <Container style={{ marginTop: "30px", 
-    backgroundColor:
-    styles?.AllCategoriesBackgroundColorV2?.value != ""
-      ? styles?.AllCategoriesBackgroundColorV2?.value
-      : globalComponentStyles?.Background?.color?.value != ""
-        ? globalComponentStyles?.Background?.color?.value
-        : themeColors?.AllCategoriesBackgroundColorV2?.value,
+    // backgroundColor:
+    // styles?.AllCategoriesBackgroundColorV2?.value != ""
+    //   ? styles?.AllCategoriesBackgroundColorV2?.value
+    //   : globalComponentStyles?.Background?.color?.value != ""
+    //     ? globalComponentStyles?.Background?.color?.value
+    //     : themeColors?.AllCategoriesBackgroundColorV2?.value,
      }}>
       {sortedCategory.map((category, index) => (
         <Box
