@@ -338,8 +338,8 @@ export default function CustomFooterV2({
           marginBottom: states?.cardItems?.items?.length > 0 ? 8 : "none"
         }}
       >
-        <Typography sx={{...getFooterStyles("FooterPoweredByText")}} >
-            © {new Date().getFullYear()} Powered by <Link href="#" sx={{ ...getFooterStyles("FooterEgoraText") }} >Egora.</Link>
+        <Typography sx={{ ...getFooterStyles("FooterPoweredByText") }} >
+            © {new Date().getFullYear()} Powered by <Link href="https://merchants.egora.pk/" target="_blank" rel="noopener noreferrer" sx={{ ...getFooterStyles("FooterEgoraText") }} >Egora.</Link>
         </Typography>
       </Box>
        </Container>
