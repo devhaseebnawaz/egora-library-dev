@@ -783,7 +783,7 @@ const CartDrawer = ({
 
   const cardItems = states.cardItems?.items ?? [];
   const { orderType, franchise } = states ?? {};
-  const { serviceFeesObject, configurations, storeTaxOnCash, platformFees, deliveryFees } = franchise ?? {};
+  const { serviceFeesObject, configurations, storeTaxOnCash, platformFees, deliveryFees, minimumAllowedAmount } = franchise ?? {};
   const {
     isServiceFeesApplicableOnStore,
     isTaxApplicableOnStore,
@@ -847,6 +847,8 @@ const CartDrawer = ({
   const orderTotal = (
     Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(finalDeliveryFee) : 0)
   );
+
+  const isCheckoutDisabled = Number(orderTotal) < Number(minimumAllowedAmount);
 
   const content = (
     <Box style={{ position: "relative", height: "100%", ...getDrawerStyles }}>
@@ -1044,6 +1046,7 @@ const CartDrawer = ({
 
           <Button
             variant="contained"
+            disabled={isCheckoutDisabled}
             fullWidth
             onClick={() => {
               if (!previewMode) {
@@ -1064,6 +1067,18 @@ const CartDrawer = ({
           >
             Checkout
           </Button>
+           {isCheckoutDisabled && (
+            <Typography
+              sx={{
+                marginTop: 1,
+                textAlign: "center",
+                color: "red",
+                fontSize: 12,
+              }}
+            >
+              Minimum order amount is Rs. {minimumAllowedAmount}. Please add more items to proceed.
+            </Typography>
+          )}
           <Box
             style={{
               display: "flex",
