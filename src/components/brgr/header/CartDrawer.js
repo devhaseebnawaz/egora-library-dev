@@ -1043,7 +1043,6 @@ const CartDrawer = ({
               </Typography>
             </Box>
           </Box>
-
           <Button
             variant="contained"
             disabled={isCheckoutDisabled}
