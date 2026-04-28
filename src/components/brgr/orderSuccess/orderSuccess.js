@@ -4,7 +4,7 @@ import cartIcon from "@iconify-icons/mdi/cart";
 import creditCardIcon from '@iconify-icons/mdi/credit-card-outline';
 import locationIcon from '@iconify-icons/mdi/map-marker';
 import { Icon } from "@iconify/react";
-import { fNumber, fNumberRound, formatTo2 } from "../../../utils/formatNumber";
+import { fNumber, fNumberRound, formatTo2,truncateTo2 } from "../../../utils/formatNumber";
 import UniversalImage from "../../../UniversalImage";
 import { formatTime, formatDate } from "../../../utils/formatDateTime";
 import { getScreenSizeCategory, getIconWidthHeight } from '../../../utils/fontsize';
@@ -1217,7 +1217,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                                         )}
                                                     </TableCell>
                                                     <TableCell align="center" sx={{ ...getProductInformationValueStyles }} >{item.qty}</TableCell>
-                                                    <TableCell align="right" sx={{ ...getProductInformationValueStyles }} >Rs. {formatTo2(Number(item.qty) * Number(item.price))}</TableCell>
+                                                    <TableCell align="right" sx={{ ...getProductInformationValueStyles }} >Rs. {truncateTo2(Number(item.qty) * Number(item.price))}</TableCell>
                                                 </TableRow>
 
                                             ))}

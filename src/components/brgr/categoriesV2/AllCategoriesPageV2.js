@@ -161,12 +161,12 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
 
   return (
     <Container style={{ marginTop: "30px", 
-    backgroundColor:
-    styles?.AllCategoriesBackgroundColorV2?.value != ""
-      ? styles?.AllCategoriesBackgroundColorV2?.value
-      : globalComponentStyles?.Background?.color?.value != ""
-        ? globalComponentStyles?.Background?.color?.value
-        : themeColors?.AllCategoriesBackgroundColorV2?.value,
+    // backgroundColor:
+    // styles?.AllCategoriesBackgroundColorV2?.value != ""
+    //   ? styles?.AllCategoriesBackgroundColorV2?.value
+    //   : globalComponentStyles?.Background?.color?.value != ""
+    //     ? globalComponentStyles?.Background?.color?.value
+    //     : themeColors?.AllCategoriesBackgroundColorV2?.value,
      }}>
       {sortedCategory.map((category, index) => (
         <Box
@@ -177,12 +177,36 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
           <CategoryLayout
           // banner={<Banner img={category.bannerImg} />}
           >
-            <Typography variant="h3" style={{ marginTop:"16px" , marginBottom: "16px", ...getCategoryNameStyles }}>
+            {/* <Typography variant="h3" style={{ marginTop:"16px" , marginBottom: "16px", ...getCategoryNameStyles }}>
               {category.name}
             </Typography>
             
-            { styles?.AllCategoriesBannerImageShowV2?.value &&  <BannerV2 img={prop.editable.categoryId.value[index]?.img} styles={styles} themeColors={themeColors}  /> } 
-            
+            { styles?.AllCategoriesBannerImageShowV2?.value &&  <BannerV2 img={prop.editable.categoryId.value[index]?.img} styles={styles} themeColors={themeColors}  /> }  */}
+            {(() => {
+              const categoryMeta = prop.editable.categoryId.value[index];
+              const hasBannerImage = !!categoryMeta?.img;
+              const shouldShowBanner =
+                styles?.AllCategoriesBannerImageShowV2?.value && hasBannerImage;
+
+              return shouldShowBanner ? (
+                <BannerV2
+                  img={categoryMeta.img}
+                  styles={styles}
+                  themeColors={themeColors}
+                />
+              ) : (
+                <Typography
+                  variant="h3"
+                  style={{
+                    marginTop: "16px",
+                    marginBottom: "16px",
+                    ...getCategoryNameStyles,
+                  }}
+                >
+                  {category.name}
+                </Typography>
+              );
+            })()}
             <Grid container spacing={2}>
               {category?.items?.map((item, index) => (
                 <Grid
