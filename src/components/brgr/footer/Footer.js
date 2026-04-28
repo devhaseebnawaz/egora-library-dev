@@ -91,7 +91,9 @@ export default function CustomFooter({
       </Typography>
 
       <Link
-        href="#"
+        href="https://merchants.egora.pk/"
+        target="_blank" 
+        rel="noopener noreferrer"
         color="inherit"
         underline="hover"
         sx={getFooterStyles("FooterLink")}
