@@ -15,6 +15,8 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
 
   let { editable } = prop ?? {}
   let { carouselImages } = editable ?? {} 
+  const defaultInterval = 5;
+  const slideIntervalDuration = prop?.editable?.carouselSlideInterval?.value === 0 ? defaultInterval : prop?.editable?.carouselSlideInterval?.value || defaultInterval;
   const totalSlides = carouselImages.value.length;
   const fullSlides = [carouselImages.value[totalSlides - 1], ...carouselImages.value, carouselImages.value[0]];
 
@@ -27,15 +29,25 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
 
 
   const goToIndex = (index) => {
+    if (isJumpingRef.current) return;
+    setTransitionEnabled(true);
     setCurrentIndex(index + 1);
+    startSlide();
   };
 
   const goToPrev = () => {
+    if (isJumpingRef.current) return;
+
+    setTransitionEnabled(true);
     setCurrentIndex((prev) => prev - 1);
+    startSlide();
   };
 
   const goToNext = () => {
+    if (isJumpingRef.current) return;
+    setTransitionEnabled(true);
     setCurrentIndex((prev) => prev + 1);
+    startSlide();
   };
 
   const realIndex =
@@ -59,9 +71,9 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
       }
 
       if (!isJumpingRef.current) {
-        setCurrentIndex((prev) => prev - 1);
+        setCurrentIndex((prev) => prev + 1);
       }
-    }, 5000);
+    }, slideIntervalDuration * 1000);
   };
 
   const stopSlide = () => {
@@ -73,18 +85,26 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
       isJumpingRef.current = true;
       setTimeout(() => {
         setTransitionEnabled(false);
-        setCurrentIndex(totalSlides);
-        isJumpingRef.current = false;
+        requestAnimationFrame(() => {
+          setCurrentIndex(totalSlides);
+          requestAnimationFrame(() => {
+            setTransitionEnabled(true);
+            isJumpingRef.current = false;
+          });
+        });
       }, 800);
     } else if (currentIndex === totalSlides + 1) {
       isJumpingRef.current = true;
       setTimeout(() => {
         setTransitionEnabled(false);
-        setCurrentIndex(1);
-        isJumpingRef.current = false;
+        requestAnimationFrame(() => {
+          setCurrentIndex(1);
+          requestAnimationFrame(() => {
+            setTransitionEnabled(true);
+            isJumpingRef.current = false;
+          });
+        });
       }, 800);
-    } else {
-      setTransitionEnabled(true);
     }
   }, [currentIndex, totalSlides]);
 
@@ -256,7 +276,7 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
                 : `${themeColors?.HeroCarouselDotBorderRadius?.value}px`,
               backgroundColor: getCarouselDotColor(index),
               cursor: "pointer",
-              transition: "background-color 0.3s ease",
+              transition: "all 0.3s ease",
             }}
           />
         ))}
