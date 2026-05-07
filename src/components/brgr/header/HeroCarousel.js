@@ -17,6 +17,7 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
   let { carouselImages } = editable ?? {} 
   const defaultInterval = 5;
   const slideIntervalDuration = prop?.editable?.carouselSlideInterval?.value === 0 ? defaultInterval : prop?.editable?.carouselSlideInterval?.value || defaultInterval;
+  console.log("slideIntervalDuration", slideIntervalDuration)
   const totalSlides = carouselImages.value.length;
   const fullSlides = [carouselImages.value[totalSlides - 1], ...carouselImages.value, carouselImages.value[0]];
 
