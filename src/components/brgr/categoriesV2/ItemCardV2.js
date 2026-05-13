@@ -17,7 +17,6 @@ import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 
 
 export default function ItemCardV2({
-    key,
     globalComponentStyles,
     themeColors,
     styles,
