@@ -41,7 +41,7 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
               setTimeout(() => actions.updateArrows(), 300); 
           }
       }
-  }, [states.selectedCategoryItem, actions.updateArrows]);
+      }, [states.selectedCategoryItem]);
 
     const handleCategoryClick = (category) => {
         actions.handleCategoryClick(category);
