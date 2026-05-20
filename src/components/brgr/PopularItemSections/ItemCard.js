@@ -100,6 +100,8 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
         ? globalComponentStyles?.Text?.backgroundColor?.value
         : themeColors?.PopularMenuSectionPriceBackgroundcolor?.value,
   };
+  console.log("styles?.CartBackGroundColor?.value  : ", styles?.CartBackGroundColor?.value)
+  console.log("themeColors?.CartBackGroundColor?.value  : ", themeColors?.CartBackGroundColor?.value)
 
   return (
     <>
@@ -111,6 +113,9 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
           textAlign: "center",
           boxShadow: "rgba(0, 0, 0, 0.2) 0px 4px 8px",
           cursor: "pointer",
+          background: styles?.CartBackGroundColor?.value !== ""
+            ? styles?.CartBackGroundColor?.value
+            : themeColors?.CartBackGroundColor?.value,
           display: "flex",
           flexDirection: "column",
           height: "100%",
