@@ -100,6 +100,8 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
         ? globalComponentStyles?.Text?.backgroundColor?.value
         : themeColors?.PopularMenuSectionPriceBackgroundcolor?.value,
   };
+  console.log("styles?.CartBackGroundColor?.value  : ", styles?.CartBackGroundColor?.value)
+  console.log("themeColors?.CartBackGroundColor?.value  : ", themeColors?.CartBackGroundColor?.value)
 
   return (
     <>
