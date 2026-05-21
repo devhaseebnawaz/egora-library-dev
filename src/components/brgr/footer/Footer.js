@@ -75,7 +75,7 @@ export default function CustomFooter({
         alignItems: "center",
         flexWrap: "wrap",
         gap: "8px",
-        minHeight: "280px",
+        minHeight: "100px",
         padding: "25px 15px",
         justifyContent: "center",
         position: isShort && "fixed",
