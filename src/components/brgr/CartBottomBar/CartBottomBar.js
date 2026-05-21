@@ -22,7 +22,6 @@ export default function CartBottomBar({
     const storeTaxOnCash = franchise?.storeTaxOnCash;
     const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
     layout = layout?.json ? layout?.json : layout
-    // console.log("CartBottomBar layout", layout);
     // console.log("CartBottomBar globalComponentStyles", globalComponentStyles);
     // const { cartItems } = useCart();
     const [cartOpen, setCartOpen] = useState(false);
