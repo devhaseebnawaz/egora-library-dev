@@ -850,6 +850,8 @@ const CartDrawer = ({
 
   const isCheckoutDisabled = Number(orderTotal) < Number(minimumAllowedAmount);
 
+  console.log("minimumAllowedAmount", minimumAllowedAmount)
+
   const content = (
     <Box style={{ position: "relative", height: "100%", ...getDrawerStyles }}>
       {totalCartQuantity > 0 && <Box
