@@ -13,7 +13,7 @@ const shouldBypassNextOptimizer = (src) => {
   return (
     src.includes("api.egora.pk/v1/images") ||
     src.includes("api.dev.egora.pk/v1/images") ||
-    src.includes("api.staging.egora.pk/v1/images")
+    src.includes("api.stg.egora.pk/v1/images")
   );
 };
 
