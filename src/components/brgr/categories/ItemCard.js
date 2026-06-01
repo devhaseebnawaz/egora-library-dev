@@ -159,6 +159,9 @@ export default function ItemCard({
           borderRadius: "16px",
           overflow: "hidden",
           boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+          background: styles?.CartBackGroundColor?.value !== ""
+            ? styles?.CartBackGroundColor?.value
+            : themeColors?.CartBackGroundColor?.value,
           padding: 0,
           cursor: "pointer",
           display: "flex",
