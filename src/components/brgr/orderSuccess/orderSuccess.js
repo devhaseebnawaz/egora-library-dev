@@ -748,8 +748,8 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
             storeDelivery: "Your order has been successfully delivered"
         },
         abort: {
-            storePickUp: "Your pickup order was canceled by the venue",
-            storeDelivery: "Your delivery order was canceled by the venue"
+            storePickUp: "Your pickup order was declined by the venue",
+            storeDelivery: "Your delivery order was declined by the venue"
         },
         noShow: {
             storePickUp: "Your pickup order was canceled after being prepared",
