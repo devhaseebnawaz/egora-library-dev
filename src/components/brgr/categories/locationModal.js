@@ -50,6 +50,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const [isConfirmingLocation, setIsConfirmingLocation] = useState(false);
+    const [isLocationAllowed, setIsLocationAllowed] = useState(false);
     const [prevSelectedVenueForPickUp, setPrevSelectedVenueForPickUp] = useState(states.selectedOutlet?._id || "");
     const filteredOutlets = states.outlets?.filter((outlet) =>
         outlet.name.toLowerCase().includes(states.searchQuery.toLowerCase())
@@ -418,6 +419,53 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
         } else {
             actions.handleSelectedLocation(states.latLongForDelivery);
         }
+    };
+    const handleUseCurrentLocationClick = () => {
+        states?.setRefineModalOpen(true);
+
+        if (!navigator.geolocation) {
+            states?.setErrorForDeniedLocation?.("Geolocation is not supported by your browser.");
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const posCoords = {
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude,
+                };
+                states?.setUserCoordinates?.(posCoords);
+                states?.setMarkerPosition?.(posCoords);
+                states?.setLatLongForDelivery?.(`${posCoords.lat},${posCoords.lng}`);
+                const geocoder = new window.google.maps.Geocoder();
+                geocoder.geocode({ location: posCoords }, (results, status) => {
+                    if (status === "OK" && results?.[0]) {
+                        const formattedAddress = results[0].formatted_address;
+                        console.log("Formatted Address:", formattedAddress);
+                        actions?.updateLocation?.(formattedAddress);
+                        setIsLocationAllowed(true);
+                        states?.setCurrentLocation?.(formattedAddress);
+                    } else {
+                        setIsLocationAllowed(false);
+                        console.error("Geocoder failed due to:", status);
+                    }
+                });
+            },
+            (err) => {
+                console.error("Geolocation error:", err);
+
+                if (err.code === err.PERMISSION_DENIED) {
+                    states?.setErrorForDeniedLocation?.(
+                        "Location permission denied. Please allow location from browser settings."
+                    );
+                }
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0,
+            }
+        );
     };
     
     const content = (
@@ -959,7 +1007,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
 
             {
                 (states?.orderType === "storeDelivery" && !states?.franchise?.configurations?.isRegionBasedDeliveryOnStore) && (<Box
-                    onClick={() => states?.setRefineModalOpen(true)}
+                    onClick={handleUseCurrentLocationClick}
                     sx={{
                         display: "flex",
                         alignItems: "center",
@@ -1153,6 +1201,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 actions={actions}
                 onClose={() => states?.setRefineModalOpen(false)}
                 currentCoords={states?.userCoordinates}
+                isLocationAllowed={isLocationAllowed}
+                setIsLocationAllowed={setIsLocationAllowed}
                 onSave={({ coords, address }) => {
                     states?.setUserCoordinates(coords);
                 }}
