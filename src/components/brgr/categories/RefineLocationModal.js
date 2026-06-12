@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     Modal,
     Box,
@@ -29,6 +29,7 @@ const mapContainerStyle = {
     width: "100%",
     height: "calc(100% - 120px)",
 };
+const libraries =["geometry"]
 
 export default function RefineLocationModal({
     open,
@@ -37,14 +38,26 @@ export default function RefineLocationModal({
     actions,
     currentCoords,
     onSave,
+    isLocationAllowed,
+    setIsLocationAllowed
 }) {
+
+    const mapRef = useRef(null);
+
+    useEffect(() => {
+        if (mapRef.current && states?.markerPosition) {
+            mapRef.current.panTo(states.markerPosition);
+            mapRef.current.setZoom(15);
+        }
+    }, [states?.markerPosition]);
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-        libraries: ["geometry"],
+        libraries: libraries,
     });
 
     const [userLocation, setUserLocation] = useState(null);
+    const [isGettingLocation, setIsGettingLocation] = useState(false);
 
     // const handleUpdate = () => {
     //     onSave( states?.markerPosition);
@@ -97,7 +110,7 @@ export default function RefineLocationModal({
                 {isLoaded ? (
                     <GoogleMap
                         mapContainerStyle={mapContainerStyle}
-                        center={states?.markerPosition}
+                        center={states?.markerPosition || currentCoords || { lat: 31.5204, lng: 74.3587 }}
                         zoom={15}
                         onClick={actions?.handleMapClick}
                         options={{
@@ -107,6 +120,7 @@ export default function RefineLocationModal({
                             zoomControl: true,
                         }}
                         onLoad={(map) => {
+                            mapRef.current = map;
                             const locationButton = document.createElement("button");
                             locationButton.textContent = "◉";
                             locationButton.style.background = "#fff";
@@ -129,6 +143,8 @@ export default function RefineLocationModal({
 
                             locationButton.addEventListener("click", () => {
                                 if (navigator.geolocation) {
+                                    setIsGettingLocation(true);
+                                    setIsLocationAllowed(false);
                                     navigator.geolocation.getCurrentPosition(
                                         (pos) => {
                                             const posCoords = {
@@ -139,6 +155,8 @@ export default function RefineLocationModal({
                                             setUserLocation(posCoords);
                                             states.setMarkerPosition(posCoords);
                                             map.setCenter(posCoords);
+                                            setIsLocationAllowed(true);
+                                            setIsGettingLocation(false);
 
                                             const geocoder = new window.google.maps.Geocoder();
                                             geocoder.geocode({ location: posCoords }, (results, status) => {
@@ -154,6 +172,8 @@ export default function RefineLocationModal({
                                         },
                                         (err) => {
                                             console.error("Geolocation error:", err);
+                                            setIsLocationAllowed(false);
+                                            setIsGettingLocation(false);
                                         },
                                         {
                                             enableHighAccuracy: true,
@@ -210,19 +230,25 @@ export default function RefineLocationModal({
                     <Button
                         fullWidth
                         onClick={handleUpdate}
+                        disabled={!isLocationAllowed || isGettingLocation}
                         sx={{
-                            backgroundColor: "#000",
+                            backgroundColor: !isLocationAllowed || isGettingLocation ? "#999" : "#000",
                             color: "#fff",
                             fontWeight: "bold",
                             fontSize: "16px",
                             borderRadius: "12px",
                             textTransform: "none",
                             "&:hover": {
-                                backgroundColor: "#333",
+                                backgroundColor: !isLocationAllowed || isGettingLocation ? "#999" : "#333",
+                            },
+                            "&.Mui-disabled": {
+                                backgroundColor: "#999",
+                                color: "#fff",
+                                cursor: "not-allowed",
                             },
                         }}
                     >
-                        Update
+                        {isGettingLocation ? "Getting Location..." : "Update"}
                     </Button>
                 </Box>
             </Box>
