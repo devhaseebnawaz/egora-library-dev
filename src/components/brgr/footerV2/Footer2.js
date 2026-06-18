@@ -311,12 +311,12 @@ export default function CustomFooterV2({
                   </Typography>
                 ) : (
                   <Link
-                    href={link.type === "url" ? link.url : `/${link.url}`}
+                    href={link.url}
                     color="inherit"
                     underline="hover"
                     sx={getFooterStyles("FooterLink")}
-                    target={link.type === "url" ? "_blank" : "_self"}
-                    rel={link.type === "url" ? "noopener noreferrer" : undefined}
+                    target={ "_blank" }
+                    rel={"noopener noreferrer"}
                   >
                     {link.name}
                   </Link>
