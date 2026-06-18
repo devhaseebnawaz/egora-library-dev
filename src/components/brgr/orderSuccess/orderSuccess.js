@@ -761,6 +761,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
     };
 
     const message = orderMessages?.[state]?.[orderType] || "Your order status is updating...";
+    const shouldShowStoreMessage = !["abort", "noShow"].includes(state);
 
     return (
         <Box sx={{
@@ -856,7 +857,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                     {billNumber}
                                 </Typography>
                             </Typography>
-                              {orderType === "storeDelivery" ? (
+                              {orderType === "storeDelivery" && shouldShowStoreMessage ? (
                                 <Typography
                                     mt={2}
                                     sx={{
@@ -868,7 +869,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                 </Typography>
                             ) : (
                                 <>
-                                    {orderType === "storePickUp" && (
+                                    {orderType === "storePickUp" && shouldShowStoreMessage && (
                                         <Typography variant="body2" mt={1} sx={{ ...getDescriptionStyles }}>
                                             You have to collect your order from:
                                         </Typography>
