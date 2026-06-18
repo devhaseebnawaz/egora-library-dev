@@ -173,6 +173,7 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
           key={category.id}
           ref={categoryRefs.current[category.name]}
           data-category-name={category.name}
+          sx={{ marginBottom: 3 }}
         >
           <CategoryLayout
           // banner={<Banner img={category.bannerImg} />}

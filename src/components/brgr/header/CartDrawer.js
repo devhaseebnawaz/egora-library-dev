@@ -509,11 +509,11 @@ const CartDrawer = ({
 
   const getItemIncreaseButtonStyles = {
     width:
-      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerIncreaseItemHeightWidth?.value !== ""
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerIncreaseItemHeightWidth?.value !== 0
         ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerIncreaseItemHeightWidth?.value
         : themeColors?.cartDrawerIncreaseItemHeightWidth?.value,
     height:
-      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerIncreaseItemHeightWidth?.value != 0
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerIncreaseItemHeightWidth?.value !== 0
         ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerIncreaseItemHeightWidth?.value
         : themeColors?.cartDrawerIncreaseItemHeightWidth?.value,
 
@@ -524,11 +524,11 @@ const CartDrawer = ({
 
   const getItemDecreaseButtonStyles = {
     width:
-      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerDecreaseItemHeightWidth?.value !== ""
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerDecreaseItemHeightWidth?.value !== 0
         ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerDecreaseItemHeightWidth?.value
         : themeColors?.cartDrawerDecreaseItemHeightWidth?.value,
     height:
-      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerDecreaseItemHeightWidth?.value != 0
+      layout?.cartDrawerLayout?.body[0].styles?.cartDrawerDecreaseItemHeightWidth?.value !== 0
         ? layout?.cartDrawerLayout?.body[0].styles?.cartDrawerDecreaseItemHeightWidth?.value
         : themeColors?.cartDrawerDecreaseItemHeightWidth?.value,
 
