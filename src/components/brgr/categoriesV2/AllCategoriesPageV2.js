@@ -6,6 +6,7 @@ import CategoryLayout from "../categories/CategoryLayout";
 import ItemCardV2 from "./ItemCardV2";
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
+import { getPhotoURL } from "../../../utils/photoURL";
 
 export default function AllCategoriesPageV2({ prop, actions, styles, states, themeColors, globalComponentStyles }) {
   const theme = useTheme();
@@ -191,7 +192,7 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
 
               return shouldShowBanner ? (
                 <BannerV2
-                  img={categoryMeta.img}
+                  img={getPhotoURL(categoryMeta.img)}
                   styles={styles}
                   themeColors={themeColors}
                 />
