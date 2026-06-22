@@ -22,6 +22,7 @@ import { getIconWidthHeight, getScreenSizeCategory } from '../../../utils/fontsi
 import { useMediaQuery } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { LoadingButton } from "@mui/lab";
+import { getPhotoURL } from "../../../utils/photoURL";
 
 const modalStyle = (themeColors, layout) => {
     return {
@@ -499,8 +500,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 }}
             >
                 <UniversalImage
-                    src={prop.editable.logoImage.value}
-                    alt="BRGR Logo"
+                    src={getPhotoURL(prop.editable.logoImage.value)}
+                    alt="Logo"
                     layout="fill"
                     objectFit="contain"
                 />
