@@ -1,4 +1,5 @@
-export function getPhotoURL(photoURL) {    
+export function getPhotoURL(photoURL) {
+    console.log("Photo URL : ",photoURL)    
     if (photoURL?.startsWith(`${process.env.NEXT_PUBLIC_BACKEND_URL}/images/`)  ) {
       photoURL = photoURL.split('/images/')[1];
       return `https://${process.env.NEXT_PUBLIC_AWS_BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_BUCKET_REGION}.amazonaws.com/${photoURL}`
