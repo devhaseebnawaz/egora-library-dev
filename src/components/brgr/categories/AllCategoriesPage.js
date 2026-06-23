@@ -6,6 +6,7 @@ import CategoryLayout from "./CategoryLayout";
 import ItemCard from "./ItemCard";
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
+import { getPhotoURL } from "../../../utils/photoURL";
 
 export default function AllCategoriesPage({ prop, actions, styles, states, themeColors, globalComponentStyles }) {
   
@@ -173,7 +174,7 @@ export default function AllCategoriesPage({ prop, actions, styles, states, theme
           // banner={<Banner img={category.bannerImg} />}
           >
             {prop.editable.categoryId.value[index]?.img ?
-              <Banner img={prop.editable.categoryId.value[index]?.img} /> :
+              <Banner img={getPhotoURL(prop.editable.categoryId.value[index]?.img)} /> :
               <Typography variant="h3" style={{marginTop:"16px" , marginBottom: "16px", ...getCategoryNameStyles }}>
                 {category.name}
               </Typography>

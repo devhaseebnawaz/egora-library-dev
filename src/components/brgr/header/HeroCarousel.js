@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import arrowLeft from "@iconify-icons/mdi/chevron-left";
 import arrowRight from "@iconify-icons/mdi/chevron-right";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
+import { getPhotoURL } from "../../../utils/photoURL";
 
 export default function HeroCarousel({ prop, themeColors, styles, states, globalComponentStyles }) {
   const [currentIndex, setCurrentIndex] = useState(1);
@@ -149,7 +150,7 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
           <Box
             key={index}
             component="img"
-            src={img}
+            src={getPhotoURL(img)}
             alt={`slide-${index}`}
             onLoad={handleImageLoad}
             style={{
