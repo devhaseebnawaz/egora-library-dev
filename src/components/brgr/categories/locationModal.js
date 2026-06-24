@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {
     Modal,
     Box,
@@ -71,6 +71,23 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
             return obj;
         }, {});
+    const firstOnlineOutlet = filteredOutlets.find(
+        (outlet) => outlet.isOnlineForStore
+    );
+
+    useEffect(() => {
+        if (
+            states.orderType === "storePickUp" &&
+            firstOnlineOutlet &&
+            !states.selectedOutlet
+        ) {
+            states.setSelectedOutlet(firstOnlineOutlet);
+        }
+    }, [
+        states.orderType,
+        firstOnlineOutlet?._id,
+        states.selectedOutlet?._id,
+    ]);
 
     const allRegions = Object.entries(filteredRegions).flatMap(([branchId, regions]) =>
         regions.map(region => ({
@@ -792,7 +809,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                             <InputLabel id="select-outlet-label">Select Outlet</InputLabel>
                             <Select
                                 labelId="select-outlet-label"
-                                value={states.selectedOutlet?._id || ""}
+                                value={states.selectedOutlet?._id || firstOnlineOutlet?._id || ""}
                                 onChange={(e) => {
                                     const selected = filteredOutlets.find(
                                         (outlet) => outlet._id === e.target.value
