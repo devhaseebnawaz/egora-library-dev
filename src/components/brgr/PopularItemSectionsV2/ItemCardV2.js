@@ -19,6 +19,11 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
   const { franchise } = states ?? {};
   const storeTaxOnCash = franchise?.storeTaxOnCash;
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
+  const getItemPromotionDiscount = (item) =>
+  Number(item?.discountObject?.isPromotionDiscount ? item?.discountObject?.discount || 0 : 0);
+  const hasPromotionDiscount = (item) => getItemPromotionDiscount(item) > 0;
+  const getDiscountedItemPrice = (item) =>
+  Math.max(Number(item?.price || 0) - getItemPromotionDiscount(item), 0);
   const getItemNameStyles = {
     color:
       styles?.PopularMenuSectionItemNameTextColorV2?.value !== ""
@@ -279,20 +284,45 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
             alignItems: "start",
           }}
         >
-          <Typography
+           <Typography
             variant="subtitle"
             sx={{
               px: 1,
               py: 0.3,
-              ...getPriceTagStyles
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              flexWrap: 'wrap',
+              ...getPriceTagStyles,
             }}
           >
-            Rs.{" "}
-            {getStoreDisplayPrice({
-              price: item.price,
-              showTaxWithPrice,
-              storeTaxOnCash,
-            })}
+            {hasPromotionDiscount(item) && (
+              <Typography
+                component="span"
+                sx={{
+                  textDecoration: 'line-through',
+                  opacity: 0.65,
+                  fontSize: 'inherit',
+                  fontWeight: 500,
+                }}
+              >
+                Rs.{' '}
+                {getStoreDisplayPrice({
+                  price: item.price,
+                  showTaxWithPrice,
+                  storeTaxOnCash,
+                })}
+              </Typography>
+            )}
+
+            <Typography component="span" sx={{ fontSize: 'inherit', fontWeight: 700 }}>
+              Rs.{' '}
+              {getStoreDisplayPrice({
+                price: hasPromotionDiscount(item) ? getDiscountedItemPrice(item) : item.price,
+                showTaxWithPrice,
+                storeTaxOnCash,
+              })}
+            </Typography>
           </Typography>
           <Button
             variant="contained"

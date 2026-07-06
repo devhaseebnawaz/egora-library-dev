@@ -4,6 +4,7 @@ import {
 } from "@mui/material";
 import { fNumber, fNumberRound, formatTo2, truncateTo2 } from "../../../utils/formatNumber";
 import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
+import { calculateCartDiscount } from "../../../utils/cart";
 
 const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, setOrderData, getDescriptionStyles, getHeadingStyles, getOrderHeadingStyles, checkoutTotalSummaryBackground }) => {
 
@@ -45,6 +46,10 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
   useEffect(() => {
     setSubTotal(subTotalOfItems);
   }, [subTotalOfItems]);
+
+    useEffect(() => {
+    setDiscount(calculateCartDiscount(cardItems?.items || [], cardItems));
+  }, [cardItems]);
 
   const taxRate = isTaxApplicableOnStore
     ? (states.paymentMethod === "cash"
@@ -89,7 +94,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
 
 
   useEffect(() => {
-    let updatedTotal = Number(subTotal);
+    let updatedTotal = Math.max(Number(subTotal) - Number(discount || 0), 0);
     if (isServiceFeesApplicableOnStore && isApplicable(serviceFeesObject?.[states.orderType]?.[states.paymentMethod]?.applicable)) {
       updatedTotal += Number(serviceFee);
     }
@@ -173,6 +178,12 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
       tax: fNumber(taxAmount),
       subTotal: fNumber(subTotal),
       tip: selectedTip === null ? 0 : fNumber(selectedTip),
+      discount: fNumber(discount),
+      discountObject: cardItems?.discountObject || {
+      reason: discount > 0 ? "Promotion" : "",
+        value: fNumber(discount),
+      },
+      promotion: cardItems?.promotion || undefined,
       serviceFees: fNumber(totalServiceValue),
       location: states.latLong ? states.latLong : "2,2",
       platformFees: isPlatformFeeApplicableOnStore ? platformFees : 0,
@@ -182,7 +193,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
     };
 
     setOrderData(orderData);
-  }, [cardItems, total, selectedTip, serviceFee, taxAmount, subTotal, states.paymentMethod, states.orderType, isServiceFeesApplicableOnStore, serviceFeesObject,
+    }, [cardItems, total, selectedTip, serviceFee, taxAmount, subTotal, discount, states.paymentMethod, states.orderType, isServiceFeesApplicableOnStore, serviceFeesObject,
   ]);
 
 
@@ -201,6 +212,13 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
               <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Sub Total</Typography>
               <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {truncateTo2(subTotal)}</Typography>
             </Stack>
+                {discount > 0 && (
+              <Stack direction="row" justifyContent="space-between">
+                <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Discount</Typography>
+                <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}> - Rs. {fNumber(discount)}</Typography>
+            
+              </Stack>
+            )}
             {isPlatformFeeApplicableOnStore && (
               <Stack direction="row" justifyContent="space-between">
                 <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Platform Fee</Typography>
