@@ -22,6 +22,13 @@ import { fNumber , formatTo2,truncateTo2} from "../../../utils/formatNumber";
 
 import { getScreenSizeCategory } from '../../../utils/fontsize';
 
+import {
+    calculateCartItemGrossTotal,
+    calculateCartItemNetTotal,
+    getCartItemDiscount
+} from "../../../utils/cart";
+
+
 const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, showDeleteIndex, setShowDeleteIndex, handleRemoveFromCart, handleMenuItemClick, states, layout, globalComponentStyles, themeColors, previewMode, getItemPriceStyles, getItemIncreaseButtonStyles, getItemDecreaseButtonStyles, getItemDescriptionStyles, getItemHeadingStyles, getItemNameStyles, getImageStyles, getItemQtyStyles, getItemQtyButtonStyles, getItemNotesStyles }) => {
     // console.log("the cart item sis", cartItem)
     // const sessionInfo = useSession();
@@ -69,19 +76,16 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
     //     fetchImagesForCart();
     // }, [cardItems]);
 
-    const calculateMenuItemTotal = (cartItem) => {
-        const itemQuantity = cartItem.qty;
-        let p =
-            cartItem?.choiceGroup?.length > 0 || cartItem?.variants?.length > 0
-                ? cartItem?.priceWithChoiceGroup
-                : cartItem?.price;
-        let itemTotal = p * itemQuantity;
-        if (cartItem.selectedAddOns && cartItem.selectedAddOns.length > 0) {
-            cartItem.selectedAddOns.forEach((addon) => {
-                itemTotal += parseFloat(addon.price.replace("Rs. ", ""));
-            });
-        }
-        return `Rs. ${truncateTo2(itemTotal)}`;
+   const getCartItemOriginalTotal = (cartItem) => {
+        return truncateTo2(calculateCartItemGrossTotal(cartItem));
+    };
+
+    const getCartItemDiscountedTotal = (cartItem) => {
+        return truncateTo2(calculateCartItemNetTotal(cartItem));
+    };
+
+    const hasPromotionDiscount = (cartItem) => {
+        return getCartItemDiscount(cartItem) > 0;
     };
 
 
@@ -304,19 +308,58 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
                                 >
                                     <span>{cartItem?.notes}</span>
                                 </Typography>
-                                <Typography
+                          <Box
                                     sx={{
-                                        ...getItemPriceStyles,
                                         marginTop: "4px",
                                         marginLeft: "10px",
-                                        fontWeight: "600",
-                                        "@media (max-width: 1440px)": {
-                                            fontSize: "12px",
-                                        },
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "8px",
+                                        flexWrap: "wrap",
                                     }}
                                 >
-                                    {calculateMenuItemTotal(cartItem)}
-                                </Typography>
+                                    {hasPromotionDiscount(cartItem) && (
+                                        <Typography
+                                            sx={{
+                                                ...getItemPriceStyles,
+                                                fontWeight: "500",
+                                                textDecoration: "line-through",
+                                                opacity: 0.65,
+                                                "@media (max-width: 1440px)": {
+                                                    fontSize: "12px",
+                                                },
+                                            }}
+                                        >
+                                            Rs. {getCartItemOriginalTotal(cartItem)}
+                                        </Typography>
+                                    )}
+
+                                    <Typography
+                                        sx={{
+                                            ...getItemPriceStyles,
+                                            fontWeight: "700",
+                                            "@media (max-width: 1440px)": {
+                                                fontSize: "12px",
+                                            },
+                                        }}
+                                    >
+                                        Rs. {getCartItemDiscountedTotal(cartItem)}
+                                    </Typography>
+                                </Box>
+{/* 
+                                {hasPromotionDiscount(cartItem) && (
+                                    <Typography
+                                        variant="caption"
+                                        sx={{
+                                            marginLeft: "10px",
+                                            display: "block",
+                                            fontWeight: 500,
+                                            ...getItemDescriptionStyles
+                                        }}
+                                    >
+                                        You saved Rs. {truncateTo2(getCartItemDiscount(cartItem))}
+                                    </Typography>
+                                )} */}
                             </Stack>
                         </Box>
                     </Box>
