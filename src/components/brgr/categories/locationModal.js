@@ -107,12 +107,15 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
         openModal = true;
     } else {
         if (states.locationModalOpen) {
-            if (states.selectedVenue) {
-                openModal = false;
-            } else {
-                openModal = true;
-            }
+            openModal = true;
         }
+        //   if (states.locationModalOpen) {
+        //     if (states.selectedVenue) {
+        //         openModal = false;
+        //     } else {
+        //         openModal = true;
+        //     }
+        // }
     }
 
     const getOrderTypeSelectorSelectedButtonStyles = {
