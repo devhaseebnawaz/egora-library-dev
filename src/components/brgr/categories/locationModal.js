@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import {
     Modal,
     Box,
@@ -51,6 +51,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const [isConfirmingLocation, setIsConfirmingLocation] = useState(false);
+    const [isGettingCurrentLocation, setIsGettingCurrentLocation] = useState(false);
     const [isLocationAllowed, setIsLocationAllowed] = useState(false);
     const [prevSelectedVenueForPickUp, setPrevSelectedVenueForPickUp] = useState(states.selectedOutlet?._id || "");
     const filteredOutlets = states.outlets?.filter((outlet) =>
@@ -71,6 +72,13 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
             return obj;
         }, {});
+
+    const allRegions = Object.entries(filteredRegions).flatMap(([branchId, regions]) =>
+        regions.map(region => ({
+            ...region,
+            branchId,
+        }))
+    );
     const firstOnlineOutlet = filteredOutlets.find(
         (outlet) => outlet.isOnlineForStore
     );
@@ -88,13 +96,6 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
         firstOnlineOutlet?._id,
         states.selectedOutlet?._id,
     ]);
-
-    const allRegions = Object.entries(filteredRegions).flatMap(([branchId, regions]) =>
-        regions.map(region => ({
-            ...region,
-            branchId,
-        }))
-    );
     const uniqueVenues = Array.from(
         new Map(
             allRegions.map(item => [item.name.toLowerCase(), item])
@@ -403,49 +404,117 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     }
 
     const handleSelectedLocation = async () => {
-        if (states.franchise.configurations.isEnabledDeliveryLocation && !states.franchise.configurations.isRegionBasedDeliveryOnStore) {
+        states?.setErrorForToFarLocation("");
+        if (
+            states.franchise.configurations.isEnabledDeliveryLocation &&
+            !states.franchise.configurations.isRegionBasedDeliveryOnStore
+        ) {
             try {
-                const response = await actions.handleLocateMe();
-                if (response) {
-                    const [franLat, franLng] = states.latLongForDelivery.split(",").map(Number);
-                    const [userLat, userLng] = response.split(",").map(Number);
+                const savedUserLocation = getSavedUserLocation();
 
-                    const distance = getDistanceFromLatLonInMeters(franLat, franLng, userLat, userLng);
+                if (!savedUserLocation || !states.latLongForDelivery) {
+                    states.setErrorForDeniedLocation?.(
+                        "Please allow location first."
+                    );
+                    return;
+                }
 
-                    if (distance <= states.franchise.deliveryRadius * 1000) {
-                        actions.handleSelectedLocation(states.latLongForDelivery);
-                    } else {
-                        states.setErrorForToFarLocation("Sorry! You are too far from the delivery address.");
-                    }
+                const [franLat, franLng] = states.latLongForDelivery
+                    .split(",")
+                    .map(Number);
+
+                const [userLat, userLng] = savedUserLocation
+                    .split(",")
+                    .map(Number);
+
+                const distance = getDistanceFromLatLonInMeters(franLat, franLng, userLat, userLng);
+
+                if (distance <= states.franchise.deliveryRadius * 1000) {
+                    actions.handleSelectedLocation(states.latLongForDelivery);
+                } else {
+                    states.setErrorForToFarLocation(
+                        "Sorry! You are too far from the delivery address."
+                    );
                 }
             } catch (error) {
-                console.log("Error::", error);
+                console.log("Confirm location error:", error);
             }
-        } else if (states.franchise.configurations.isRegionBasedDeliveryOnStore) {
-            if (states.franchise.configurations.isLocationRestrictedRegionBasedDeliveryOnStore) {
+
+            return;
+        }
+
+        if (states.franchise.configurations.isRegionBasedDeliveryOnStore) {
+            if (
+                states.franchise.configurations
+                    .isLocationRestrictedRegionBasedDeliveryOnStore
+            ) {
                 setIsConfirmingLocation(true);
+
                 try {
-                    const response = await actions.handleLocateMe();
-                    if (response) {
+                    const savedUserLocation = getSavedUserLocation();
+
+                    if (savedUserLocation) {
                         actions.handleSelectedRegion(states?.selectedRegion);
+                    } else {
+                        states.setErrorForDeniedLocation?.(
+                            "Please allow location first."
+                        );
                     }
                 } catch (error) {
-                    console.log("Error::", error);
+                    console.log("Confirm region error:", error);
                 } finally {
                     setIsConfirmingLocation(false);
                 }
             } else {
                 actions.handleSelectedRegion(states?.selectedRegion);
             }
-        } else {
-            actions.handleSelectedLocation(states.latLongForDelivery);
+
+            return;
+        }
+
+        actions.handleSelectedLocation(states.latLongForDelivery);
+    };
+    const getCoordsString = (coords) => {
+        if (!coords?.lat || !coords?.lng) return "";
+        return `${coords.lat},${coords.lng}`;
+    };
+
+    const getSavedUserLocation = () => {
+        if (states?.userCoordinates?.lat && states?.userCoordinates?.lng) {
+            return getCoordsString(states.userCoordinates);
+        }
+
+        if (states?.markerPosition?.lat && states?.markerPosition?.lng) {
+            return getCoordsString(states.markerPosition);
+        }
+
+        return "";
+    };
+    const getGeolocationPermissionState = async () => {
+        try {
+            if (!navigator.permissions?.query) return null;
+
+            const result = await navigator.permissions.query({
+                name: "geolocation",
+            });
+
+            return result.state; // granted | prompt | denied
+        } catch (error) {
+            return null;
         }
     };
+
     const handleUseCurrentLocationClick = () => {
         states?.setRefineModalOpen(true);
+        states?.setErrorForDeniedLocation?.("");
+        setIsLocationAllowed(false);
+        setIsGettingCurrentLocation(true);
 
         if (!navigator.geolocation) {
-            states?.setErrorForDeniedLocation?.("Geolocation is not supported by your browser.");
+            setIsGettingCurrentLocation(false);
+            states?.setErrorForDeniedLocation?.(
+                "Geolocation is not supported by your browser."
+            );
             return;
         }
 
@@ -460,22 +529,31 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 states?.setLatLongForDelivery?.(`${posCoords.lat},${posCoords.lng}`);
                 const geocoder = new window.google.maps.Geocoder();
                 geocoder.geocode({ location: posCoords }, (results, status) => {
+                    setIsGettingCurrentLocation(false);
                     if (status === "OK" && results?.[0]) {
                         const formattedAddress = results[0].formatted_address;
-                        console.log("Formatted Address:", formattedAddress);
+
                         actions?.updateLocation?.(formattedAddress);
-                        setIsLocationAllowed(true);
                         states?.setCurrentLocation?.(formattedAddress);
+                        setIsLocationAllowed(true);
                     } else {
                         setIsLocationAllowed(false);
-                        console.error("Geocoder failed due to:", status);
+                        states?.setErrorForDeniedLocation?.(
+                            "Unable to fetch address from your current location."
+                        );
                     }
                 });
             },
-            (err) => {
-                console.error("Geolocation error:", err);
+            async (err) => {
+                setIsGettingCurrentLocation(false);
+                setIsLocationAllowed(false);
 
-                if (err.code === err.PERMISSION_DENIED) {
+                const permissionState = await getGeolocationPermissionState();
+
+                if (
+                    err.code === err.PERMISSION_DENIED &&
+                    permissionState === "denied"
+                ) {
                     states?.setErrorForDeniedLocation?.(
                         "Location permission denied. Please allow location from browser settings."
                     );
@@ -483,7 +561,6 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000,
                 maximumAge: 0,
             }
         );
@@ -1224,6 +1301,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 currentCoords={states?.userCoordinates}
                 isLocationAllowed={isLocationAllowed}
                 setIsLocationAllowed={setIsLocationAllowed}
+                isGettingCurrentLocation={isGettingCurrentLocation}
                 onSave={({ coords, address }) => {
                     states?.setUserCoordinates(coords);
                 }}
