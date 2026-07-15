@@ -216,7 +216,7 @@ export default function ItemCard({
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                minHeight: smDown ? "2em" :  "3em",    // ensure height same even if text short
+                minHeight: "3em",
                 ...getItemNameStyles
               }}
             >
@@ -233,7 +233,7 @@ export default function ItemCard({
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                minHeight: smDown ? "2em" :  "3em",     // fix height for uniformity
+                minHeight: "3em", 
               }}
             >
               {item.description}
