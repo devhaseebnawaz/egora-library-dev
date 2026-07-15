@@ -223,6 +223,11 @@ export default function ItemCardV2({
                 p: 1.2,
                 ...getCardStyles,
                 height: 170,
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                "&:hover": {
+                    transform: "scale(1.03)",
+                    boxShadow: "0 12px 32px rgba(0, 0, 0, 0.2)",
+                }
             }}
             onClick={() => {
                 actions.handleOpenCard(item);
