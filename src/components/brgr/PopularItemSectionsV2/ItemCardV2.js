@@ -201,6 +201,11 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         p: 1.2,
         ...getCardStyles,
         height: 170,
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "scale(1.03)",
+          boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+        },
       }}
       onClick={() => {
 

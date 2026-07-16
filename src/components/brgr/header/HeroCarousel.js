@@ -60,18 +60,27 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
         : currentIndex - 1;
 
   useEffect(() => {
-    startSlide();
-    return () => stopSlide();
-  }, []);
+    stopSlide();
+
+    if (totalSlides <= 1) return undefined;
+
+    slideInterval.current = setInterval(() => {
+      if (!isJumpingRef.current) {
+        setCurrentIndex((prev) => prev + 1);
+      }
+    }, slideIntervalDuration * 1000);
+
+    return () => {
+      stopSlide();
+    };
+  }, [slideIntervalDuration, totalSlides]);
 
   const startSlide = () => {
     stopSlide();
-    slideInterval.current = setInterval(() => {
-      if (!hasMountedRef.current) {
-        hasMountedRef.current = true;
-        return;
-      }
 
+    if (totalSlides <= 1) return;
+
+    slideInterval.current = setInterval(() => {
       if (!isJumpingRef.current) {
         setCurrentIndex((prev) => prev + 1);
       }
@@ -79,7 +88,10 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
   };
 
   const stopSlide = () => {
-    clearInterval(slideInterval.current);
+    if (slideInterval.current) {
+      clearInterval(slideInterval.current);
+      slideInterval.current = null;
+    }
   };
 
   useEffect(() => {
