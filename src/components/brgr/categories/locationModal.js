@@ -358,34 +358,48 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 : themeColors?.LocationModalSelectOutletTextStyle?.value,
     };
 
-    const handleOutletSelection = async () => {
-        if (!states?.addressForPickUpMode && states.franchise.configurations.isEnabledPickUpLocation) {
-            try {
-                const response = await actions.handleLocateMe();
-                if (response) {
-                    states.setGetNewData(true);
-                    actions.handleOpenLocationModal(false);
-                    actions.handleOpenLocationModalOnClick(false);
-                    if ( prevSelectedVenueForPickUp != states?.selectedOutlet?._id ){
-                        actions.handleDeleteCartBySessionId();
-                        setPrevSelectedVenueForPickUp(states.selectedOutlet)
-                    }
-                    actions.handleSetSelectedVenue(states.selectedOutlet);
-                }
-            } catch (err) {
-                console.log(err);
-            }
+    const completeOutletSelection = async () => {
+        const selectedOutletId = states?.selectedOutlet?._id;
+
+        if (!selectedOutletId) {
+            return;
         }
 
-        if (states?.addressForPickUpMode || !states.franchise.configurations.isEnabledPickUpLocation) {
-            states.setGetNewData(true);
-            actions.handleOpenLocationModal(false);
-            actions.handleOpenLocationModalOnClick(false);
-            if ( prevSelectedVenueForPickUp != states?.selectedOutlet?._id ){
-                actions.handleDeleteCartBySessionId();
-                setPrevSelectedVenueForPickUp(states.selectedOutlet)
+        if (prevSelectedVenueForPickUp !== selectedOutletId) {
+            await actions.handleDeleteCartBySessionId();
+            setPrevSelectedVenueForPickUp(selectedOutletId);
+        }
+
+        actions.handleSetSelectedVenue(states.selectedOutlet);
+
+        states.setGetNewData(true);
+        actions.handleOpenLocationModal(false);
+        actions.handleOpenLocationModalOnClick(false);
+    };
+
+    const handleOutletSelection = async () => {
+        const isPickupLocationRestricted =
+            states?.franchise?.configurations?.isEnabledPickUpLocation === true;
+
+        if (!states?.selectedOutlet?._id) {
+            return;
+        }
+
+        try {
+            if (
+                isPickupLocationRestricted &&
+                !states?.userLocationLatlong
+            ) {
+                const locationResult = await actions.handleLocateMe();
+
+                if (!locationResult) {
+                    return;
+                }
             }
-            actions.handleSetSelectedVenue(states.selectedOutlet);
+
+            await completeOutletSelection();
+        } catch (error) {
+            console.error("Pickup location error:", error);
         }
     };
 
