@@ -96,9 +96,6 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             branchId,
         }))
     );
-    const firstOnlineOutlet = filteredOutlets.find(
-        (outlet) => outlet.isOnlineForStore
-    );
 
     useEffect(() => {
         if (
