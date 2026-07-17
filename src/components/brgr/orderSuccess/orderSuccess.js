@@ -14,10 +14,26 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const { orderData } = states ?? {}
-    const { orderType, customer, billNumber, tax, deliveryFees, serviceFees, platformFees, subTotal, total, paymentType, venueId, items, state, createdAt } = orderData ?? {}
+    const { orderType, customer, billNumber, tax, deliveryFees, serviceFees, platformFees, subTotal, total, paymentType, venueId, items, state, createdAt , discount,discountObject,promotion,} = orderData ?? {}
     const { name, venueAddressOne, venueAddressTwo, venuePhoneNumber, franchiseId } = venueId ?? {}
     const { firstName, lastName, address, phone } = customer ?? {}
     const { street, area } = address ?? {}
+    const getOrderItemDiscount = (item) =>
+    Number(item?.discountObject?.discount || item?.discountObject?.value || 0);
+    const getOrderItemGrossTotal = (item) =>
+    Number(item?.qty || 0) * Number(item?.price || 0);
+    const getOrderItemNetTotal = (item) =>
+    Math.max(getOrderItemGrossTotal(item) - getOrderItemDiscount(item), 0);
+    const orderPromotionDiscount =
+    Number(discount || 0) ||
+    Number(discountObject?.value || 0) ||
+    Number(items?.reduce((total, item) => total + getOrderItemDiscount(item), 0) || 0);
+
+    const orderPromotionLabel =
+    discountObject?.reason ||
+    promotion?.name ||
+    promotion?.tagLine ||
+    "Promotion";
     const redirectHome = () => {
         const baseUrl = `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}`;
         const urlsToAppendId = ["http://localhost:3031", "https://stores.dev.egora.pk", "https://stores.stg.egora.pk", "https://stores.test.egora.pk", "https://stores.egora.pk"];
@@ -1029,6 +1045,20 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                         <Typography sx={{ ...getPaymentInformationKeyStyles }}>Total</Typography>
                                         <Typography sx={{ ...getPaymentInformationValueStyles }} >Rs. {subTotal}</Typography>
                                     </Stack>
+                                    {orderPromotionDiscount > 0 && (
+                                        <>
+                                            <Divider sx={{ mt: 1.5 }} />
+                                            <Stack direction="row" justifyContent="space-between" mt={1}>
+                                                <Typography sx={{ ...getPaymentInformationKeyStyles }}>
+                                                    {/* {orderPromotionLabel} */}
+                                                    Discount
+                                                </Typography>
+                                                <Typography sx={{ ...getPaymentInformationValueStyles }}>
+                                                    - Rs. {truncateTo2(orderPromotionDiscount)}
+                                                </Typography>
+                                            </Stack>
+                                        </>
+                                    )}
 
                                     {tax > 0 && (
                                         <>
@@ -1218,7 +1248,50 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                                         )}
                                                     </TableCell>
                                                     <TableCell align="center" sx={{ ...getProductInformationValueStyles }} >{item.qty}</TableCell>
-                                                    <TableCell align="right" sx={{ ...getProductInformationValueStyles }} >Rs. {truncateTo2(Number(item.qty) * Number(item.price))}</TableCell>
+                                                    <TableCell align="right" sx={{ ...getProductInformationValueStyles }}>
+                                                        {getOrderItemDiscount(item) > 0 ? (
+                                                            <Box
+                                                                sx={{
+                                                                    display: "flex",
+                                                                    flexDirection: "column",
+                                                                    alignItems: "flex-end",
+                                                                    gap: "2px",
+                                                                }}
+                                                            >
+                                                                <Typography
+                                                                    sx={{
+                                                                        ...getProductInformationValueStyles,
+                                                                        textDecoration: "line-through",
+                                                                        opacity: 0.65,
+                                                                        fontSize: "12px",
+                                                                    }}
+                                                                >
+                                                                    Rs. {truncateTo2(getOrderItemGrossTotal(item))}
+                                                                </Typography>
+
+                                                                <Typography
+                                                                    sx={{
+                                                                        ...getProductInformationValueStyles,
+                                                                        fontWeight: "bold",
+                                                                    }}
+                                                                >
+                                                                    Rs. {truncateTo2(getOrderItemNetTotal(item))}
+                                                                </Typography>
+
+                                                                {/* <Typography
+                                                                    sx={{
+                                                                        ...getProductInformationValueStyles,
+                                                                        fontSize: "11px",
+                                                                        opacity: 0.75,
+                                                                    }}
+                                                                >
+                                                                    Saved Rs. {truncateTo2(getOrderItemDiscount(item))}
+                                                                </Typography> */}
+                                                            </Box>
+                                                        ) : (
+                                                            <>Rs. {truncateTo2(getOrderItemGrossTotal(item))}</>
+                                                        )}
+                                                    </TableCell>
                                                 </TableRow>
 
                                             ))}

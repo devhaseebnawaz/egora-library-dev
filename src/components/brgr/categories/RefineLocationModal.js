@@ -39,7 +39,8 @@ export default function RefineLocationModal({
     currentCoords,
     onSave,
     isLocationAllowed,
-    setIsLocationAllowed
+    setIsLocationAllowed,
+    isGettingCurrentLocation
 }) {
 
     const mapRef = useRef(null);
@@ -58,7 +59,7 @@ export default function RefineLocationModal({
 
     const [userLocation, setUserLocation] = useState(null);
     const [isGettingLocation, setIsGettingLocation] = useState(false);
-
+    const isLocationLoading = isGettingLocation || isGettingCurrentLocation;
     // const handleUpdate = () => {
     //     onSave( states?.markerPosition);
     //     onClose();
@@ -84,6 +85,19 @@ export default function RefineLocationModal({
                 onClose();
             }
         });
+    };
+    const getGeolocationPermissionState = async () => {
+        try {
+            if (!navigator.permissions?.query) return null;
+
+            const result = await navigator.permissions.query({
+                name: "geolocation",
+            });
+
+            return result.state;
+        } catch (error) {
+            return null;
+        }
     };
 
     return (
@@ -141,49 +155,83 @@ export default function RefineLocationModal({
 
                             map.controls[window.google.maps.ControlPosition.RIGHT_BOTTOM].push(locationButton);
 
-                            locationButton.addEventListener("click", () => {
-                                if (navigator.geolocation) {
-                                    setIsGettingLocation(true);
-                                    setIsLocationAllowed(false);
-                                    navigator.geolocation.getCurrentPosition(
-                                        (pos) => {
-                                            const posCoords = {
-                                                lat: pos.coords.latitude,
-                                                lng: pos.coords.longitude,
-                                            };
-
-                                            setUserLocation(posCoords);
-                                            states.setMarkerPosition(posCoords);
-                                            map.setCenter(posCoords);
-                                            setIsLocationAllowed(true);
-                                            setIsGettingLocation(false);
-
-                                            const geocoder = new window.google.maps.Geocoder();
-                                            geocoder.geocode({ location: posCoords }, (results, status) => {
-                                                if (status === "OK" && results[0]) {
-                                                    const formattedAddress = results[0].formatted_address;
-                                                    console.log("Formatted Address: ", formattedAddress);
-
-                                                    actions.updateLocation(formattedAddress);
-                                                } else {
-                                                    console.error("Geocoder failed due to: " + status);
-                                                }
-                                            });
-                                        },
-                                        (err) => {
-                                            console.error("Geolocation error:", err);
-                                            setIsLocationAllowed(false);
-                                            setIsGettingLocation(false);
-                                        },
-                                        {
-                                            enableHighAccuracy: true,
-                                            timeout: 10000,
-                                            maximumAge: 0,
-                                        }
+                            locationButton.addEventListener("click", async () => {
+                                if (!navigator.geolocation) {
+                                    states?.setErrorForDeniedLocation?.(
+                                        "Geolocation is not supported by your browser."
                                     );
+                                    return;
                                 }
-                            });
 
+                                const permissionState = await getGeolocationPermissionState();
+
+                                if (permissionState === "denied") {
+                                    setIsGettingLocation(false);
+                                    setIsLocationAllowed(false);
+
+                                    states?.setErrorForDeniedLocation?.(
+                                        "Location permission is blocked. Please allow location from browser settings and try again."
+                                    );
+
+                                    return;
+                                }
+
+                                setIsGettingLocation(true);
+                                setIsLocationAllowed(false);
+                                states?.setErrorForDeniedLocation?.("");
+
+                                navigator.geolocation.getCurrentPosition(
+                                    (pos) => {
+                                        const posCoords = {
+                                            lat: pos.coords.latitude,
+                                            lng: pos.coords.longitude,
+                                        };
+
+                                        setUserLocation(posCoords);
+                                        states.setMarkerPosition(posCoords);
+                                        map.setCenter(posCoords);
+                                        setIsLocationAllowed(true);
+
+                                        const geocoder = new window.google.maps.Geocoder();
+
+                                        geocoder.geocode({ location: posCoords }, (results, status) => {
+                                            setIsGettingLocation(false);
+
+                                            if (status === "OK" && results[0]) {
+                                                const formattedAddress = results[0].formatted_address;
+
+                                                actions.updateLocation(formattedAddress);
+                                                states?.setCurrentLocation?.(formattedAddress);
+                                                states?.setLatLongForDelivery?.(`${posCoords.lat},${posCoords.lng}`);
+                                            } else {
+                                                setIsLocationAllowed(false);
+                                                states?.setErrorForDeniedLocation?.(
+                                                    "Unable to fetch address from your current location."
+                                                );
+                                            }
+                                        });
+                                    },
+                                    async (err) => {
+                                        setIsGettingLocation(false);
+                                        setIsLocationAllowed(false);
+
+                                        const permissionState = await getGeolocationPermissionState();
+
+                                        if (
+                                            err.code === err.PERMISSION_DENIED &&
+                                            permissionState === "denied"
+                                        ) {
+                                            states?.setErrorForDeniedLocation?.(
+                                                "Location permission is blocked. Please allow location from browser settings and try again."
+                                            );
+                                        }
+                                    },
+                                    {
+                                        enableHighAccuracy: true,
+                                        maximumAge: 0,
+                                    }
+                                );
+                            });
                         }}
                     >
                         <Marker
@@ -230,16 +278,16 @@ export default function RefineLocationModal({
                     <Button
                         fullWidth
                         onClick={handleUpdate}
-                        disabled={!isLocationAllowed || isGettingLocation}
+                        disabled={!isLocationAllowed || isLocationLoading}
                         sx={{
-                            backgroundColor: !isLocationAllowed || isGettingLocation ? "#999" : "#000",
+                            backgroundColor: !isLocationAllowed || isLocationLoading ? "#999" : "#000",
                             color: "#fff",
                             fontWeight: "bold",
                             fontSize: "16px",
                             borderRadius: "12px",
                             textTransform: "none",
                             "&:hover": {
-                                backgroundColor: !isLocationAllowed || isGettingLocation ? "#999" : "#333",
+                                backgroundColor: !isLocationAllowed || isLocationLoading ? "#999" : "#333",
                             },
                             "&.Mui-disabled": {
                                 backgroundColor: "#999",
@@ -248,7 +296,7 @@ export default function RefineLocationModal({
                             },
                         }}
                     >
-                        {isGettingLocation ? "Getting Location..." : "Update"}
+                        {isLocationLoading ? "Getting Location..." : "Update"}
                     </Button>
                 </Box>
             </Box>
