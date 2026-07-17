@@ -3,6 +3,7 @@ import { Box, Typography, IconButton } from '@mui/material';
 // import {Iconify} from "src/components/brgr/iconify";
 import {
     calculateSubTotal,
+    calculateCartDiscount
 } from "../../../utils/cart";
 import { fNumber, getStoreDisplayPrice } from "../../../utils/formatNumber";
 // import { useCart } from '../CartContext';
@@ -34,6 +35,8 @@ export default function CartBottomBar({
     // );
     const cardItems = states?.cardItems?.items ?? [];
     const subTotal = calculateSubTotal(cardItems);
+    const discount = calculateCartDiscount(cardItems, states?.cardItems);
+    const discountedSubTotal = Math.max(Number(subTotal || 0) - Number(discount || 0), 0);
 
 
     useEffect(() => {
@@ -137,8 +140,23 @@ export default function CartBottomBar({
                         <Typography style={{ fontWeight: 'bold' }}>
                             View Cart
                         </Typography>
-                        <Typography style={{ fontWeight: 'bold' }}>
-                            Rs. {getStoreDisplayPrice({ price: subTotal, showTaxWithPrice, storeTaxOnCash })}
+                        <Typography
+                            style={{
+                                fontWeight: 'bold',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 6,
+                                flexWrap: 'wrap',
+                                justifyContent: 'flex-end',
+                            }}
+                        >
+                            <span>
+                                Rs. {getStoreDisplayPrice({
+                                    price: discount > 0 ? discountedSubTotal : subTotal,
+                                    showTaxWithPrice,
+                                    storeTaxOnCash,
+                                })}
+                            </span>
                         </Typography>
                     </Box>
                 )}

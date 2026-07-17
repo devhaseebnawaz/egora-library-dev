@@ -12,6 +12,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
+import { getPhotoURL } from "../../../utils/photoURL";
 
 
 
@@ -28,6 +29,12 @@ export default function ItemCard({
   const { franchise } = states ?? {};
   const storeTaxOnCash = franchise?.storeTaxOnCash;
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
+  const headerLogo = getPhotoURL(states?.logoUrl);
+  const getItemPromotionDiscount = (item) =>
+  Number(item?.discountObject?.isPromotionDiscount ? item?.discountObject?.discount || 0 : 0);
+  const hasPromotionDiscount = (item) => getItemPromotionDiscount(item) > 0;
+  const getDiscountedItemPrice = (item) =>
+  Math.max(Number(item?.price || 0) - getItemPromotionDiscount(item), 0);
   const getItemNameStyles = {
     color:
       styles?.AllCategoriesItemNameTextColor?.value !== ""
@@ -184,7 +191,7 @@ export default function ItemCard({
           image={
             item?.photoURL
               ? `${states.storeImagesBaseUrl}/${item.photoURL}`
-              : "/assets/placeholder.png"
+              : headerLogo || "/assets/placeholder.png"
           }
           alt={item.name}
           style={{ height: smDown ? "150px" : "250px", objectFit: smDown ? "cover" : "fill" }}
@@ -211,7 +218,7 @@ export default function ItemCard({
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                minHeight: smDown ? "2em" :  "3em",    // ensure height same even if text short
+                minHeight: "3em",
                 ...getItemNameStyles
               }}
             >
@@ -228,7 +235,7 @@ export default function ItemCard({
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                minHeight: smDown ? "2em" :  "3em",     // fix height for uniformity
+                minHeight: "3em", 
               }}
             >
               {item.description}
@@ -248,13 +255,35 @@ export default function ItemCard({
                     boxShadow: "none"
                   },
                   ...getPriceTagStyles,
-                }}
+              }}
               >
-                Rs. {getStoreDisplayPrice({
-                  price: item.price,
-                  showTaxWithPrice,
-                  storeTaxOnCash,
-                })}
+                <Box sx={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                  {hasPromotionDiscount(item) && (
+                    <Typography
+                      component="span"
+                      sx={{
+                        textDecoration: "line-through",
+                        opacity: 0.65,
+                        fontSize: "inherit",
+                        fontWeight: 500,
+                      }}
+                    >
+                      Rs. {getStoreDisplayPrice({
+                        price: item.price,
+                        showTaxWithPrice,
+                        storeTaxOnCash,
+                      })}
+                    </Typography>
+                  )}
+
+                  <Typography component="span" sx={{ fontSize: "inherit", fontWeight: 700 }}>
+                    Rs. {getStoreDisplayPrice({
+                      price: hasPromotionDiscount(item) ? getDiscountedItemPrice(item) : item.price,
+                      showTaxWithPrice,
+                      storeTaxOnCash,
+                    })}
+                  </Typography>
+                </Box>
               </Button>
             </Box>
 

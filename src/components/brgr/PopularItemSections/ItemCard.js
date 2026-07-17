@@ -4,13 +4,21 @@ import ItemDetailModal from "../categories/ItemDetailModal";
 import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
+import { getPhotoURL } from "../../../utils/photoURL";
+
 
 export default function ItemCard ({ item, themeColors, styles, actions, states, globalComponentStyles }) {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm")); 
   const { franchise } = states ?? {};
+  const headerLogo = getPhotoURL(states?.logoUrl);
   const storeTaxOnCash = franchise?.storeTaxOnCash;
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
+  const getItemPromotionDiscount = (item) =>
+  Number(item?.discountObject?.isPromotionDiscount ? item?.discountObject?.discount || 0 : 0);
+  const hasPromotionDiscount = (item) => getItemPromotionDiscount(item) > 0;
+  const getDiscountedItemPrice = (item) =>
+  Math.max(Number(item?.price || 0) - getItemPromotionDiscount(item), 0);
   const getItemNameStyles = {
     backgroundColor:
       styles?.PopularMenuSectionItemNameTextBackgroundColor?.value !== ""
@@ -136,7 +144,7 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
           src={
             item?.photoURL
               ? `${states.storeImagesBaseUrl}/${item.photoURL}`
-              : '/assets/placeholder.png'
+              : headerLogo || '/assets/placeholder.png'
           }
           alt={item?.name || "Menu Item"}
           loading="lazy"
@@ -171,21 +179,47 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
           {item?.name}
         </Typography>
 
-        <Box
+           <Box
           style={{
             position: "absolute",
             bottom: 12,
             right: 12,
-            // backgroundColor: themeColors?.ItemCardItemPriceBackgroundColor ? themeColors?.ItemCardItemPriceBackgroundColor : styles?.ItemCardItemPriceBackgroundColor != "" ? styles?.ItemCardItemPriceBackgroundColor : "#fff",
-            padding: "4px 12px",
-            // borderRadius: 20,
-            // fontWeight: 600,
-            // fontSize: 14,
-            boxShadow: "rgba(0, 0, 0, 0.14) 0px 1px 4px",
-            ...getPriceTagStyles
+            padding: '4px 12px',
+            boxShadow: 'rgba(0, 0, 0, 0.14) 0px 1px 4px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flexWrap: 'wrap',
+            ...getPriceTagStyles,
           }}
         >
-          Rs. {getStoreDisplayPrice({ price: item?.price, showTaxWithPrice, storeTaxOnCash })}
+          {hasPromotionDiscount(item) && (
+            <Typography
+              component="span"
+              sx={{
+                textDecoration: 'line-through',
+                opacity: 0.65,
+                fontSize: 'inherit',
+                fontWeight: 500,
+              }}
+            >
+              Rs.{' '}
+              {getStoreDisplayPrice({
+                price: item?.price,
+                showTaxWithPrice,
+                storeTaxOnCash,
+              })}
+            </Typography>
+          )}
+
+          <Typography component="span" sx={{ fontSize: 'inherit', fontWeight: 700 }}>
+            Rs.{' '}
+            {getStoreDisplayPrice({
+              price: hasPromotionDiscount(item) ? getDiscountedItemPrice(item) : item?.price,
+              showTaxWithPrice,
+              storeTaxOnCash,
+            })}
+          </Typography>
         </Box>
       </Card>
     </>
