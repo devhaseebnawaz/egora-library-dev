@@ -12,6 +12,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
+import { getPhotoURL } from "../../../utils/photoURL";
 
 
 
@@ -28,6 +29,7 @@ export default function ItemCard({
   const { franchise } = states ?? {};
   const storeTaxOnCash = franchise?.storeTaxOnCash;
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
+  const headerLogo = getPhotoURL(states?.logoUrl);
   const getItemPromotionDiscount = (item) =>
   Number(item?.discountObject?.isPromotionDiscount ? item?.discountObject?.discount || 0 : 0);
   const hasPromotionDiscount = (item) => getItemPromotionDiscount(item) > 0;
@@ -189,7 +191,7 @@ export default function ItemCard({
           image={
             item?.photoURL
               ? `${states.storeImagesBaseUrl}/${item.photoURL}`
-              : "/assets/placeholder.png"
+              : headerLogo || "/assets/placeholder.png"
           }
           alt={item.name}
           style={{ height: smDown ? "150px" : "250px", objectFit: smDown ? "cover" : "fill" }}
