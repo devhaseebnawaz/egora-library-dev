@@ -4,11 +4,14 @@ import ItemDetailModal from "../categories/ItemDetailModal";
 import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
+import { getPhotoURL } from "../../../utils/photoURL";
+
 
 export default function ItemCard ({ item, themeColors, styles, actions, states, globalComponentStyles }) {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down("sm")); 
   const { franchise } = states ?? {};
+  const headerLogo = getPhotoURL(states?.logoUrl);
   const storeTaxOnCash = franchise?.storeTaxOnCash;
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
   const getItemPromotionDiscount = (item) =>
@@ -141,7 +144,7 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
           src={
             item?.photoURL
               ? `${states.storeImagesBaseUrl}/${item.photoURL}`
-              : '/assets/placeholder.png'
+              : headerLogo || '/assets/placeholder.png'
           }
           alt={item?.name || "Menu Item"}
           loading="lazy"
