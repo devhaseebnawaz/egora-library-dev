@@ -72,6 +72,23 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
             return obj;
         }, {});
+    const firstOnlineOutlet = filteredOutlets.find(
+        (outlet) => outlet.isOnlineForStore
+    );
+
+    useEffect(() => {
+        if (
+            states.orderType === "storePickUp" &&
+            firstOnlineOutlet &&
+            !states.selectedOutlet
+        ) {
+            states.setSelectedOutlet(firstOnlineOutlet);
+        }
+    }, [
+        states.orderType,
+        firstOnlineOutlet?._id,
+        states.selectedOutlet?._id,
+    ]);
 
     const allRegions = Object.entries(filteredRegions).flatMap(([branchId, regions]) =>
         regions.map(region => ({
