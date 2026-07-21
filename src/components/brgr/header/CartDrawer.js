@@ -21,6 +21,7 @@ import {
   isApplicable,
   calculateServiceFee,
   calculateFinalTotal,
+  calculateCartDiscount
 } from "../../../utils/cart";
 import { getScreenSizeCategory } from '../../../utils/fontsize';
 import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
@@ -791,8 +792,7 @@ const CartDrawer = ({
     isDeliveryFeeApplicableOnStore
   } = configurations ?? {};
   const taxRate = isTaxApplicableOnStore ? storeTaxOnCash / 100 : 0;
-
-  let discount = 0;
+  let discount = calculateCartDiscount(cardItems, states.cardItems);
   let paymentOption = "cash";
   let subTotal = calculateSubTotal(cardItems);
   const taxAmount = calculateAndRoundTax(subTotal, taxRate, discount);
@@ -810,7 +810,7 @@ const CartDrawer = ({
           discount
         )
         : 0,
-    [cardItems, subTotal, taxAmount]
+    [cardItems, subTotal, discount, orderType, states, serviceFeesObject, isServiceFeesApplicableOnStore]
   );
   const totalCartQuantity = useMemo(() => {
     return cardItems?.reduce((acc, item) => acc + item.qty, 0) || 0;
@@ -993,6 +993,17 @@ const CartDrawer = ({
                 Rs. {truncateTo2(calculateSubTotal(cardItems))}
               </Typography>
             </Box>
+            {discount > 0 && (
+                <Box style={{ display: "flex", justifyContent: "space-between" }}>
+                  <Typography sx={{ ...getPriceTextStyles }}>
+                    {/* {states.cardItems?.discountObject?.reason || "Promotion"} */}
+                    Discount
+                  </Typography>
+                  <Typography sx={{ ...getPriceTextStyles }}>
+                    - Rs. {fNumber(discount)}
+                  </Typography>
+                </Box>
+              )}
             {isPlatformFeeApplicableOnStore && (
               <Box
                 style={{ display: "flex", justifyContent: "space-between" }}

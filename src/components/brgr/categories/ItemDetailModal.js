@@ -379,7 +379,7 @@ const handleShare = (type) => {
       ? parseFloat(selectedVariant.price)
       : parseFloat(states.itemForDetailedModal?.price);
     const addOnPrices = (states.itemForDetailedModal?.addOns || []).reduce((total, addon) => {
-      const addonPrice = parseFloat(addon.price.replace("Rs. ", ""));
+        const addonPrice = parseFloat(String(addon.price).replace("Rs. ", ""));
       return total + addonPrice;
     }, 0);
 
@@ -390,10 +390,57 @@ const handleShare = (type) => {
         .flat()
         .reduce((total, item) => total + parseFloat(item.price), 0);
     }
-    const calTotalPrice = (basePrice + addOnPrices + saucePrices) * quantity;
-    return fNumber(calTotalPrice);
+
+     return (basePrice + addOnPrices + saucePrices) * quantity;
   };
   const totalPrice = calculateTotalPrice();
+
+  const getModalPromotionDiscount = () => {
+    const discountObject = states.itemForDetailedModal?.discountObject;
+
+    if (!discountObject?.isPromotionDiscount) return 0;
+
+    const grossTotal = Number(totalPrice || 0);
+    if (grossTotal <= 0) return 0;
+
+    const amount = Number(discountObject?.amount || 0);
+
+    let discount = 0;
+
+    if (discountObject?.amountType === "percentage") {
+      discount = (grossTotal * amount) / 100;
+
+      const cappedAmount = Number(discountObject?.cappedAmount || 0);
+      if (cappedAmount > 0) {
+        discount = Math.min(discount, cappedAmount * quantity);
+      }
+    } else {
+      discount = amount * quantity;
+    }
+
+    return Math.min(discount, grossTotal);
+  };
+
+  const modalDiscount = getModalPromotionDiscount();
+  const modalDiscountedTotal = Math.max(Number(totalPrice || 0) - Number(modalDiscount || 0), 0);
+  const hasModalPromotionDiscount = modalDiscount > 0;
+
+  const getModalSingleOriginalPrice = () =>
+    selectedVariant?.price ? selectedVariant.price : states.itemForDetailedModal.price;
+
+  const getModalSingleDiscountedPrice = () => {
+    if (!hasModalPromotionDiscount) return getModalSingleOriginalPrice();
+
+    const discountObject = states.itemForDetailedModal?.discountObject;
+    const originalPrice = Number(getModalSingleOriginalPrice() || 0);
+    const amount = Number(discountObject?.amount || 0);
+
+    if (discountObject?.amountType === "percentage") {
+      return Math.max(originalPrice - ((originalPrice * amount) / 100), 0);
+    }
+
+    return Math.max(originalPrice - amount, 0);
+  };
 
 
   const toggleSauce = (elem, sauce) => {
@@ -770,9 +817,51 @@ const handleShare = (type) => {
           </Box>
         </Box>
 
-        <Typography variant="h6" color="text.secondary" gutterBottom style={{ marginBottom: 15 , ...getHeadingStyles}} >
-            Rs. {getStoreDisplayPrice({ price: selectedVariant?.price ? selectedVariant?.price : states.itemForDetailedModal.price, showTaxWithPrice, storeTaxOnCash })}
-        </Typography>
+       <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              flexWrap: "wrap",
+              marginBottom: "15px",
+            }}
+          >
+            {hasModalPromotionDiscount && (
+              <Typography
+                variant="h6"
+                color="text.secondary"
+                sx={{
+                  ...getHeadingStyles,
+                  textDecoration: "line-through",
+                  opacity: 0.65,
+                  fontWeight: 500,
+                }}
+              >
+                Rs. {getStoreDisplayPrice({
+                  price: getModalSingleOriginalPrice(),
+                  showTaxWithPrice,
+                  storeTaxOnCash,
+                })}
+              </Typography>
+            )}
+
+            <Typography
+              variant="h6"
+              color="text.secondary"
+              sx={{
+                ...getHeadingStyles,
+                fontWeight: 700,
+              }}
+            >
+              Rs. {getStoreDisplayPrice({
+                price: hasModalPromotionDiscount
+                  ? getModalSingleDiscountedPrice()
+                  : getModalSingleOriginalPrice(),
+                showTaxWithPrice,
+                storeTaxOnCash,
+              })}
+            </Typography>
+          </Box>
         <Typography color="gray" style={{ marginBottom: 20, ...getDescriptionStyles }}  >
           {states.itemForDetailedModal.description || ''}
         </Typography>
@@ -956,7 +1045,15 @@ const handleShare = (type) => {
               <CircularProgress size={24} color="inherit" />
             ) : (
                 <>
-                 <span>Rs. {getStoreDisplayPrice({ price: totalPrice, showTaxWithPrice, storeTaxOnCash })}</span>
+                   <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <span style={{ fontWeight: 700 }}>
+                      Rs. {getStoreDisplayPrice({
+                        price: hasModalPromotionDiscount ? modalDiscountedTotal : totalPrice,
+                        showTaxWithPrice,
+                        storeTaxOnCash,
+                      })}
+                    </span>
+                  </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                     {isItemEdit ? "Update cart" : "Add to Cart"}
                   </span>

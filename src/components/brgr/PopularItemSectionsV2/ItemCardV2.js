@@ -11,6 +11,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
+import { getPhotoURL } from "../../../utils/photoURL";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
@@ -19,6 +20,12 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
   const { franchise } = states ?? {};
   const storeTaxOnCash = franchise?.storeTaxOnCash;
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
+  const headerLogo = getPhotoURL(states?.logoUrl);
+  const getItemPromotionDiscount = (item) =>
+  Number(item?.discountObject?.isPromotionDiscount ? item?.discountObject?.discount || 0 : 0);
+  const hasPromotionDiscount = (item) => getItemPromotionDiscount(item) > 0;
+  const getDiscountedItemPrice = (item) =>
+  Math.max(Number(item?.price || 0) - getItemPromotionDiscount(item), 0);
   const getItemNameStyles = {
     color:
       styles?.PopularMenuSectionItemNameTextColorV2?.value !== ""
@@ -196,6 +203,11 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         p: 1.2,
         ...getCardStyles,
         height: 170,
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "scale(1.03)",
+          boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+        },
       }}
       onClick={() => {
 
@@ -209,7 +221,7 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         src={
           item?.photoURL
             ? `${states.storeImagesBaseUrl}/${item.photoURL}`
-            : '/assets/placeholder.png'
+            : headerLogo || '/assets/placeholder.png'
         }
         alt={item?.name || "Menu Item"}
         loading="lazy"
@@ -279,20 +291,45 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
             alignItems: "start",
           }}
         >
-          <Typography
+           <Typography
             variant="subtitle"
             sx={{
               px: 1,
               py: 0.3,
-              ...getPriceTagStyles
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              flexWrap: 'wrap',
+              ...getPriceTagStyles,
             }}
           >
-            Rs.{" "}
-            {getStoreDisplayPrice({
-              price: item.price,
-              showTaxWithPrice,
-              storeTaxOnCash,
-            })}
+            {hasPromotionDiscount(item) && (
+              <Typography
+                component="span"
+                sx={{
+                  textDecoration: 'line-through',
+                  opacity: 0.65,
+                  fontSize: 'inherit',
+                  fontWeight: 500,
+                }}
+              >
+                Rs.{' '}
+                {getStoreDisplayPrice({
+                  price: item.price,
+                  showTaxWithPrice,
+                  storeTaxOnCash,
+                })}
+              </Typography>
+            )}
+
+            <Typography component="span" sx={{ fontSize: 'inherit', fontWeight: 700 }}>
+              Rs.{' '}
+              {getStoreDisplayPrice({
+                price: hasPromotionDiscount(item) ? getDiscountedItemPrice(item) : item.price,
+                showTaxWithPrice,
+                storeTaxOnCash,
+              })}
+            </Typography>
           </Typography>
           <Button
             variant="contained"
