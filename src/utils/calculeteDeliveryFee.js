@@ -2,60 +2,100 @@ export function calculeteDeliveryFee({ states, baseTotal }) {
     if (!states) { return { finalDeliveryFee: 0, reason: "none", message: "" } }
     const { franchise, latLongForDelivery, selectedVenue, orderType } = states ?? {}
     const { location } = selectedVenue ?? {};
-    const { deliveryFees = 0, storeDeliveryMaxDistanceThreshold, storeDeliveryMaxOrderThreshold, configurations } = franchise ?? {};
-    const { isDeliveryFeeApplicableOnStore, isDeliveryFeeMaxOrderThresholdApplicableOnStore, isDeliveryFeeMaxDistanceThresholdApplicableOnStore, isLocationRestrictedRegionBasedDeliveryOnStore, isRegionBasedDeliveryOnStore } = configurations ?? {}
-    const orderTotal = (Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(deliveryFees) : 0));
+    const {
+        deliveryFees = 0,
+        deliveryFeeByDistance = [],
+        storeDeliveryMaxDistanceThreshold,
+        storeDeliveryMaxOrderThreshold,
+        configurations,
+    } = franchise ?? {};
+    const {
+        isDeliveryFeeApplicableOnStore,
+        isDeliveryFeeMaxOrderThresholdApplicableOnStore,
+        isDeliveryFeeMaxDistanceThresholdApplicableOnStore,
+        isLocationRestrictedRegionBasedDeliveryOnStore,
+        isRegionBasedDeliveryOnStore,
+    } = configurations ?? {}
+
     if (orderType !== "storeDelivery") { return { finalDeliveryFee: 0, reason: "none", message: "" } }
     if (!isDeliveryFeeApplicableOnStore) { return { finalDeliveryFee: 0, reason: "none", message: "" } }
 
-    if (isDeliveryFeeMaxOrderThresholdApplicableOnStore) {
-        const orderThresholdMet = Number(orderTotal) >= Number(storeDeliveryMaxOrderThreshold);
-        let reason = "none";
-        let message = "";
-        if (orderThresholdMet) {
-            reason = "highOrderAmount";
-            message = "Congrats! you got free delivery for this order.";
-        } else if (storeDeliveryMaxOrderThreshold) {
-            const remaining = Number(storeDeliveryMaxOrderThreshold) - Number(orderTotal);
-            if (remaining > 0) {
-                message = `Add Rs. ${remaining.toFixed(0)} more to get free delivery.`;
-            }
+    const defaultDeliveryFee = Number(deliveryFees) || 0;
+    let applicableDeliveryFee = defaultDeliveryFee;
+    let distance;
+
+    const canCalculateDistance = typeof latLongForDelivery === "string"
+        && typeof location === "string"
+        && latLongForDelivery.length > 0
+        && location.length > 0;
+    if (canCalculateDistance) {
+        const userCoords = latLongForDelivery.split(",").map((value) => parseFloat(value.trim()));
+        const venueCoords = location.split(",").map((value) => parseFloat(value.trim()));
+        const coordinatesAreValid = userCoords.length === 2
+            && venueCoords.length === 2
+            && !userCoords.some(Number.isNaN)
+            && !venueCoords.some(Number.isNaN);
+
+        if (coordinatesAreValid) {
+            const [userLat, userLng] = userCoords;
+            const [venueLat, venueLng] = venueCoords;
+            distance = getDistanceFromLatLonInMeters(userLat, userLng, venueLat, venueLng);
+            applicableDeliveryFee = getDistanceBasedDeliveryFee({
+                deliveryFeeByDistance,
+                distanceInMeters: distance,
+                fallbackFee: defaultDeliveryFee,
+            });
         }
-        const finalDeliveryFee = orderThresholdMet ? 0 : deliveryFees;
-        return { finalDeliveryFee, reason, message };
     }
 
+    // Preserve the existing fallback behavior for region-based delivery when a
+    // customer's exact location is not required or has not been selected yet.
     if (isRegionBasedDeliveryOnStore) {
-        if (!isLocationRestrictedRegionBasedDeliveryOnStore) {
-            return { finalDeliveryFee: deliveryFees, reason: "none", message: "" }
+        if (!isLocationRestrictedRegionBasedDeliveryOnStore || !latLongForDelivery) {
+            applicableDeliveryFee = defaultDeliveryFee;
         }
-        else if (!latLongForDelivery) {
-            return { finalDeliveryFee: deliveryFees, reason: "none", message: "" }
-        }
-    } else {
-        if (!latLongForDelivery || !location) { return { finalDeliveryFee: deliveryFees, reason: "none", message: "" } }
     }
 
-    if (!location || typeof location !== "string") { return { finalDeliveryFee: deliveryFees, reason: "none", message: "" } }
-
-    const userCoords = latLongForDelivery?.split(",")?.map((v) => parseFloat(v.trim()));
-    const venueCoords = location.split(",").map((v) => parseFloat(v.trim()));
-    if (userCoords.length !== 2 || venueCoords.length !== 2 || userCoords.some(isNaN) || venueCoords.some(isNaN)) { return { finalDeliveryFee: 0, reason: "none", message: "" } }
-    const [userLat, userLng] = userCoords;
-    const [venueLat, venueLng] = venueCoords;
-    const distance = getDistanceFromLatLonInMeters(userLat, userLng, venueLat, venueLng);
-    const distanceThresholdMet = isDeliveryFeeMaxDistanceThresholdApplicableOnStore && distance <= storeDeliveryMaxDistanceThreshold;
+    const orderTotal = Number(baseTotal) + applicableDeliveryFee;
+    const orderThresholdMet = isDeliveryFeeMaxOrderThresholdApplicableOnStore
+        && Number(orderTotal) >= Number(storeDeliveryMaxOrderThreshold);
+    const distanceThresholdMet = isDeliveryFeeMaxDistanceThresholdApplicableOnStore
+        && Number.isFinite(distance)
+        && (distance / 1000) <= Number(storeDeliveryMaxDistanceThreshold);
 
     let reason = "none";
     let message = "";
-    if (distanceThresholdMet) {
+
+    if (orderThresholdMet) {
+        reason = "highOrderAmount";
+        message = "Congrats! you got free delivery for this order.";
+    } else if (distanceThresholdMet) {
         reason = "lessDistanceOrder";
         message = "Congrats! you got free delivery for this order.";
+    } else if (isDeliveryFeeMaxOrderThresholdApplicableOnStore && storeDeliveryMaxOrderThreshold) {
+        const remaining = Number(storeDeliveryMaxOrderThreshold) - Number(orderTotal);
+        if (remaining > 0) {
+            message = `Add Rs. ${remaining.toFixed(0)} more to get free delivery.`;
+        }
     }
-    const finalDeliveryFee = distanceThresholdMet ? 0 : deliveryFees;
+
+    const finalDeliveryFee = orderThresholdMet || distanceThresholdMet ? 0 : applicableDeliveryFee;
     return { finalDeliveryFee, reason, message };
 }
 
+function getDistanceBasedDeliveryFee({ deliveryFeeByDistance, distanceInMeters, fallbackFee }) {
+    if (!Array.isArray(deliveryFeeByDistance) || !Number.isFinite(distanceInMeters)) {
+        return fallbackFee;
+    }
+
+    const distanceInKilometers = distanceInMeters / 1000;
+    const matchingSlab = deliveryFeeByDistance
+        .filter(({ distance, fee }) => Number.isFinite(Number(distance)) && Number.isFinite(Number(fee)))
+        .sort((first, second) => Number(first.distance) - Number(second.distance))
+        .find(({ distance }) => distanceInKilometers <= Number(distance));
+
+    return matchingSlab ? Number(matchingSlab.fee) : fallbackFee;
+}
 
 function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
     const R = 6371e3
