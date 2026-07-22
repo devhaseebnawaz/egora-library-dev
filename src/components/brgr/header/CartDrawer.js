@@ -842,7 +842,7 @@ const CartDrawer = ({
     (isPlatformFeeApplicableOnStore ? Number(platformFees) : 0)
   );
 
-  let { finalDeliveryFee, message } = calculeteDeliveryFee({ states, baseTotal })
+  const { finalDeliveryFee, message } = calculeteDeliveryFee({ states, baseTotal })
 
   const orderTotal = (
     Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(finalDeliveryFee) : 0)
