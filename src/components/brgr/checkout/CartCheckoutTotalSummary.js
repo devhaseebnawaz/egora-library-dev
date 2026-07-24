@@ -4,7 +4,7 @@ import {
 } from "@mui/material";
 import { fNumber, fNumberRound, formatTo2, truncateTo2 } from "../../../utils/formatNumber";
 import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
-import { calculateCartDiscount } from "../../../utils/cart";
+import {calculateCartManualDiscount,calculateCartPromotion,} from '../utils/cart';
 
 const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, setOrderData, getDescriptionStyles, getHeadingStyles, getOrderHeadingStyles, checkoutTotalSummaryBackground }) => {
 
@@ -14,6 +14,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
 
   const [subTotal, setSubTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
+  const [promotion, setPromotion] = useState(0);
   const [total, setTotal] = useState(0);
   const [selectedTip, setSelectedTip] = useState(cardItems?.tip || 0);
 
@@ -47,9 +48,25 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
     setSubTotal(subTotalOfItems);
   }, [subTotalOfItems]);
 
-    useEffect(() => {
-    setDiscount(calculateCartDiscount(cardItems?.items || [], cardItems));
+  useEffect(() => {
+    setDiscount(
+      calculateCartManualDiscount(
+        cardItems?.items || [],
+        cardItems
+      )
+    );
+
+    setPromotion(
+      calculateCartPromotion(
+        cardItems?.items || [],
+        cardItems
+      )
+    );
   }, [cardItems]);
+
+  const totalReduction =
+    Number(discount || 0) +
+    Number(promotion || 0);
 
   const taxRate = isTaxApplicableOnStore
     ? (states.paymentMethod === "cash"
@@ -59,9 +76,12 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
         : 0)
     : 0;
 
-  const taxAmount = useMemo(() => (
-    calculateAndRoundTax(subTotal, taxRate, discount)
-  ), [subTotal, taxRate, discount]);
+    const taxAmount = useMemo(() =>
+    calculateAndRoundTax(
+      subTotal, taxRate, totalReduction
+    ),
+    [subTotal, taxRate, totalReduction,]
+  );
 
   const calculateServiceFee = () => {
     if (!isServiceFeesApplicableOnStore) return 0;
@@ -79,7 +99,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
     const paymentData = modeData?.[states.paymentMethod];
     if (!paymentData || !isApplicable(paymentData.applicable)) return 0;
 
-    const feeableSubtotal = subTotal - discount;
+    const feeableSubtotal =Math.max( subTotal - totalReduction, 0 );
 
     return paymentData.type === "Percentage"
       ? (feeableSubtotal * parseFloat(paymentData.amount)) / 100
@@ -94,7 +114,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
 
 
   useEffect(() => {
-    let updatedTotal = Math.max(Number(subTotal) - Number(discount || 0), 0);
+    let updatedTotal = Math.max( Number(subTotal) - totalReduction, 0 );
     if (isServiceFeesApplicableOnStore && isApplicable(serviceFeesObject?.[states.orderType]?.[states.paymentMethod]?.applicable)) {
       updatedTotal += Number(serviceFee);
     }
@@ -183,7 +203,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
       reason: discount > 0 ? "Promotion" : "",
          value: Number(discount || 0),
       },
-      promotion: cardItems?.promotion || undefined,
+      promotion:Number(promotion || 0),
       serviceFees: fNumber(totalServiceValue),
       location: states.latLong ? states.latLong : "2,2",
       platformFees: isPlatformFeeApplicableOnStore ? platformFees : 0,
@@ -219,6 +239,31 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
             
               </Stack>
             )}
+                   {promotion > 0 && (
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+              >
+                <Typography
+                  sx={{
+                    color: 'text.secondary',
+                    fontWeight: '600',
+                    ...getHeadingStyles,
+                  }}
+                >
+                  Promotion
+                </Typography>
+
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    ...getDescriptionStyles,
+                  }}
+                >
+                  - Rs. {fNumber(promotion)}
+                </Typography>
+              </Stack>
+            )}
             {isPlatformFeeApplicableOnStore && (
               <Stack direction="row" justifyContent="space-between">
                 <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Platform Fee</Typography>
@@ -240,7 +285,7 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
                 <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Discount</Typography>
                 <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {fNumber(discount)}</Typography>
               </Stack>
-            )}
+            )}        
 
             {/* <Stack direction="row" justifyContent="space-between">
               <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Tip</Typography>

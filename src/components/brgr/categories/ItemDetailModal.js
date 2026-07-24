@@ -395,8 +395,28 @@ const handleShare = (type) => {
   };
   const totalPrice = calculateTotalPrice();
 
+
+  const getCurrentPromotionObject =
+    () => {
+      const newPromotion =
+        states.itemForDetailedModal
+          ?.promotionObj;
+
+      if ( newPromotion ?.isPromotionDiscount ) {
+        return newPromotion;
+      }
+      const legacyPromotion =
+        states.itemForDetailedModal
+          ?.discountObject;
+
+      if ( legacyPromotion ?.isPromotionDiscount ) {
+        return legacyPromotion;
+      }
+      return null;
+    };
   const getModalPromotionDiscount = () => {
-    const discountObject = states.itemForDetailedModal?.discountObject;
+    const discountObject =
+      getCurrentPromotionObject();
 
     if (!discountObject?.isPromotionDiscount) return 0;
 
@@ -431,7 +451,7 @@ const handleShare = (type) => {
   const getModalSingleDiscountedPrice = () => {
     if (!hasModalPromotionDiscount) return getModalSingleOriginalPrice();
 
-    const discountObject = states.itemForDetailedModal?.discountObject;
+    const discountObject =getCurrentPromotionObject();
     const originalPrice = Number(getModalSingleOriginalPrice() || 0);
     const amount = Number(discountObject?.amount || 0);
 
