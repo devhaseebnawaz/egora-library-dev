@@ -12,7 +12,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
-import { getCartItemPromotionDiscount,} from '../utils/cart';
+import { getCartItemPromotionDiscount,} from '../../../utils/cart';
 import { getPhotoURL } from "../../../utils/photoURL";
 
 

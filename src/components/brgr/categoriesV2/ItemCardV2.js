@@ -14,7 +14,7 @@ import { useTheme } from '@mui/material/styles';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
-import { getCartItemPromotionDiscount,} from '../utils/cart';
+import { getCartItemPromotionDiscount,} from '../../../utils/cart';
 import { getPhotoURL } from "../../../utils/photoURL";
 
 
