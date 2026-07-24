@@ -4,7 +4,7 @@ import {
 } from "@mui/material";
 import { fNumber, fNumberRound, formatTo2, truncateTo2 } from "../../../utils/formatNumber";
 import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
-import {calculateCartManualDiscount,calculateCartPromotion,} from '../utils/cart';
+import {calculateCartManualDiscount,calculateCartPromotion,} from '../../../utils/cart';
 
 const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, setOrderData, getDescriptionStyles, getHeadingStyles, getOrderHeadingStyles, checkoutTotalSummaryBackground }) => {
 
