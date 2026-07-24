@@ -2,27 +2,25 @@ import React from "react";
 import { Stack, Paper, Radio, RadioGroup, Box,  FormControlLabel } from "@mui/material";
 import Iconify from "../iconify";
 
-const PAYMENT_OPTIONS = [
-  {
-    value: "cash",
-    title: "Pay at the counter",
-    icons: ["/assets/icons/payments/ic_paypal.svg"],
-  },
-  {
-    value: "card",
-    title: "Credit / Debit Card",
-    icons: [
-      "/assets/icons/payments/ic_mastercard.svg",
-      "/assets/icons/payments/ic_visa.svg",
-    ],
-  },
-];
-
 export default function PaymentMethods({ actions, prop, styles, states, PaymentComponent, getPayAtCounterStyles, getPaymentCheckedIconStyles, getCreditDebitCardStyles, getPaymentUnCheckedIconStyles, paymentSectionBackground }) {
   const { franchise, orderType } = states ?? {}
   const { configurations } = franchise ?? {}
   const { isCardAvailableOnStore, isCashAvailableOnStore, isCardAvailableOnDelivery, isCardAvailableOnPickUp, isCashAvailableOnDelivery, isCashAvailableOnPickUp } = configurations ?? {}
-
+  const PAYMENT_OPTIONS = [
+    {
+      value: "cash",
+      title: orderType === "storeDelivery" ? "Cash on Delivery" : "Pay at the counter",
+      icons: ["/assets/icons/payments/ic_paypal.svg"],
+    },
+    {
+      value: "card",
+      title: "Credit / Debit Card",
+      icons: [
+        "/assets/icons/payments/ic_mastercard.svg",
+        "/assets/icons/payments/ic_visa.svg",
+      ],
+    },
+  ];
   const isCashAvailable = () => {
     if (!isCashAvailableOnStore) return false;
     if (orderType === "storeDelivery" && isCashAvailableOnDelivery) return true;

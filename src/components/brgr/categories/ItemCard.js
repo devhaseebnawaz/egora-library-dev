@@ -13,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import { getFontSize, getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 import { getCartItemPromotionDiscount,} from '../utils/cart';
+import { getPhotoURL } from "../../../utils/photoURL";
 
 
 
@@ -31,7 +32,7 @@ export default function ItemCard({
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
   const hasPromotionDiscount = (item) =>
     getCartItemPromotionDiscount(item) > 0;
-
+  const headerLogo = getPhotoURL(states?.logoUrl);
   const getDiscountedItemPrice = (item) =>
     Math.max(
       Number(item?.price || 0) -
@@ -196,7 +197,7 @@ export default function ItemCard({
           image={
             item?.photoURL
               ? `${states.storeImagesBaseUrl}/${item.photoURL}`
-              : "/assets/placeholder.png"
+              : headerLogo || "/assets/placeholder.png"
           }
           alt={item.name}
           style={{ height: smDown ? "150px" : "250px", objectFit: smDown ? "cover" : "fill" }}
@@ -223,7 +224,7 @@ export default function ItemCard({
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                minHeight: smDown ? "2em" :  "3em",    // ensure height same even if text short
+                minHeight: "3em",
                 ...getItemNameStyles
               }}
             >
@@ -240,7 +241,7 @@ export default function ItemCard({
                 WebkitBoxOrient: "vertical",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                minHeight: smDown ? "2em" :  "3em",     // fix height for uniformity
+                minHeight: "3em", 
               }}
             >
               {item.description}

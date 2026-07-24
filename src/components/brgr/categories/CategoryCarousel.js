@@ -198,7 +198,6 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                                         ? globalComponentStyles?.Text?.fontStyle?.value :
                                         themeColors?.CategoryCarouselTextStyle?.value,
 
-                                fontWeight: 600,
                                 padding: "8px 16px",
                                 // minWidth: "120px",
                                 // maxWidth: "160px",

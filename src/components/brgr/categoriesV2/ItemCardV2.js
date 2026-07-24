@@ -15,6 +15,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 import { getCartItemPromotionDiscount,} from '../utils/cart';
+import { getPhotoURL } from "../../../utils/photoURL";
 
 
 export default function ItemCardV2({
@@ -29,6 +30,7 @@ export default function ItemCardV2({
     const smDown = useMediaQuery(theme.breakpoints.down("sm"));
     const { franchise } = states ?? {};
     const storeTaxOnCash = franchise?.storeTaxOnCash;
+    const headerLogo = getPhotoURL(states?.logoUrl);
     const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
     const hasPromotionDiscount = (item) =>
         getCartItemPromotionDiscount(item) > 0;
@@ -228,6 +230,11 @@ export default function ItemCardV2({
                 p: 1.2,
                 ...getCardStyles,
                 height: 170,
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                "&:hover": {
+                    transform: "scale(1.03)",
+                    boxShadow: "0 12px 32px rgba(0, 0, 0, 0.2)",
+                }
             }}
             onClick={() => {
                 actions.handleOpenCard(item);
@@ -237,7 +244,7 @@ export default function ItemCardV2({
         >
             <CardMedia
                 component="img"
-                image={item?.photoURL ? `${states?.storeImagesBaseUrl}/${item?.photoURL}` : "/assets/placeholder.png"}
+                image={item?.photoURL ? `${states?.storeImagesBaseUrl}/${item?.photoURL}` : headerLogo || "/assets/placeholder.png"}
                 alt={item?.name}
                 sx={{
                     objectFit: "fill",

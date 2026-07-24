@@ -12,6 +12,7 @@ import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
 import { getCartItemPromotionDiscount,} from '../utils/cart';
+import { getPhotoURL } from "../../../utils/photoURL";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
@@ -20,9 +21,9 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
   const { franchise } = states ?? {};
   const storeTaxOnCash = franchise?.storeTaxOnCash;
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
-    const hasPromotionDiscount = (item) =>
+  const hasPromotionDiscount = (item) =>
     getCartItemPromotionDiscount(item) > 0;
-
+  const headerLogo = getPhotoURL(states?.logoUrl);
   const getDiscountedItemPrice = (item) =>
     Math.max(
       Number(item?.price || 0) -
@@ -208,6 +209,11 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         p: 1.2,
         ...getCardStyles,
         height: 170,
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+        "&:hover": {
+          transform: "scale(1.03)",
+          boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.3)",
+        },
       }}
       onClick={() => {
 
@@ -221,7 +227,7 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         src={
           item?.photoURL
             ? `${states.storeImagesBaseUrl}/${item.photoURL}`
-            : '/assets/placeholder.png'
+            : headerLogo || '/assets/placeholder.png'
         }
         alt={item?.name || "Menu Item"}
         loading="lazy"
