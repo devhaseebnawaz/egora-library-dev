@@ -14,6 +14,7 @@ import { useTheme } from '@mui/material/styles';
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
+import { getCartItemPromotionDiscount,} from '../utils/cart';
 
 
 export default function ItemCardV2({
@@ -29,13 +30,17 @@ export default function ItemCardV2({
     const { franchise } = states ?? {};
     const storeTaxOnCash = franchise?.storeTaxOnCash;
     const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
-    const getItemPromotionDiscount = (item) =>
-        Number(item?.discountObject?.isPromotionDiscount ? item?.discountObject?.discount || 0 : 0);
-
-    const hasPromotionDiscount = (item) => getItemPromotionDiscount(item) > 0;
+    const hasPromotionDiscount = (item) =>
+        getCartItemPromotionDiscount(item) > 0;
 
     const getDiscountedItemPrice = (item) =>
-        Math.max(Number(item?.price || 0) - getItemPromotionDiscount(item), 0);
+        Math.max(
+            Number(item?.price || 0) -
+            getCartItemPromotionDiscount(
+                item
+            ),
+            0
+        );
     
     const getCardStyles = {
         backgroundColor:

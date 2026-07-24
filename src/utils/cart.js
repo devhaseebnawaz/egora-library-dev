@@ -16,20 +16,102 @@ export const calculateCartItemGrossTotal = (cartItem) => {
     return Number(itemTotal || 0);
 };
 
-export const getCartItemDiscount = (cartItem) =>
-    Number(cartItem?.discountObject?.discount || 0);
+export const getCartItemManualDiscount = (cartItem) =>
+    Number(
+        cartItem?.discountObject?.discount ||
+        cartItem?.discountObject?.value ||
+        0
+    );
 
-export const calculateCartItemNetTotal = (cartItem) =>
-    Math.max(calculateCartItemGrossTotal(cartItem) - getCartItemDiscount(cartItem), 0);
+export const getCartItemPromotionDiscount = (
+    cartItem
+) =>
+    Number(
+        cartItem?.promotionObj?.discount ||
+        cartItem?.promotionObj?.discountAvailed ||
+        cartItem?.promotionObj?.value ||
+        0
+    );
 
-export const calculateCartDiscount = (cart = [], cartMeta = {}) => {
-    const backendDiscount = Number(cartMeta?.discount || 0);
-    if (backendDiscount > 0) return backendDiscount;
+export const getCartItemDiscount = (
+    cartItem
+) =>
+    getCartItemManualDiscount(cartItem) +
+    getCartItemPromotionDiscount(cartItem);
 
-    if (!Array.isArray(cart)) return 0;
+export const calculateCartItemNetTotal = (
+    cartItem
+) =>
+    Math.max(
+        calculateCartItemGrossTotal(cartItem) -
+        getCartItemDiscount(cartItem),
+        0
+    );
 
-    return cart.reduce((total, cartItem) => total + getCartItemDiscount(cartItem), 0);
+export const calculateCartManualDiscount = (
+    cart = [],
+    cartMeta = {}
+) => {
+    const backendDiscount = Number(
+        cartMeta?.discount || 0
+    );
+
+    if (backendDiscount > 0) {
+        return backendDiscount;
+    }
+
+    if (!Array.isArray(cart)) {
+        return 0;
+    }
+
+    return cart.reduce(
+        (total, cartItem) =>
+            total +
+            getCartItemManualDiscount(cartItem),
+        0
+    );
 };
+
+export const calculateCartPromotion = (
+    cart = [],
+    cartMeta = {}
+) => {
+    const backendPromotion = Number(
+        cartMeta?.promotion ||
+        cartMeta?.promotionObj?.discountAvailed ||
+        cartMeta?.promotionObj?.discount ||
+        cartMeta?.promotionObj?.value ||
+        0
+    );
+
+    if (backendPromotion > 0) {
+        return backendPromotion;
+    }
+
+    if (!Array.isArray(cart)) {
+        return 0;
+    }
+
+    return cart.reduce(
+        (total, cartItem) =>
+            total +
+            getCartItemPromotionDiscount(cartItem),
+        0
+    );
+};
+
+export const calculateCartDiscount = (
+    cart = [],
+    cartMeta = {}
+) =>
+    calculateCartManualDiscount(
+        cart,
+        cartMeta
+    ) +
+    calculateCartPromotion(
+        cart,
+        cartMeta
+    );
 
 export const calculateSubTotal = (cart) => {
     if (!Array.isArray(cart) || cart.length === 0) return '0';
