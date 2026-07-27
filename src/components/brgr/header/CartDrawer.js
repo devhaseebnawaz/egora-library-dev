@@ -997,7 +997,7 @@ const CartDrawer = ({
                 <Box style={{ display: "flex", justifyContent: "space-between" }}>
                   <Typography sx={{ ...getPriceTextStyles }}>
                     {/* {states.cardItems?.discountObject?.reason || "Promotion"} */}
-                    Discount
+                    Promotion
                   </Typography>
                   <Typography sx={{ ...getPriceTextStyles }}>
                     - Rs. {fNumber(discount)}
