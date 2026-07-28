@@ -11,6 +11,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import { getStoreDisplayPrice } from "../../../utils/formatNumber";
+import { getCartItemPromotionDiscount,} from '../../../utils/cart';
 import { getPhotoURL } from "../../../utils/photoURL";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -20,12 +21,17 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
   const { franchise } = states ?? {};
   const storeTaxOnCash = franchise?.storeTaxOnCash;
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
+  const hasPromotionDiscount = (item) =>
+    getCartItemPromotionDiscount(item) > 0;
   const headerLogo = getPhotoURL(states?.logoUrl);
-  const getItemPromotionDiscount = (item) =>
-  Number(item?.discountObject?.isPromotionDiscount ? item?.discountObject?.discount || 0 : 0);
-  const hasPromotionDiscount = (item) => getItemPromotionDiscount(item) > 0;
   const getDiscountedItemPrice = (item) =>
-  Math.max(Number(item?.price || 0) - getItemPromotionDiscount(item), 0);
+    Math.max(
+      Number(item?.price || 0) -
+      getCartItemPromotionDiscount(
+        item
+      ),
+      0
+    );
   const getItemNameStyles = {
     color:
       styles?.PopularMenuSectionItemNameTextColorV2?.value !== ""

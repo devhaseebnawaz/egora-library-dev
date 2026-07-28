@@ -14,7 +14,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
     layout = layout?.json ? layout?.json : layout
     const isBelow850 = useMediaQuery('(max-width:850px)');
     const { orderData } = states ?? {}
-    const { orderType, customer, billNumber, tax, deliveryFees, serviceFees, platformFees, subTotal, total, paymentType, venueId, items, state, createdAt , discount,discountObject,promotion,} = orderData ?? {}
+    const { orderType, customer, billNumber, tax, deliveryFees, serviceFees, platformFees, subTotal, total, paymentType, venueId, items, state, createdAt , discount,discountObject,promotion,  promotionObj } = orderData ?? {}
     const { name, venueAddressOne, venueAddressTwo, venuePhoneNumber, franchiseId } = venueId ?? {}
     const { firstName, lastName, address, phone } = customer ?? {}
     const { street, area } = address ?? {}
@@ -24,10 +24,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
     Number(item?.qty || 0) * Number(item?.price || 0);
     const getOrderItemNetTotal = (item) =>
     Math.max(getOrderItemGrossTotal(item) - getOrderItemDiscount(item), 0);
-    const orderPromotionDiscount =
-    Number(discount || 0) ||
-    Number(discountObject?.value || 0) ||
-    Number(items?.reduce((total, item) => total + getOrderItemDiscount(item), 0) || 0);
+    const orderPromotionDiscount = Number( promotion || promotionObj ?.discountAvailed || promotionObj?.discount || promotionObj?.value || 0 );
 
     const orderPromotionLabel =
     discountObject?.reason ||
@@ -1051,7 +1048,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                                             <Stack direction="row" justifyContent="space-between" mt={1}>
                                                 <Typography sx={{ ...getPaymentInformationKeyStyles }}>
                                                     {/* {orderPromotionLabel} */}
-                                                    Discount
+                                                    Promotion
                                                 </Typography>
                                                 <Typography sx={{ ...getPaymentInformationValueStyles }}>
                                                     - Rs. {truncateTo2(orderPromotionDiscount)}
