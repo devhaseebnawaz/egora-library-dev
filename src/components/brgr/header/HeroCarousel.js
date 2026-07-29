@@ -18,7 +18,6 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
   let { carouselImages } = editable ?? {} 
   const defaultInterval = 5;
   const slideIntervalDuration = prop?.editable?.carouselSlideInterval?.value === 0 ? defaultInterval : prop?.editable?.carouselSlideInterval?.value || defaultInterval;
-  console.log("slideIntervalDuration", slideIntervalDuration)
   const totalSlides = carouselImages.value.length;
   const fullSlides = [carouselImages.value[totalSlides - 1], ...carouselImages.value, carouselImages.value[0]];
 
@@ -137,6 +136,15 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
     }
   };
 
+   const marginValues =
+    styles?.HeroCarouselImageMargin?.value ??
+    themeColors?.HeroCarouselImageMargin?.value ??
+    [0, 0, 0, 0];
+
+  const margin = Array.isArray(marginValues)
+    ? marginValues.map(value => `${value}px`).join(" ")
+    : `${marginValues}px`;
+
   return (
     <Box
       onMouseEnter={stopSlide}
@@ -144,6 +152,10 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
       style={{
         position: "relative",
         overflow: "hidden",
+        margin,
+        borderRadius: `${styles?.HeroCarouselImageBorderRadius?.value !== 0
+          ? styles?.HeroCarouselImageBorderRadius?.value
+          : themeColors?.HeroCarouselImageBorderRadius?.value}px`,
       }}
     >
       <Box
@@ -167,7 +179,7 @@ export default function HeroCarousel({ prop, themeColors, styles, states, global
             onLoad={handleImageLoad}
             style={{
               width: "100%",
-              maxHeight:imgHeight,
+              // maxHeight:imgHeight,
               objectFit: "fill",
               flexShrink: 0,
             }}
