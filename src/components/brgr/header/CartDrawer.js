@@ -842,7 +842,7 @@ const CartDrawer = ({
     (isPlatformFeeApplicableOnStore ? Number(platformFees) : 0)
   );
 
-  let { finalDeliveryFee, message } = calculeteDeliveryFee({ states, baseTotal })
+  const { finalDeliveryFee, message } = calculeteDeliveryFee({ states, baseTotal })
 
   const orderTotal = (
     Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(finalDeliveryFee) : 0)
@@ -997,7 +997,7 @@ const CartDrawer = ({
                 <Box style={{ display: "flex", justifyContent: "space-between" }}>
                   <Typography sx={{ ...getPriceTextStyles }}>
                     {/* {states.cardItems?.discountObject?.reason || "Promotion"} */}
-                    Discount
+                    Promotion
                   </Typography>
                   <Typography sx={{ ...getPriceTextStyles }}>
                     - Rs. {fNumber(discount)}
