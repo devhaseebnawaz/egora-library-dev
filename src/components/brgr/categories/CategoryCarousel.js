@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, IconButton, Button,useMediaQuery } from "@mui/material";
+import { Box, IconButton, Button, Container, useMediaQuery } from "@mui/material";
 import { Icon } from "@iconify/react";
 import arrowLeft from "@iconify-icons/mdi/chevron-left";
 import arrowRight from "@iconify-icons/mdi/chevron-right";
@@ -29,19 +29,28 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
       useEffect(() => {
       if (states.selectedCategoryItem && states.scrollRef?.current) {
           const buttons = states.scrollRef.current.querySelectorAll("button");
-          const activeButton = Array.from(buttons).find(
+          const activeButtonIndex = Array.from(buttons).findIndex(
               (btn) => btn.textContent === states.selectedCategoryItem
           );
+          const activeButton = buttons[activeButtonIndex];
+
           if (activeButton) {
-              activeButton.scrollIntoView({
-                  behavior: "smooth",
-                  inline: "nearest",
-                  block: "nearest"
-              });
+              if (activeButtonIndex === 0) {
+                  states.scrollRef.current.scrollTo({
+                      left: 0,
+                      behavior: "smooth",
+                  });
+              } else {
+                  activeButton.scrollIntoView({
+                      behavior: "smooth",
+                      inline: "nearest",
+                      block: "nearest"
+                  });
+              }
               setTimeout(() => actions.updateArrows(), 300); 
           }
       }
-      }, [states.selectedCategoryItem]);
+  }, [states.selectedCategoryItem]);
 
     const handleCategoryClick = (category) => {
         actions.handleCategoryClick(category);
@@ -82,7 +91,8 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.3)",
             }}
         >
-            <Box
+            <Container
+                maxWidth="lg"
                 style={{
                     display: "flex",
                     alignItems: "center",
@@ -96,7 +106,9 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                         onClick={() => actions.handleScroll("left")}
                         style={{
                             position: "absolute",
-                            left: 0,
+                            left: smDown ? 8 : 16,
+                            top: "50%",
+                            transform: "translateY(-50%)",
                             zIndex: 2,
                             backgroundColor:
                                 styles?.CategoryCarouselGoPrevIconBackgroundColor?.value != ""
@@ -141,8 +153,8 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                   display: "flex",
                   flexWrap: "nowrap",
                   overflowX: "auto",
-                  gap: smDown ? "0px" : "16px",   
-                  padding: smDown ? "0 8px" : "0 40px", 
+                  gap: smDown ? "0px" : "8px",
+                  padding: smDown ? "0 48px" : "0 64px",
                   width: "100%",
                   scrollbarWidth: "none",
                   }}
@@ -198,17 +210,24 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                                         ? globalComponentStyles?.Text?.fontStyle?.value :
                                         themeColors?.CategoryCarouselTextStyle?.value,
 
-                                padding: "8px 16px",
+                                padding: smDown ? "6px 10px" : "8px 12px",
                                 // minWidth: "120px",
                                 // maxWidth: "160px",
                                 borderRadius: "8px",
                                 textTransform: "none",
+                                transition: "box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease",
+                                boxShadow: states.selectedCategoryItem === cat
+                                    ? "0 4px 12px rgba(0, 0, 0, 0.22)"
+                                    : "none",
                                 backgroundColor: states.selectedCategoryItem === cat ?
                                     styles?.CategoryCarouselHoverColor?.value != ""
                                         ? styles?.CategoryCarouselHoverColor?.value
                                         : themeColors?.CategoryCarouselHoverColor?.value : "transparent",
                             }}
                             onMouseOver={(e) => {
+                                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.22)";
+                                e.currentTarget.style.transform = "translateY(-1px)";
+
                                 if (states.selectedCategoryItem !== cat) {
                                     const bgColor = styles?.CategoryCarouselHoverColor?.value !== ""
                                         ? styles.CategoryCarouselHoverColor.value
@@ -223,6 +242,11 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                                 }
                             }}
                             onMouseOut={(e) => {
+                                e.currentTarget.style.boxShadow = states.selectedCategoryItem === cat
+                                    ? "0 4px 12px rgba(0, 0, 0, 0.22)"
+                                    : "none";
+                                e.currentTarget.style.transform = "translateY(0)";
+
                                 if (states.selectedCategoryItem !== cat) {
                                     e.currentTarget.style.backgroundColor = "transparent";
                                     e.currentTarget.style.color = styles?.CategoryCarouselTextColor?.value ||
@@ -242,7 +266,9 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                         onClick={() => actions.handleScroll("right")}
                         style={{
                             position: "absolute",
-                            right: 0,
+                            right: smDown ? 8 : 16,
+                            top: "50%",
+                            transform: "translateY(-50%)",
                             zIndex: 2,
                             backgroundColor:
                                 styles?.CategoryCarouselGoNextIconBackgroundColor?.value != ""
@@ -279,7 +305,7 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                         />
                     </IconButton>
                 )}
-            </Box>
+            </Container>
         </Box>
     );
 }
