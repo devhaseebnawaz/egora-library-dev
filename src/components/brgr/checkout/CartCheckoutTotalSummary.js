@@ -4,186 +4,313 @@ import {
 } from "@mui/material";
 import { fNumber, fNumberRound, formatTo2, truncateTo2 } from "../../../utils/formatNumber";
 import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
-import {calculateCartManualDiscount,calculateCartPromotion,} from '../../../utils/cart';
+import { calculateCartManualDiscount, calculateCartPromotion, calculateSubTotal, } from '../../../utils/cart';
+import { calculateAndRoundTax, calculateTaxableCartBase, } from '../../../utils/tax';
 
-const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, setOrderData, getDescriptionStyles, getHeadingStyles, getOrderHeadingStyles, checkoutTotalSummaryBackground }) => {
+const isApplicable = (applicable) =>
+  applicable === 'true' || applicable === true;
 
+const isTaxableByConfiguration = (value) =>
+  value !== false && value !== 'false';
+
+const CartCheckoutTotalSummary = ({
+  states,
+  setOrderData,
+  getDescriptionStyles,
+  getHeadingStyles,
+  getOrderHeadingStyles,
+  checkoutTotalSummaryBackground,
+}) => {
   const { cardItems, franchise, orderType } = states ?? {};
-  const { serviceFeesObject, configurations, storeTaxOnCash, storeTaxOnCard, platformFees, deliveryFees,storeDeliveryMaxOrderThreshold,storeDeliveryMaxDistanceThreshold } = franchise ?? {};
-  const { isServiceFeesApplicableOnStore, isTaxApplicableOnStore, isPlatformFeeApplicableOnStore, isCashAvailableOnPickUp, isCashAvailableOnDelivery, isDeliveryFeeApplicableOnStore } = configurations ?? {};
+  const items = cardItems?.items || [];
 
-  const [subTotal, setSubTotal] = useState(0);
-  const [discount, setDiscount] = useState(0);
-  const [promotion, setPromotion] = useState(0);
-  const [total, setTotal] = useState(0);
-  const [selectedTip, setSelectedTip] = useState(cardItems?.tip || 0);
+  const { serviceFeesObject, configurations, storeTaxOnCash, storeTaxOnCard, platformFees, deliveryFees, storeDeliveryMaxOrderThreshold, storeDeliveryMaxDistanceThreshold,
+  } = franchise ?? {};
 
-  const calculateAndRoundTax = (total, taxRate, discount) => {
-    let t = total - discount
-    const taxAmount = t * taxRate;
-    const roundedTax = Math.round(taxAmount * 100) / 100;
-    return roundedTax;
-  };
+  const {
+    isServiceFeesApplicableOnStore,
+    isTaxApplicableOnStore,
+    isPlatformFeeApplicableOnStore,
+    isCashAvailableOnPickUp,
+    isCashAvailableOnDelivery,
+    isDeliveryFeeApplicableOnStore,
+    isServiceFeeTaxableOnStore,
+    isTipTaxableOnStore,
+    isPlatformFeeTaxableOnStore,
+    isDeliveryFeeTaxableOnStore,
+  } = configurations ?? {};
 
-  const isApplicable = (applicable) => applicable === "true" || applicable === true;
+  const [selectedTip] = useState(cardItems?.tip || 0);
 
-  const calculateSubTotal = () => {
-    return cardItems.items.reduce((total, cartItem) => {
-      const qty = cartItem.qty;
-      let itemTotal = parseFloat(cartItem.priceWithChoiceGroup ?? cartItem.price) * qty;
-      if (cartItem.selectedAddOns?.length > 0) {
-        cartItem.selectedAddOns.forEach((addon) => {
-          itemTotal += parseFloat(addon.price.replace("Rs. ", ""));
-        });
-      }
-      return total + itemTotal;
-    }, 0);
-  };
-
-  const subTotalOfItems = useMemo(() => (
-    cardItems?.items?.length > 0 ? calculateSubTotal() : 0
-  ), [cardItems]);
-
-  useEffect(() => {
-    setSubTotal(subTotalOfItems);
-  }, [subTotalOfItems]);
-
-  useEffect(() => {
-    setDiscount(
-      calculateCartManualDiscount(
-        cardItems?.items || [],
-        cardItems
-      )
-    );
-
-    setPromotion(
-      calculateCartPromotion(
-        cardItems?.items || [],
-        cardItems
-      )
-    );
-  }, [cardItems]);
-
-  const totalReduction =
-    Number(discount || 0) +
-    Number(promotion || 0);
-
-  const taxRate = isTaxApplicableOnStore
-    ? (states.paymentMethod === "cash"
-      ? storeTaxOnCash / 100
-      : states.paymentMethod === "card"
-        ? storeTaxOnCard / 100
-        : 0)
-    : 0;
-
-    const taxAmount = useMemo(() =>
-    calculateAndRoundTax(
-      subTotal, taxRate, totalReduction
-    ),
-    [subTotal, taxRate, totalReduction,]
+  const subTotal = useMemo(
+    () => Number(calculateSubTotal(items) || 0),
+    [items]
   );
 
-  const calculateServiceFee = () => {
-    if (!isServiceFeesApplicableOnStore) return 0;
+  const discount = useMemo(
+    () => calculateCartManualDiscount(items, cardItems),
+    [items, cardItems]
+  );
+
+  const promotion = useMemo(
+    () => calculateCartPromotion(items, cardItems),
+    [items, cardItems]
+  );
+
+  const totalReduction =
+    Number(discount || 0) + Number(promotion || 0);
+
+  const netItemsTotal = Math.max(
+    Number(subTotal) - totalReduction,
+    0
+  );
+
+  const taxRate = isTaxApplicableOnStore
+    ? states.paymentMethod === 'cash'
+      ? Number(storeTaxOnCash || 0) / 100
+      : states.paymentMethod === 'card'
+        ? Number(storeTaxOnCard || 0) / 100
+        : 0
+    : 0;
+
+  const serviceFee = useMemo(() => {
+    if (!isServiceFeesApplicableOnStore || items.length === 0) {
+      return 0;
+    }
 
     const modeCashAvailability = {
       storePickUp: isCashAvailableOnPickUp,
       storeDelivery: isCashAvailableOnDelivery,
     };
 
-    if (!modeCashAvailability[states.orderType] && states.paymentMethod === "cash") {
+    if (
+      !modeCashAvailability[states.orderType] &&
+      states.paymentMethod === 'cash'
+    ) {
       return 0;
     }
 
-    const modeData = serviceFeesObject?.[states.orderType];
-    const paymentData = modeData?.[states.paymentMethod];
-    if (!paymentData || !isApplicable(paymentData.applicable)) return 0;
+    const paymentData =
+      serviceFeesObject?.[states.orderType]?.[states.paymentMethod];
 
-    const feeableSubtotal =Math.max( subTotal - totalReduction, 0 );
-
-    return paymentData.type === "Percentage"
-      ? (feeableSubtotal * parseFloat(paymentData.amount)) / 100
-      : parseFloat(paymentData.amount);
-  };
-
-  const serviceFee = useMemo(() => (
-    cardItems?.items?.length > 0
-      ? calculateServiceFee()
-      : 0
-  ), [cardItems, subTotal, discount, states.orderType, states.paymentMethod]);
-
-
-  useEffect(() => {
-    let updatedTotal = Math.max( Number(subTotal) - totalReduction, 0 );
-    if (isServiceFeesApplicableOnStore && isApplicable(serviceFeesObject?.[states.orderType]?.[states.paymentMethod]?.applicable)) {
-      updatedTotal += Number(serviceFee);
+    if (!paymentData || !isApplicable(paymentData.applicable)) {
+      return 0;
     }
-    const platformFee = isPlatformFeeApplicableOnStore ? platformFees : 0;
-    const deliveryFee = isDeliveryFeeApplicableOnStore && orderType === "storeDelivery"
-      ? Number(calculeteDeliveryFee({ states, baseTotal: updatedTotal + platformFee + taxAmount + selectedTip }).finalDeliveryFee)
-      : 0;
-    const grandTotal = Number(updatedTotal) + Number(platformFee) + Number(taxAmount) + Number(selectedTip) + Number(deliveryFee);
-    setTotal(grandTotal);
+
+    if (paymentData.type === 'Percentage') {
+      return (
+        (netItemsTotal * Number(paymentData.amount || 0)) /
+        100
+      );
+    }
+
+    return Number(paymentData.amount || 0);
   }, [
-    subTotal,
-    discount,
-    serviceFee,
-    taxAmount,
-    selectedTip,
-    states.paymentMethod,
-    states.orderType,
     isServiceFeesApplicableOnStore,
+    items.length,
+    isCashAvailableOnPickUp,
+    isCashAvailableOnDelivery,
+    states.orderType,
+    states.paymentMethod,
     serviceFeesObject,
-    isPlatformFeeApplicableOnStore,
-    platformFees,
-    isDeliveryFeeApplicableOnStore,
-    orderType,
-    states,
+    netItemsTotal,
   ]);
 
-  let { finalDeliveryFee, reason } = calculeteDeliveryFee({ states, baseTotal: total })
+  const platformFee = isPlatformFeeApplicableOnStore
+    ? Number(platformFees || 0)
+    : 0;
+
+  const sharedTaxPayload = useMemo(
+    () => ({
+      items,
+      cartMeta: cardItems,
+      cartSubtotal: subTotal,
+      manualDiscount: discount,
+      promotion,
+      serviceFee,
+      tip: Number(selectedTip || 0),
+      platformFee,
+      isServiceFeeTaxable: isTaxableByConfiguration(
+        isServiceFeeTaxableOnStore
+      ),
+      isTipTaxable: isTaxableByConfiguration(
+        isTipTaxableOnStore
+      ),
+      isPlatformFeeTaxable: isTaxableByConfiguration(
+        isPlatformFeeTaxableOnStore
+      ),
+    }),
+    [
+      items,
+      cardItems,
+      subTotal,
+      discount,
+      promotion,
+      serviceFee,
+      selectedTip,
+      platformFee,
+      isServiceFeeTaxableOnStore,
+      isTipTaxableOnStore,
+      isPlatformFeeTaxableOnStore,
+    ]
+  );
+
+
+  const provisionalTax = useMemo(() => {
+    const taxableBaseWithoutDelivery =
+      calculateTaxableCartBase({
+        ...sharedTaxPayload,
+        deliveryFee: 0,
+      });
+
+    return calculateAndRoundTax(
+      taxableBaseWithoutDelivery,
+      taxRate
+    );
+  }, [sharedTaxPayload, taxRate]);
+
+  const deliveryResult = useMemo(
+    () =>
+      calculeteDeliveryFee({
+        states,
+        baseTotal:
+          netItemsTotal +
+          Number(serviceFee || 0) +
+          platformFee +
+          Number(selectedTip || 0) +
+          provisionalTax,
+      }),
+    [
+      states,
+      netItemsTotal,
+      serviceFee,
+      platformFee,
+      selectedTip,
+      provisionalTax,
+    ]
+  );
+
+  const finalDeliveryFee =
+    isDeliveryFeeApplicableOnStore &&
+      orderType === 'storeDelivery'
+      ? Number(deliveryResult?.finalDeliveryFee || 0)
+      : 0;
+
+  const taxAmount = useMemo(() => {
+    const taxableBase = calculateTaxableCartBase({
+      ...sharedTaxPayload,
+      deliveryFee: finalDeliveryFee,
+      isDeliveryFeeTaxable: isTaxableByConfiguration(
+        isDeliveryFeeTaxableOnStore
+      ),
+    });
+
+    return calculateAndRoundTax(taxableBase, taxRate);
+  }, [
+    sharedTaxPayload,
+    finalDeliveryFee,
+    isDeliveryFeeTaxableOnStore,
+    taxRate,
+  ]);
+
+  const total = useMemo(
+    () =>
+      netItemsTotal +
+      Number(serviceFee || 0) +
+      platformFee +
+      Number(selectedTip || 0) +
+      finalDeliveryFee +
+      Number(taxAmount || 0),
+    [
+      netItemsTotal,
+      serviceFee,
+      platformFee,
+      selectedTip,
+      finalDeliveryFee,
+      taxAmount,
+    ]
+  );
 
   const renderServiceFee = () => {
-    const service = serviceFeesObject?.[states.orderType]?.[states.paymentMethod];
-    if (isServiceFeesApplicableOnStore && isApplicable(service?.applicable) && serviceFee > 0) {
+    const service =
+      serviceFeesObject?.[states.orderType]?.[
+      states.paymentMethod
+      ];
+
+    if (
+      isServiceFeesApplicableOnStore &&
+      isApplicable(service?.applicable) &&
+      serviceFee > 0
+    ) {
       return (
-        <Stack direction="row" justifyContent="space-between" marginBottom='5px'>
-          <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>
-            Service Fee {service?.type === "Percentage" ? `(${service.amount}%)` : ""}
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          marginBottom="5px"
+        >
+          <Typography
+            sx={{
+              color: 'text.secondary',
+              fontWeight: '600',
+              ...getHeadingStyles,
+            }}
+          >
+            Service Fee{' '}
+            {service?.type === 'Percentage'
+              ? `(${service.amount}%)`
+              : ''}
           </Typography>
-          <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>
+
+          <Typography
+            variant="subtitle2"
+            sx={{ ...getDescriptionStyles }}
+          >
             Rs. {fNumber(serviceFee)}
           </Typography>
         </Stack>
       );
     }
+
     return null;
   };
 
   useEffect(() => {
-    if (!cardItems || cardItems.items?.length === 0) return;
+    if (!cardItems || items.length === 0) {
+      return;
+    }
 
     const mode = states.orderType;
-
     let totalServiceValue = 0;
     let serviceFeesObj = {};
 
-    let deliveryFeesObject = {
-      reason: reason,
+    const deliveryFeesObject = {
+      reason: deliveryResult?.reason,
       waiveOff: true,
-      waiveOffValue: deliveryFees ,
-      ...(reason === "highOrderAmount" && { orderThreshold: storeDeliveryMaxOrderThreshold }),
-      ...(reason === "lessDistanceOrder" && { distanceThreshold: storeDeliveryMaxDistanceThreshold })
-    }
+      waiveOffValue: deliveryFees,
+      ...(deliveryResult?.reason === 'highOrderAmount' && {
+        orderThreshold: storeDeliveryMaxOrderThreshold,
+      }),
+      ...(deliveryResult?.reason === 'lessDistanceOrder' && {
+        distanceThreshold: storeDeliveryMaxDistanceThreshold,
+      }),
+    };
 
     if (
       isServiceFeesApplicableOnStore &&
-      isApplicable(serviceFeesObject?.[mode]?.[states.paymentMethod]?.applicable)
+      isApplicable(
+        serviceFeesObject?.[mode]?.[
+          states.paymentMethod
+        ]?.applicable
+      )
     ) {
       totalServiceValue = Number(serviceFee);
+
       serviceFeesObj = {
         [mode]: {
-          [states.paymentMethod]: serviceFeesObject?.[mode]?.[states.paymentMethod],
+          [states.paymentMethod]:
+            serviceFeesObject?.[mode]?.[
+            states.paymentMethod
+            ],
         },
       };
     }
@@ -193,56 +320,191 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
       venueId: cardItems?.venueId,
       total: fNumber(total),
       orderType: mode,
-      type: "store",
-       ...(mode === "storeDelivery" && {
+      type: 'store',
+
+      ...(mode === 'storeDelivery' && {
         isDeliveryFeesApplicable: true,
       }),
+
       paymentType: states.paymentMethod,
       tax: fNumber(taxAmount),
       subTotal: fNumber(subTotal),
-      tip: selectedTip === null ? 0 : fNumber(selectedTip),
+      tip:
+        selectedTip === null
+          ? 0
+          : fNumber(selectedTip),
+
       discount: Number(discount || 0),
-      discountObject: cardItems?.discountObject || {
-      reason: discount > 0 ? "Promotion" : "",
-         value: Number(discount || 0),
-      },
-      promotion:Number(promotion || 0),
+
+      discountObject:
+        cardItems?.discountObject || {
+          reason: discount > 0 ? 'Promotion' : '',
+          value: Number(discount || 0),
+        },
+
+      promotion: Number(promotion || 0),
       serviceFees: fNumber(totalServiceValue),
-      location: states.latLong ? states.latLong : "2,2",
-      platformFees: isPlatformFeeApplicableOnStore ? platformFees : 0,
-      deliveryFees: (isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? finalDeliveryFee : 0,
-       ...(isDeliveryFeeApplicableOnStore && orderType === "storeDelivery" && finalDeliveryFee === 0 && { deliveryFeesObject }),
+      location: states.latLong
+        ? states.latLong
+        : '2,2',
+
+      platformFees: platformFee,
+      deliveryFees: finalDeliveryFee,
+
+      ...(isDeliveryFeeApplicableOnStore &&
+        orderType === 'storeDelivery' &&
+        finalDeliveryFee === 0 && {
+        deliveryFeesObject,
+      }),
+
       serviceFeesObject: serviceFeesObj,
     };
 
     setOrderData(orderData);
-    }, [cardItems, total, selectedTip, serviceFee, taxAmount, subTotal, discount, states.paymentMethod, states.orderType, isServiceFeesApplicableOnStore, serviceFeesObject,
+  }, [
+    cardItems,
+    items.length,
+    states.orderType,
+    states.paymentMethod,
+    states.latLong,
+    total,
+    selectedTip,
+    serviceFee,
+    taxAmount,
+    subTotal,
+    discount,
+    promotion,
+    isServiceFeesApplicableOnStore,
+    serviceFeesObject,
+    deliveryResult,
+    deliveryFees,
+    storeDeliveryMaxOrderThreshold,
+    storeDeliveryMaxDistanceThreshold,
+    platformFee,
+    finalDeliveryFee,
+    isDeliveryFeeApplicableOnStore,
+    orderType,
+    setOrderData,
   ]);
 
-
   return (
-    <>
-      <Card sx={{
+    <Card
+      sx={{
         mb: 2,
-        backgroundColor: checkoutTotalSummaryBackground
-      }}>
-        <CardContent sx={{ padding: '16px !important' }}>
-          <Stack spacing={1}>
-            <Typography variant="h4" sx={{ fontWeight: "700", fontSize: 25, ...getOrderHeadingStyles }}>
-              Your Order
+        backgroundColor: checkoutTotalSummaryBackground,
+      }}
+    >
+      <CardContent sx={{ padding: '16px !important' }}>
+        <Stack spacing={1}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: '700',
+              fontSize: 25,
+              ...getOrderHeadingStyles,
+            }}
+          >
+            Your Order
+          </Typography>
+
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+          >
+            <Typography
+              sx={{
+                color: 'text.secondary',
+                fontWeight: '600',
+                ...getHeadingStyles,
+              }}
+            >
+              Sub Total
             </Typography>
-            <Stack direction="row" justifyContent="space-between">
-              <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Sub Total</Typography>
-              <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {truncateTo2(subTotal)}</Typography>
+
+            <Typography
+              variant="subtitle2"
+              sx={{ ...getDescriptionStyles }}
+            >
+              Rs. {truncateTo2(subTotal)}
+            </Typography>
+          </Stack>
+
+          {discount > 0 && (
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+            >
+              <Typography
+                sx={{
+                  color: 'text.secondary',
+                  fontWeight: '600',
+                  ...getHeadingStyles,
+                }}
+              >
+                Discount
+              </Typography>
+
+              <Typography
+                variant="subtitle2"
+                sx={{ ...getDescriptionStyles }}
+              >
+                - Rs. {fNumber(discount)}
+              </Typography>
             </Stack>
-                {discount > 0 && (
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Discount</Typography>
-                <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}> - Rs. {fNumber(discount)}</Typography>
-            
-              </Stack>
-            )}
-                   {promotion > 0 && (
+          )}
+
+          {promotion > 0 && (
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+            >
+              <Typography
+                sx={{
+                  color: 'text.secondary',
+                  fontWeight: '600',
+                  ...getHeadingStyles,
+                }}
+              >
+                Promotion
+              </Typography>
+
+              <Typography
+                variant="subtitle2"
+                sx={{ ...getDescriptionStyles }}
+              >
+                - Rs. {fNumber(promotion)}
+              </Typography>
+            </Stack>
+          )}
+
+          {isPlatformFeeApplicableOnStore && (
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+            >
+              <Typography
+                sx={{
+                  color: 'text.secondary',
+                  fontWeight: '600',
+                  ...getHeadingStyles,
+                }}
+              >
+                Platform Fee
+              </Typography>
+
+              <Typography
+                variant="subtitle2"
+                sx={{ ...getDescriptionStyles }}
+              >
+                Rs. {platformFee}
+              </Typography>
+            </Stack>
+          )}
+
+          {renderServiceFee()}
+
+          {isDeliveryFeeApplicableOnStore &&
+            orderType === 'storeDelivery' && (
               <Stack
                 direction="row"
                 justifyContent="space-between"
@@ -254,64 +516,69 @@ const CartCheckoutTotalSummary = ({ themeColors, actions, prop, styles, states, 
                     ...getHeadingStyles,
                   }}
                 >
-                  Promotion
+                  Delivery Fee
                 </Typography>
 
                 <Typography
                   variant="subtitle2"
-                  sx={{
-                    ...getDescriptionStyles,
-                  }}
+                  sx={{ ...getDescriptionStyles }}
                 >
-                  - Rs. {fNumber(promotion)}
+                  Rs. {finalDeliveryFee}
                 </Typography>
               </Stack>
             )}
-            {isPlatformFeeApplicableOnStore && (
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Platform Fee</Typography>
-                <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {platformFees}</Typography>
-              </Stack>
-            )}
 
-            {renderServiceFee()}
+          {isTaxApplicableOnStore && (
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+            >
+              <Typography
+                sx={{
+                  color: 'text.secondary',
+                  fontWeight: '600',
+                  ...getHeadingStyles,
+                }}
+              >
+                Tax
+              </Typography>
 
-            {isDeliveryFeeApplicableOnStore && orderType === "storeDelivery" && (
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Delivery Fee</Typography>
-                <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {finalDeliveryFee}</Typography>
-              </Stack>
-            )}
-
-            {discount > 0 && (
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Discount</Typography>
-                <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {fNumber(discount)}</Typography>
-              </Stack>
-            )}        
-
-            {/* <Stack direction="row" justifyContent="space-between">
-              <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Tip</Typography>
-              <Typography variant="subtitle2" sx={{ ...getDescriptionStyles}}>Rs. {fNumber(selectedTip || 0)}</Typography>
-            </Stack> */}
-
-            {isTaxApplicableOnStore && (
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ color: "text.secondary", fontWeight: "600", ...getHeadingStyles }}>Tax</Typography>
-                <Typography variant="subtitle2" sx={{ ...getDescriptionStyles }}>Rs. {fNumber(taxAmount)}</Typography>
-              </Stack>
-            )}
-
-            <Stack direction="row" justifyContent="space-between">
-              <Typography sx={{ color: "#FCA92E", fontWeight: "600", ...getHeadingStyles }}>Total Amount</Typography>
-              <Typography variant="subtitle2" sx={{ color: "#FCA92E", ...getDescriptionStyles }}>
-                Rs. {fNumberRound(total)}
+              <Typography
+                variant="subtitle2"
+                sx={{ ...getDescriptionStyles }}
+              >
+                Rs. {fNumber(taxAmount)}
               </Typography>
             </Stack>
+          )}
+
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+          >
+            <Typography
+              sx={{
+                color: '#FCA92E',
+                fontWeight: '600',
+                ...getHeadingStyles,
+              }}
+            >
+              Total Amount
+            </Typography>
+
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: '#FCA92E',
+                ...getDescriptionStyles,
+              }}
+            >
+              Rs. {fNumberRound(total)}
+            </Typography>
           </Stack>
-        </CardContent>
-      </Card>
-    </>
+        </Stack>
+      </CardContent>
+    </Card>
   );
 };
 
