@@ -788,6 +788,7 @@ const CartDrawer = ({
 
   const cardItems = states.cardItems?.items ?? [];
   const { orderType, franchise } = states ?? {};
+
   const { serviceFeesObject, configurations, storeTaxOnCash, platformFees, minimumAllowedAmount, } = franchise ?? {};
 
   const {
@@ -1098,7 +1099,8 @@ const CartDrawer = ({
           </Button>
 
           <Divider style={{ margin: "16px 0", ...getDividerStyles }} />
-            <Box style={{ marginBottom: 8 }}>
+
+        <Box style={{ marginBottom: 8 }}>
               <Box
                 style={{
                   display: "flex",
