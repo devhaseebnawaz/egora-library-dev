@@ -966,6 +966,7 @@ const CartDrawer = ({
   const orderTotal = baseTotal + finalDeliveryFee;
 
   const isCheckoutDisabled =
+    orderType === "storeDelivery" &&
     Number(orderTotal) < Number(minimumAllowedAmount);
 
   const content = (
