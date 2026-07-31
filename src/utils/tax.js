@@ -197,6 +197,7 @@ export const calculateTaxableCartBreakdown = ({
   isPlatformFeeTaxable = true,
 } = {}) => {
   const taxableSubtotal = calculateTaxableItemsSubtotal(items);
+
   const nonTaxableSubtotal =
     calculateNonTaxableItemsSubtotal(items);
 
@@ -238,18 +239,16 @@ export const calculateTaxableCartBreakdown = ({
 
   const hasTaxableItems = taxableSubtotal > 0;
 
-  const taxableBase = hasTaxableItems
-    ? Math.max(
-      taxableSubtotal -
-      taxableManualDiscount -
-      taxablePromotion +
-      taxableServiceFee +
-      taxableTip +
-      taxableDeliveryFee +
-      taxablePlatformFee,
-      0
-    )
-    : 0;
+  const taxableBase = Math.max(
+    taxableSubtotal -
+    taxableManualDiscount -
+    taxablePromotion +
+    taxableServiceFee +
+    taxableTip +
+    taxableDeliveryFee +
+    taxablePlatformFee,
+    0
+  );
 
   return {
     taxableSubtotal,
