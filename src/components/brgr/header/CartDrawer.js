@@ -15,16 +15,20 @@ import plusIcon from "@iconify-icons/mdi/plus";
 import closeIcon from "@iconify-icons/mdi/close";
 import CartItems from "./CartItems";
 import { fNumber, fNumberRound, formatTo2,truncateTo2 } from "../../../utils/formatNumber";
-import { calculateAndRoundTax } from "../../../utils/tax";
+import { calculateAndRoundTax,  calculateTaxableCartBase, } from "../../../utils/tax";
 import {
   calculateSubTotal,
   isApplicable,
   calculateServiceFee,
-  calculateFinalTotal,
-  calculateCartDiscount
+  calculateCartDiscount,
+  calculateCartManualDiscount,
+  calculateCartPromotion,
 } from "../../../utils/cart";
 import { getScreenSizeCategory } from '../../../utils/fontsize';
 import { calculeteDeliveryFee } from "../../../utils/calculeteDeliveryFee";
+
+const isTaxableByConfiguration = (value) =>
+  value !== false && value !== "false";
 
 const CartDrawer = ({
   open,
@@ -784,24 +788,55 @@ const CartDrawer = ({
 
   const cardItems = states.cardItems?.items ?? [];
   const { orderType, franchise } = states ?? {};
-  const { serviceFeesObject, configurations, storeTaxOnCash, platformFees, deliveryFees, minimumAllowedAmount } = franchise ?? {};
+
+  const { serviceFeesObject, configurations, storeTaxOnCash, platformFees, minimumAllowedAmount, } = franchise ?? {};
+
   const {
     isServiceFeesApplicableOnStore,
     isTaxApplicableOnStore,
     isPlatformFeeApplicableOnStore,
-    isDeliveryFeeApplicableOnStore
+    isDeliveryFeeApplicableOnStore,
+    isServiceFeeTaxableOnStore,
+    isTipTaxableOnStore,
+    isPlatformFeeTaxableOnStore,
+    isDeliveryFeeTaxableOnStore,
   } = configurations ?? {};
-  const taxRate = isTaxApplicableOnStore ? storeTaxOnCash / 100 : 0;
-  let discount = calculateCartDiscount(cardItems, states.cardItems);
-  let paymentOption = "cash";
-  let subTotal = calculateSubTotal(cardItems);
-  const taxAmount = calculateAndRoundTax(subTotal, taxRate, discount);
+
+  const taxRate = isTaxApplicableOnStore
+    ? Number(storeTaxOnCash || 0) / 100
+    : 0;
+
+  const manualDiscount = calculateCartManualDiscount(
+    cardItems,
+    states.cardItems
+  );
+
+  const promotion = calculateCartPromotion(
+    cardItems,
+    states.cardItems
+  );
+
+  const discount = calculateCartDiscount(
+    cardItems,
+    states.cardItems
+  );
+
+  const paymentOption = "cash";
+  const subTotal = Number(calculateSubTotal(cardItems) || 0);
+  const selectedTip = 0;
+
+  const netItemsTotal = Math.max(
+    subTotal - Number(discount || 0),
+    0
+  );
 
   const serviceFee = useMemo(
     () =>
       cardItems?.length > 0 &&
         isServiceFeesApplicableOnStore &&
-        isApplicable(serviceFeesObject?.[orderType]?.cash?.applicable)
+        isApplicable(
+          serviceFeesObject?.[orderType]?.cash?.applicable
+        )
         ? calculateServiceFee(
           states,
           orderType,
@@ -810,47 +845,129 @@ const CartDrawer = ({
           discount
         )
         : 0,
-    [cardItems, subTotal, discount, orderType, states, serviceFeesObject, isServiceFeesApplicableOnStore]
+    [cardItems, subTotal, discount, orderType, states, serviceFeesObject, isServiceFeesApplicableOnStore,]);
+
+  const platformFee = isPlatformFeeApplicableOnStore
+    ? Number(platformFees || 0)
+    : 0;
+
+  const sharedTaxPayload = {
+    items: cardItems,
+    cartMeta: states.cardItems,
+    cartSubtotal: subTotal,
+    manualDiscount,
+    promotion,
+    serviceFee,
+    tip: selectedTip,
+    platformFee,
+
+    isServiceFeeTaxable: isTaxableByConfiguration(
+      isServiceFeeTaxableOnStore
+    ),
+
+    isTipTaxable: isTaxableByConfiguration(
+      isTipTaxableOnStore
+    ),
+
+    isPlatformFeeTaxable: isTaxableByConfiguration(
+      isPlatformFeeTaxableOnStore
+    ),
+  };
+
+  const provisionalTaxableBase = calculateTaxableCartBase({
+    ...sharedTaxPayload,
+    deliveryFee: 0,
+  });
+
+  const provisionalTax = calculateAndRoundTax(
+    provisionalTaxableBase,
+    taxRate
   );
+
+  const baseTotalForDelivery =
+    netItemsTotal +
+    Number(serviceFee || 0) +
+    platformFee +
+    selectedTip +
+    provisionalTax;
+
+  const {
+    finalDeliveryFee: calculatedDeliveryFee,
+    message,
+  } = calculeteDeliveryFee({
+    states,
+    baseTotal: baseTotalForDelivery,
+  });
+
+  const finalDeliveryFee =
+    isDeliveryFeeApplicableOnStore &&
+      orderType === "storeDelivery"
+      ? Number(calculatedDeliveryFee || 0)
+      : 0;
+
+  const taxableCartBase = calculateTaxableCartBase({
+    ...sharedTaxPayload,
+    deliveryFee: finalDeliveryFee,
+
+    isDeliveryFeeTaxable: isTaxableByConfiguration(
+      isDeliveryFeeTaxableOnStore
+    ),
+  });
+
+  const taxAmount = calculateAndRoundTax(
+    taxableCartBase,
+    taxRate
+  );
+
   const totalCartQuantity = useMemo(() => {
-    return cardItems?.reduce((acc, item) => acc + item.qty, 0) || 0;
+    return (
+      cardItems?.reduce(
+        (acc, item) => acc + item.qty,
+        0
+      ) || 0
+    );
   }, [cardItems]);
-  let selectedTip = 0;
 
   const renderServiceFee = () => {
     if (
       isServiceFeesApplicableOnStore &&
-      isApplicable(serviceFeesObject?.[orderType]?.cash?.applicable) &&
+      isApplicable(
+        serviceFeesObject?.[orderType]?.cash?.applicable
+      ) &&
       serviceFee > 0
     ) {
       return (
-        <Box style={{ display: "flex", justifyContent: "space-between" }}>
-          <Typography sx={{ ...getPriceTextStyles }}>Service Fee</Typography>
+        <Box
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <Typography sx={{ ...getPriceTextStyles }}>
+            Service Fee
+          </Typography>
+
           <Typography sx={{ ...getPriceTextStyles }}>
             Rs. {fNumber(serviceFee)}
           </Typography>
         </Box>
       );
     }
+
     return null;
   };
 
-  const baseTotal = (
-    Number(calculateFinalTotal(cardItems, selectedTip, discount)) +
-    Number(taxAmount) +
-    Number(serviceFee) +
-    (isPlatformFeeApplicableOnStore ? Number(platformFees) : 0)
-  );
+  const baseTotal =
+    netItemsTotal +
+    Number(taxAmount || 0) +
+    Number(serviceFee || 0) +
+    platformFee;
 
-  const { finalDeliveryFee, message } = calculeteDeliveryFee({ states, baseTotal })
+  const orderTotal = baseTotal + finalDeliveryFee;
 
-  const orderTotal = (
-    Number(baseTotal) + ((isDeliveryFeeApplicableOnStore && orderType === "storeDelivery") ? Number(finalDeliveryFee) : 0)
-  );
-
-  const isCheckoutDisabled = Number(orderTotal) < Number(minimumAllowedAmount);
-
-  console.log("minimumAllowedAmount", minimumAllowedAmount)
+  const isCheckoutDisabled =
+    orderType === "storeDelivery" &&
+    Number(orderTotal) < Number(minimumAllowedAmount);
 
   const content = (
     <Box style={{ position: "relative", height: "100%", ...getDrawerStyles }}>
@@ -984,78 +1101,109 @@ const CartDrawer = ({
 
           <Divider style={{ margin: "16px 0", ...getDividerStyles }} />
 
-          <Box style={{ marginBottom: 8 }}>
-            <Box style={{ display: "flex", justifyContent: "space-between" }}>
-              <Typography sx={{ ...getPriceTextStyles }}>
-                Sub Total
-              </Typography>
-              <Typography sx={{ ...getPriceTextStyles }}>
-                Rs. {truncateTo2(calculateSubTotal(cardItems))}
-              </Typography>
-            </Box>
-            {discount > 0 && (
-                <Box style={{ display: "flex", justifyContent: "space-between" }}>
+        <Box style={{ marginBottom: 8 }}>
+              <Box
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography sx={{ ...getPriceTextStyles }}>
+                  Sub Total
+                </Typography>
+
+                <Typography sx={{ ...getPriceTextStyles }}>
+                  Rs. {truncateTo2(subTotal)}
+                </Typography>
+              </Box>
+
+              {discount > 0 && (
+                <Box
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
                   <Typography sx={{ ...getPriceTextStyles }}>
-                    {/* {states.cardItems?.discountObject?.reason || "Promotion"} */}
                     Promotion
                   </Typography>
+
                   <Typography sx={{ ...getPriceTextStyles }}>
                     - Rs. {fNumber(discount)}
                   </Typography>
                 </Box>
               )}
-            {isPlatformFeeApplicableOnStore && (
-              <Box
-                style={{ display: "flex", justifyContent: "space-between" }}
-              >
-                <Typography sx={{ ...getPriceTextStyles }}>
-                  Platform Fee
-                </Typography>
-                <Typography sx={{ ...getPriceTextStyles }}>
-                  Rs. {platformFees}
-                </Typography>
-              </Box>
-            )}
-            {renderServiceFee()}
-            {isDeliveryFeeApplicableOnStore && orderType === "storeDelivery" && (
-              <Box
-                style={{ display: "flex", justifyContent: "space-between" }}
-              >
-                <Typography sx={{ ...getPriceTextStyles }}>
-                  Delivery Fee
-                </Typography>
-                <Typography sx={{ ...getPriceTextStyles }}>
-                  Rs. {finalDeliveryFee}
-                </Typography>
-              </Box>
-            )}
 
-            {isTaxApplicableOnStore && (
+              {isPlatformFeeApplicableOnStore && (
+                <Box
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography sx={{ ...getPriceTextStyles }}>
+                    Platform Fee
+                  </Typography>
+
+                  <Typography sx={{ ...getPriceTextStyles }}>
+                    Rs. {platformFee}
+                  </Typography>
+                </Box>
+              )}
+
+              {renderServiceFee()}
+
+              {isDeliveryFeeApplicableOnStore &&
+                orderType === "storeDelivery" && (
+                  <Box
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography sx={{ ...getPriceTextStyles }}>
+                      Delivery Fee
+                    </Typography>
+
+                    <Typography sx={{ ...getPriceTextStyles }}>
+                      Rs. {finalDeliveryFee}
+                    </Typography>
+                  </Box>
+                )}
+
+              {isTaxApplicableOnStore && (
+                <Box
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography sx={{ ...getPriceTextStyles }}>
+                    Tax
+                  </Typography>
+
+                  <Typography sx={{ ...getPriceTextStyles }}>
+                    Rs. {taxAmount ? fNumber(taxAmount) : 0}
+                  </Typography>
+                </Box>
+              )}
+
               <Box
-                style={{ display: "flex", justifyContent: "space-between" }}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: 8,
+                }}
               >
-                <Typography sx={{ ...getPriceTextStyles }}>Tax </Typography>
-                <Typography sx={{ ...getPriceTextStyles }}>
-                  {" "}
-                  Rs. {taxAmount ? fNumber(taxAmount) : 0}
+                <Typography sx={{ ...getTotalTextStyles }}>
+                  Grand Total
+                </Typography>
+
+                <Typography sx={{ ...getTotalTextStyles }}>
+                  Rs. {fNumberRound(orderTotal)}
                 </Typography>
               </Box>
-            )}
-            <Box
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: 8,
-              }}
-            >
-              <Typography sx={{ ...getTotalTextStyles }}>
-                Grand Total
-              </Typography>
-              <Typography sx={{ ...getTotalTextStyles }}>
-                Rs.{" "} {fNumberRound(orderTotal)}
-              </Typography>
             </Box>
-          </Box>
           <Button
             variant="contained"
             disabled={isCheckoutDisabled}
