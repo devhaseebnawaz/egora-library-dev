@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 const DEFAULTS = {
     imageWidth: 500,
@@ -132,51 +132,6 @@ export default function StoreBannerPopup({
 
         setInternalOpen(false);
     };
-
-    useEffect(() => {
-        if (!isOpen || previewMode) {
-            return undefined;
-        }
-
-        const previousOverflow =
-            document.body.style.overflow;
-
-        document.body.style.overflow = 'hidden';
-
-        const handleKeyDown = (event) => {
-            if (event.key !== 'Escape') {
-                return;
-            }
-
-            if (
-                typeof states?.setStoreBannerPopupOpen ===
-                'function'
-            ) {
-                states.setStoreBannerPopupOpen(false);
-            } else {
-                setInternalOpen(false);
-            }
-        };
-
-        window.addEventListener(
-            'keydown',
-            handleKeyDown
-        );
-
-        return () => {
-            document.body.style.overflow =
-                previousOverflow;
-
-            window.removeEventListener(
-                'keydown',
-                handleKeyDown
-            );
-        };
-    }, [
-        isOpen,
-        previewMode,
-        states?.setStoreBannerPopupOpen,
-    ]);
 
     const popupStyles = {
         width: toPixels(
