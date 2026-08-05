@@ -9,7 +9,6 @@ import {
     Autocomplete,
     FormControl,
     MenuItem,
-    InputLabel,
     Select,
     CircularProgress
 } from "@mui/material";
@@ -403,7 +402,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
         }
     };
 
-  function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+    function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
         const R = 6371e3;
         const dLat = ((lat2 - lat1) * Math.PI) / 180;
         const dLon = ((lon2 - lon1) * Math.PI) / 180;
@@ -417,18 +416,64 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
         return R * c;
     }
 
+    const requestCurrentUserLocation = () => {
+        return new Promise((resolve, reject) => {
+            if (!navigator.geolocation) {
+                reject(new Error("Geolocation is not supported by your browser."));
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const coords = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+
+                    states?.setUserCoordinates?.(coords);
+                    resolve(coords);
+                },
+                (error) => {
+                    let message = "Unable to get your current location.";
+
+                    if (error.code === error.PERMISSION_DENIED) {
+                        message = "Location access is blocked. Please allow it in your browser settings and try again.";
+                    } else if (error.code === error.POSITION_UNAVAILABLE) {
+                        message = "Your current location is temporarily unavailable. Please check Location Services and Wi-Fi, then try again.";
+                    } else if (error.code === error.TIMEOUT) {
+                        message = "Location request timed out. Please try again.";
+                    }
+
+                    reject(new Error(message));
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 15000,
+                    maximumAge: 60000,
+                }
+            );
+        });
+    };
+
     const handleSelectedLocation = async () => {
         states?.setErrorForToFarLocation("");
         if (
             states.franchise.configurations.isEnabledDeliveryLocation &&
             !states.franchise.configurations.isRegionBasedDeliveryOnStore
         ) {
+            setIsConfirmingLocation(true);
             try {
-                const savedUserLocation = getSavedUserLocation();
+                let savedUserLocation = getSavedUserLocation();
 
-                if (!savedUserLocation || !states.latLongForDelivery) {
+                if (!savedUserLocation) {
+                    states?.setErrorForDeniedLocation?.("");
+                    const coords = await requestCurrentUserLocation();
+                    savedUserLocation = getCoordsString(coords);
+                }
+
+                if (!states.latLongForDelivery) {
                     states.setErrorForDeniedLocation?.(
-                        "Please allow location first."
+                        "Please select a delivery location first."
                     );
                     return;
                 }
@@ -444,6 +489,7 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                 const distance = getDistanceFromLatLonInMeters(franLat, franLng, userLat, userLng);
 
                 if (distance <= states.franchise.deliveryRadius * 1000) {
+                    states?.setErrorForDeniedLocation?.("");
                     actions.handleSelectedLocation(states.latLongForDelivery);
                 } else {
                     states.setErrorForToFarLocation(
@@ -451,7 +497,9 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                     );
                 }
             } catch (error) {
-                console.log("Confirm location error:", error);
+                states?.setErrorForDeniedLocation?.(error.message);
+            } finally {
+                setIsConfirmingLocation(false);
             }
 
             return;
@@ -496,10 +544,6 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     const getSavedUserLocation = () => {
         if (states?.userCoordinates?.lat && states?.userCoordinates?.lng) {
             return getCoordsString(states.userCoordinates);
-        }
-
-        if (states?.markerPosition?.lat && states?.markerPosition?.lng) {
-            return getCoordsString(states.markerPosition);
         }
 
         return "";
@@ -579,7 +623,6 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
         );
     };
-    
     const content = (
         <Box >
             <Box
@@ -900,8 +943,41 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                         sx={{ mb: 2 }}
                     /> */}
                      <FormControl fullWidth sx={{ mb: 2 }}>
-                            <InputLabel id="select-outlet-label">Select Outlet</InputLabel>
+                            <Typography
+                                id="select-outlet-label"
+                                component="label"
+                                htmlFor="select-outlet"
+                                sx={{
+                                    mb: 0.75,
+                                    fontWeight: 600,
+                                    lineHeight: 1.4,
+                                    textAlign:"center",
+                                    color:
+                                        layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextColor?.value !== ""
+                                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextColor?.value}`
+                                            : `${themeColors?.LocationModalSelectOutletTextColor?.value}`,
+                                    fontSize:
+                                        layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextSize?.value[getScreenSizeCategory()] != 0
+                                            ? layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextSize?.value[getScreenSizeCategory()]
+                                            : themeColors?.LocationModalSelectOutletTextSize?.value[getScreenSizeCategory()],
+                                    fontWeight:
+                                        layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextWeight?.value != ""
+                                            ? layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextWeight?.value
+                                            : themeColors?.LocationModalSelectOutletTextWeight?.value,
+                                    fontFamily:
+                                        layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextFont?.value !== ""
+                                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextFont?.value}`
+                                            : `${themeColors?.LocationModalSelectOutletTextFont?.value}`,
+                                    fontStyle:
+                                        layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextStyle?.value !== ""
+                                            ? `${layout?.locationLayout?.body[0].styles?.LocationModalSelectOutletTextStyle?.value}`
+                                            : `${themeColors?.LocationModalSelectOutletTextStyle?.value}`,
+                                }}
+                            >
+                                Select Branch
+                            </Typography>
                             <Select
+                                id="select-outlet"
                                 labelId="select-outlet-label"
                                 value={states.selectedOutlet?._id || firstOnlineOutlet?._id || ""}
                                 onChange={(e) => {
@@ -911,7 +987,6 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                                     if (!selected?.isOnlineForStore) return;
                                     states.setSelectedOutlet(selected);
                                 }}
-                                label="Select Outlet"
                                 renderValue={(selectedId) => {
                                     const selected = filteredOutlets.find(o => o._id === selectedId);
                                     return selected ? selected.name : "";
