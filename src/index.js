@@ -21,5 +21,6 @@ import CartBottomBar from './components/brgr/CartBottomBar/CartBottomBar';
 import EditorTextBlock from './components/brgr/editorTextBlock/editorTextBlock';
 import Review from './components/brgr/review/review';
 import ReviewModal from './components/brgr/review/reviewModal';
-import StoreBannerPopup from './components/brgr/storeBannerPopup copy/StoreBannerPopup';
-export { StoreBannerPopup, Review, ReviewModal, AnnouncementsBanner, CartDrawer, ItemDetailModal, CustomerInfoModal, CartCheckoutSummary, TextBlock, EditorTextBlock, OrderSuccessPage, Header, LocationModal, HeroCarousel, CategoryCarousel, SearchBar, PopularMenuSection, PopularMenuSectionV2, AllCategoriesPage, AllCategoriesPageV2, Footer, Footer2, InfoBlock, CartBottomBar };
+import StoreBannerPopup from './components/brgr/storeBannerPopup/StoreBannerPopup';
+import PromotionBanner from './components/brgr/promotionBanner/PromotionBanner';
+export { PromotionBanner, StoreBannerPopup, Review, ReviewModal, AnnouncementsBanner, CartDrawer, ItemDetailModal, CustomerInfoModal, CartCheckoutSummary, TextBlock, EditorTextBlock, OrderSuccessPage, Header, LocationModal, HeroCarousel, CategoryCarousel, SearchBar, PopularMenuSection, PopularMenuSectionV2, AllCategoriesPage, AllCategoriesPageV2, Footer, Footer2, InfoBlock, CartBottomBar };
