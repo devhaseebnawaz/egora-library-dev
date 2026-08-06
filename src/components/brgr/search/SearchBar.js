@@ -1,11 +1,62 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { InputBase, IconButton, Paper, Container } from '@mui/material';
 import Iconify from '../iconify';
 
 const SearchBar = ({ prop, states, styles, themeColors, globalComponentStyles }) => {
   const { query, setQuery } = states ?? {};
   const [isExpanded, setIsExpanded] = useState(false);
+  const [animatedText, setAnimatedText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [activeTextIndex, setActiveTextIndex] = useState(0);
   const shouldExpand = isExpanded || Boolean(query?.trim());
+
+  const searchTerms = useMemo(() => {
+    const configuredValue = prop?.editable?.SearchBarBackgroundText?.value;
+
+    const values = Array.isArray(configuredValue)
+      ? configuredValue
+      : String(configuredValue || '').split(/[,|\n]/);
+
+    const terms = values
+      .map((value) =>
+        String(value)
+          .replace(/^search\s+for\s*/i, '')
+          .trim()
+      )
+      .filter(Boolean);
+
+    return terms.length ? terms : ['order'];
+  }, [prop?.editable?.SearchBarBackgroundText?.value]);
+
+  const activeSearchTerm = searchTerms[activeTextIndex % searchTerms.length];
+
+  useEffect(() => {
+    const hasFinishedTyping = animatedText === activeSearchTerm;
+    const hasFinishedDeleting = animatedText === '';
+    let delay = isDeleting ? 70 : 120;
+
+    if (hasFinishedTyping && !isDeleting) delay = 1200;
+    if (hasFinishedDeleting && isDeleting) delay = 350;
+
+    const timeout = setTimeout(() => {
+      if (hasFinishedTyping && !isDeleting) {
+        setIsDeleting(true);
+        return;
+      }
+
+      if (hasFinishedDeleting && isDeleting) {
+        setIsDeleting(false);
+        setActiveTextIndex((currentIndex) => (currentIndex + 1) % searchTerms.length);
+        return;
+      }
+
+      setAnimatedText((currentText) =>
+        isDeleting ? currentText.slice(0, -1) : activeSearchTerm.slice(0, currentText.length + 1)
+      );
+    }, delay);
+
+    return () => clearTimeout(timeout);
+  }, [activeSearchTerm, animatedText, isDeleting, searchTerms.length]);
 
   const iconColor =
     styles?.SearchBarIconColor?.value !== ''
@@ -15,6 +66,7 @@ const SearchBar = ({ prop, states, styles, themeColors, globalComponentStyles })
   const handleSubmit = (e) => {
     e.preventDefault();
   };
+
   const handleBlur = (e) => {
     if (!e.currentTarget.contains(e.relatedTarget)) {
       setIsExpanded(false);
@@ -44,7 +96,8 @@ const SearchBar = ({ prop, states, styles, themeColors, globalComponentStyles })
             xs: '100%',
             sm: shouldExpand ? '100%' : '50%',
           },
-          transition: 'width 300ms ease', boxShadow: 'none',
+          transition: 'width 300ms ease',
+          boxShadow: 'none',
           mx: 'auto',
         }}
       >
@@ -64,19 +117,25 @@ const SearchBar = ({ prop, states, styles, themeColors, globalComponentStyles })
         />
         <InputBase
           sx={{
-            ml: 2, flex: 1,
+            ml: 2,
+            flex: 1,
+            minWidth: 0,
             color:
               styles?.SearchBarTextColor?.value !== ""
                 ? styles?.SearchBarTextColor?.value
                 : globalComponentStyles?.Text?.color?.value !== ""
                   ? globalComponentStyles?.Text?.color?.value
                   : themeColors?.SearchBarTextColor?.value,
-
+            '& input': {
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            },
           }}
-          placeholder={prop.editable.SearchBarBackgroundText.value}
+          placeholder={`Search for${animatedText ? ` ${animatedText}` : ''}`}
           inputProps={{ 'aria-label': 'search items' }}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={query ?? ''}
+          onChange={(e) => setQuery?.(e.target.value)}
         />
         <IconButton
           type="submit"
@@ -112,5 +171,4 @@ const SearchBar = ({ prop, states, styles, themeColors, globalComponentStyles })
     </Container>
   );
 };
-
 export default SearchBar;
