@@ -156,7 +156,7 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                   gap: smDown ? "0px" : "8px",
                   padding: 0,
                   scrollbarWidth: "none",
-                  justifyContent:"space-between",
+                  justifyContent:"center",
                   }}
                 > 
 

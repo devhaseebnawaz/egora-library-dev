@@ -67,6 +67,10 @@ export default function CustomFooterV2({
       height: size,
       width: size,
       borderRadius,
+      maxWidth: "100%",
+      maxHeight: "100%",
+      objectFit: "contain",
+      display: "block",
     };
   };
 
