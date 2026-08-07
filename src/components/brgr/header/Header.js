@@ -115,11 +115,11 @@ export default function CustomNavbar({
                   flexShrink: 0,
                   padding: '5px',
                   lineHeight: 0,
-                  backgroundColor: styles?.AppBarIconBackgroundColor?.value != ''
-                    ? styles?.AppBarIconBackgroundColor?.value
+                  backgroundColor: styles?.AppBarButtonIconBackgroundColor?.value != ''
+                    ? styles?.AppBarButtonIconBackgroundColor?.value
                     : globalComponentStyles?.Icon?.color?.value != ''
                       ? globalComponentStyles?.Icon?.color?.value
-                      : themeColors?.AppBarIconBackgroundColor?.value,
+                      : themeColors?.AppBarButtonIconBackgroundColor?.value,
                   borderRadius: '50%',
                 }}
               >
@@ -280,11 +280,11 @@ export default function CustomNavbar({
                   flexShrink: 0,
                   padding: '5px',
                   lineHeight: 0,
-                  backgroundColor: styles?.AppBarIconBackgroundColor?.value != ''
-                    ? styles?.AppBarIconBackgroundColor?.value
+                  backgroundColor: styles?.AppBarButtonIconBackgroundColor?.value != ''
+                    ? styles?.AppBarButtonIconBackgroundColor?.value
                     : globalComponentStyles?.Icon?.color?.value != ''
                       ? globalComponentStyles?.Icon?.color?.value
-                      : themeColors?.AppBarIconBackgroundColor?.value,
+                      : themeColors?.AppBarButtonIconBackgroundColor?.value,
                   borderRadius: '50%',
                 }}
               >
