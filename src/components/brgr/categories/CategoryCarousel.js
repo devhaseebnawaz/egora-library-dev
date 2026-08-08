@@ -96,20 +96,19 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                 style={{
                     display: "flex",
                     alignItems: "center",
+                    gap: smDown ? "4px" : "8px",
                     padding: "8px 16px",
                     position: "relative",
                     overflow: "hidden",
                 }}
             >
-                {states.showLeft && (
-                    <IconButton
+                <IconButton
                         onClick={() => actions.handleScroll("left")}
+                        disabled={!states.showLeft}
+                        aria-label="Previous categories"
                         style={{
-                            position: "absolute",
-                            left: smDown ? 8 : 16,
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            zIndex: 2,
+                            flex: "0 0 auto",
+                            visibility: states.showLeft ? "visible" : "hidden",
                             backgroundColor:
                                 styles?.CategoryCarouselGoPrevIconBackgroundColor?.value != ""
                                     ? styles?.CategoryCarouselGoPrevIconBackgroundColor?.value
@@ -145,18 +144,19 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                             }
                         />
                     </IconButton>
-                )}
 
               <Box
                   ref={states.scrollRef}
                   style={{
                   display: "flex",
+                  flex: "1 1 auto",
+                  minWidth: 0,
                   flexWrap: "nowrap",
                   overflowX: "auto",
                   gap: smDown ? "0px" : "8px",
-                  padding: smDown ? "0 48px" : "0 64px",
-                  width: "100%",
+                  padding: 0,
                   scrollbarWidth: "none",
+                  justifyContent:"center",
                   }}
                 > 
 
@@ -261,15 +261,13 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                     ))}
                 </Box>
 
-                {states.showRight && (
-                    <IconButton
+                <IconButton
                         onClick={() => actions.handleScroll("right")}
+                        disabled={!states.showRight}
+                        aria-label="Next categories"
                         style={{
-                            position: "absolute",
-                            right: smDown ? 8 : 16,
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            zIndex: 2,
+                            flex: "0 0 auto",
+                            visibility: states.showRight ? "visible" : "hidden",
                             backgroundColor:
                                 styles?.CategoryCarouselGoNextIconBackgroundColor?.value != ""
                                     ? styles?.CategoryCarouselGoNextIconBackgroundColor?.value
@@ -304,7 +302,6 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                             }
                         />
                     </IconButton>
-                )}
             </Container>
         </Box>
     );
