@@ -46,6 +46,26 @@ export default function CustomNavbar({
     truncateLength
   );
 
+  const currentPath =
+    !previewMode && typeof window !== 'undefined'
+      ? window.location.pathname.replace(/\/+$/, '') || '/'
+      : '/';
+
+  const customPageSlugs = Object.entries(layout?.pages || {})
+    .filter(([, pageConfig]) => pageConfig?.removeable === true)
+    .map(([pageName, pageConfig]) =>
+      `/${String(pageConfig?.slug || pageName)
+        .trim()
+        .toLowerCase()
+        .replace(/[_\s]+/g, '-')
+        .replace(/[^a-z0-9-]/g, '')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')}`
+    )
+    .filter((slug) => slug !== '/');
+
+  const shouldHideHeaderActionButtons = customPageSlugs.includes(currentPath);
+
   return (
     <>
       <AppBar
@@ -80,6 +100,7 @@ export default function CustomNavbar({
               gap: isMobile ? '6px' : '12px',
             }}
           >
+            {!shouldHideHeaderActionButtons && (
             <Button
               type="button"
               aria-label="Choose delivery location"
@@ -243,7 +264,9 @@ export default function CustomNavbar({
                 </Box>
               </Box>
             </Button>
+            )}
 
+            {!shouldHideHeaderActionButtons && (
             <Button
               type="button"
               component="a"
@@ -361,8 +384,10 @@ export default function CustomNavbar({
                   : '03XX-XXXXXXX'}
               </Box>
             </Button>
+            )}
           </Box>
 
+          {!shouldHideHeaderActionButtons && (
           <Box style={{ position: 'relative' }}>
             <IconButton
               type="button"
@@ -476,6 +501,7 @@ export default function CustomNavbar({
               </Box>
             )}
           </Box>
+          )}
         </Toolbar>
 
         <Box
