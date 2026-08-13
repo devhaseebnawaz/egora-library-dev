@@ -78,20 +78,34 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
   useEffect(() => {
     let observer = null;
 
+    const updateActiveCategory = () => {
+      if (states?.isManualScroll.current) return;
+
+      const headerOffset = mdDown ? 0 : 100;
+      const categoryElements = Object.entries(categoryRefs.current)
+        .map(([name, ref]) => ({
+          name,
+          rect: ref?.current?.getBoundingClientRect(),
+        }))
+        .filter(({ rect }) => rect);
+
+      const activeCategory = categoryElements
+        .filter(({ rect }) => rect.top <= headerOffset + 10 && rect.bottom > headerOffset)
+        .sort((a, b) => b.rect.top - a.rect.top)[0]
+        || categoryElements
+          .filter(({ rect }) => rect.top > headerOffset)
+          .sort((a, b) => a.rect.top - b.rect.top)[0];
+
+      if (activeCategory) {
+        states.setSelectedCategoryItem((current) =>
+          current === activeCategory.name ? current : activeCategory.name
+        );
+      }
+    };
+
     const observe = () => {
       observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const visibleCategory = entry.target.getAttribute('data-category-name');
-              if (visibleCategory && visibleCategory !== states.selectedCategoryItem) {
-                if (!states?.isManualScroll.current) {
-                  states.setSelectedCategoryItem(visibleCategory);
-                }
-              }
-            }
-          });
-        },
+        updateActiveCategory,
         {
           root: null,
           threshold: 0.5,
@@ -103,14 +117,18 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
           observer.observe(ref.current);
         }
       });
+
+      updateActiveCategory();
     };
 
     const timeout = setTimeout(() => {
       observe();
     }, 200);
+    window.addEventListener('scroll', updateActiveCategory, { passive: true });
 
     return () => {
       clearTimeout(timeout);
+      window.removeEventListener('scroll', updateActiveCategory);
       if (observer) observer.disconnect();
     };
   }, [products]);
