@@ -9,6 +9,10 @@ import { getScreenSizeCategory } from "../../../utils/fontsize";
 export default function CategoryCarousel({ themeColors, actions, prop, styles, states, globalComponentStyles }) {
     const theme = useTheme();
     const smDown = useMediaQuery(theme.breakpoints.down("sm")); 
+    const categoryCarouselAlignment =
+        styles?.CategoryCarouselAlignment?.value ||
+        themeColors?.CategoryCarouselAlignment?.value ||
+        "flex-start";
     // useEffect(() => {
     //     if (states.selectedCategoryItem && states.scrollRef?.current) {
     //         const buttons = states.scrollRef.current.querySelectorAll("button");
@@ -156,7 +160,7 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
                   gap: smDown ? "0px" : "8px",
                   padding: 0,
                   scrollbarWidth: "none",
-                  justifyContent:"center",
+                  justifyContent: categoryCarouselAlignment,
                   }}
                 > 
 
