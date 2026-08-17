@@ -5,6 +5,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import TwitterIcon from "@mui/icons-material/Twitter";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import UniversalImage from "../../../UniversalImage";
@@ -288,6 +289,7 @@ export default function CustomFooterV2({
                     else if (name === "WhatsApp") icon = <WhatsAppIcon />;
                     else if (name === "Twitter") icon = <TwitterIcon />;
                     else if (name === "SanpChat") icon = <CameraAltIcon />;
+                    else if (name === "TikTok") icon = <MusicNoteIcon />;
                   }
                   return !addCustomIcon ? (
                     <IconButton
