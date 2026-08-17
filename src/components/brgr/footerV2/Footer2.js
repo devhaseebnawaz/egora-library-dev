@@ -26,6 +26,7 @@ export default function CustomFooterV2({
   const footerEmail = prop?.editable?.footerEmail?.value;
 
   const [isShort, setIsShort] = useState(false);
+  const [storeQuery, setStoreQuery] = useState("");
 
   const getFooterStyles = (type) => ({
     fontWeight:
@@ -109,6 +110,10 @@ export default function CustomFooterV2({
       color,
     };
   };
+
+  useEffect(() => {
+    setStoreQuery(window.location.search);
+  }, []);
 
   useEffect(() => {
     const checkHeight = () => {
@@ -315,12 +320,12 @@ export default function CustomFooterV2({
                   </Typography>
                 ) : (
                   <Link
-                    href={link.url}
+                    href={link.type === "url" ? link.url : `/${link.url}${storeQuery}`}
                     color="inherit"
                     underline="hover"
                     sx={getFooterStyles("FooterLink")}
-                    target={ "_blank" }
-                    rel={"noopener noreferrer"}
+                    target={link.type === "url" ? "_blank" : "_self"}
+                    rel={link.type === "url" ? "noopener noreferrer" : undefined}
                   >
                     {link.name}
                   </Link>
