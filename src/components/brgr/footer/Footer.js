@@ -13,6 +13,7 @@ export default function CustomFooter({
 
   const linksArray = prop?.editable?.links?.value || [];
   const [isShort, setIsShort] = useState(false);
+  const [storeQuery, setStoreQuery] = useState("");
 
   const getFooterStyles = (type) => ({
     fontWeight:
@@ -36,6 +37,10 @@ export default function CustomFooter({
       globalComponentStyles?.Text?.fontStyle?.value ||
       themeColors?.[type + "Style"]?.value,
   });
+
+  useEffect(() => {
+    setStoreQuery(window.location.search);
+  }, []);
 
   useEffect(() => {
     const checkHeight = () => {
@@ -124,7 +129,7 @@ export default function CustomFooter({
       </Typography>
     ) : (
       <Link
-        href={link.type === "url" ? link.url : `/${link.url}`}
+        href={link.type === "url" ? link.url : `/${link.url}${storeQuery}`}
         color="inherit"
         underline="hover"
         sx={getFooterStyles("FooterLink")}
@@ -139,4 +144,3 @@ export default function CustomFooter({
     </Box>
   );
 }
-

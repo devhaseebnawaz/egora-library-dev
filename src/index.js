@@ -23,4 +23,5 @@ import Review from './components/brgr/review/review';
 import ReviewModal from './components/brgr/review/reviewModal';
 import StoreBannerPopup from './components/brgr/storeBannerPopup/StoreBannerPopup';
 import PromotionBanner from './components/brgr/promotionBanner/PromotionBanner';
-export { PromotionBanner, StoreBannerPopup, Review, ReviewModal, AnnouncementsBanner, CartDrawer, ItemDetailModal, CustomerInfoModal, CartCheckoutSummary, TextBlock, EditorTextBlock, OrderSuccessPage, Header, LocationModal, HeroCarousel, CategoryCarousel, SearchBar, PopularMenuSection, PopularMenuSectionV2, AllCategoriesPage, AllCategoriesPageV2, Footer, Footer2, InfoBlock, CartBottomBar };
+import SocialPage from './components/brgr/socialPage/SocialPage';
+export { SocialPage, PromotionBanner, StoreBannerPopup, Review, ReviewModal, AnnouncementsBanner, CartDrawer, ItemDetailModal, CustomerInfoModal, CartCheckoutSummary, TextBlock, EditorTextBlock, OrderSuccessPage, Header, LocationModal, HeroCarousel, CategoryCarousel, SearchBar, PopularMenuSection, PopularMenuSectionV2, AllCategoriesPage, AllCategoriesPageV2, Footer, Footer2, InfoBlock, CartBottomBar };

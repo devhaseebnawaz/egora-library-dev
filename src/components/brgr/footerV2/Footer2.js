@@ -5,6 +5,7 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import TwitterIcon from "@mui/icons-material/Twitter";
+import MusicNoteIcon from "@mui/icons-material/MusicNote";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import UniversalImage from "../../../UniversalImage";
@@ -26,6 +27,7 @@ export default function CustomFooterV2({
   const footerEmail = prop?.editable?.footerEmail?.value;
 
   const [isShort, setIsShort] = useState(false);
+  const [storeQuery, setStoreQuery] = useState("");
 
   const getFooterStyles = (type) => ({
     fontWeight:
@@ -109,6 +111,10 @@ export default function CustomFooterV2({
       color,
     };
   };
+
+  useEffect(() => {
+    setStoreQuery(window.location.search);
+  }, []);
 
   useEffect(() => {
     const checkHeight = () => {
@@ -283,6 +289,7 @@ export default function CustomFooterV2({
                     else if (name === "WhatsApp") icon = <WhatsAppIcon />;
                     else if (name === "Twitter") icon = <TwitterIcon />;
                     else if (name === "SanpChat") icon = <CameraAltIcon />;
+                    else if (name === "TikTok") icon = <MusicNoteIcon />;
                   }
                   return !addCustomIcon ? (
                     <IconButton
@@ -315,12 +322,12 @@ export default function CustomFooterV2({
                   </Typography>
                 ) : (
                   <Link
-                    href={link.url}
+                    href={link.type === "url" ? link.url : `/${link.url}${storeQuery}`}
                     color="inherit"
                     underline="hover"
                     sx={getFooterStyles("FooterLink")}
-                    target={ "_blank" }
-                    rel={"noopener noreferrer"}
+                    target={link.type === "url" ? "_blank" : "_self"}
+                    rel={link.type === "url" ? "noopener noreferrer" : undefined}
                   >
                     {link.name}
                   </Link>
