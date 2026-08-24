@@ -38,6 +38,8 @@ export default function CustomFooterV2({
   const socialLinks = prop?.editable?.socialLinks?.value || [];
   const footerPhone = prop?.editable?.footerPhone?.value;
   const footerEmail = prop?.editable?.footerEmail?.value;
+  const phoneValue = footerPhone || (previewMode ? "000-111-222" : states.selectedVenue.pointOfContactNumber);
+  const emailValue = footerEmail || (previewMode ? "info@example.com" : states.selectedVenue.ownerEmail);
 
   const [isShort, setIsShort] = useState(false);
   const [storeQuery, setStoreQuery] = useState("");
@@ -46,7 +48,8 @@ export default function CustomFooterV2({
     fontWeight:
       styles?.[type + "WeightV2"]?.value ||
       globalComponentStyles?.Text?.fontWeight?.value ||
-      themeColors?.[type + "WeightV2"]?.value,
+      themeColors?.[type + "WeightV2"]?.value ||
+      (type === "FooterVenueNameText" ? "700" : undefined),
     color:
       styles?.[type + "ColorV2"]?.value ||
       globalComponentStyles?.Text?.color?.value ||
@@ -173,7 +176,7 @@ export default function CustomFooterV2({
       <Box
         sx={{
           display: "flex",
-          flexWrap: "nowrap",
+          flexWrap: "wrap",
           justifyContent: "space-between",
           alignItems: "flex-start",
           gap: 3,
@@ -206,36 +209,34 @@ export default function CustomFooterV2({
               >
                 Phone:
               </Typography>
-              <Typography component="span" sx={{ ...getFooterStyles("FooterPhoneText") }}>
-                {/* {previewMode
-                  ? "000-111-222"
-                  : footerPhone || states.selectedVenue.pointOfContactNumber} */}
-                {footerPhone
-                  ? footerPhone
-: previewMode
-                    ? "000-111-222"
-                    : states.selectedVenue.pointOfContactNumber}
-
-              </Typography>
+              <Link
+                component="a"
+                href={`tel:${String(phoneValue || "").replace(/[^+\d]/g, "")}`}
+                underline="always"
+                sx={{
+                  ...getFooterStyles("FooterPhoneText"),
+                  cursor: "pointer",
+                }}
+              >
+                {phoneValue}
+              </Link>
 
             </Typography>
             <Typography sx={{ display: "flex", gap: 0.5 }}>
               <Typography component="span" sx={getFooterStyles("FooterEmailHeadingText")}>
                 Email:
               </Typography>
-              {/* < Typography sx={{ ...getFooterStyles("FooterEmailText") }}> {previewMode ? "info@example.com" : `${states.selectedVenue.ownerEmail}`}</Typography> */}
-              <Typography component="span" sx={{ ...getFooterStyles("FooterEmailText") }}>
-                {/* {previewMode
-                  ? "info@example.com"
-                  : footerEmail || states.selectedVenue.ownerEmail} */}
-
-                {footerEmail
-                  ? footerEmail
-                  : previewMode
-                    ? "info@example.com"
-                    : states.selectedVenue.ownerEmail}
-
-              </Typography>
+              <Link
+                component="a"
+                href={`mailto:${emailValue || ""}`}
+                underline="always"
+                sx={{
+                  ...getFooterStyles("FooterEmailText"),
+                  cursor: "pointer",
+                }}
+              >
+                {emailValue}
+              </Link>
 
             </Typography>
 
