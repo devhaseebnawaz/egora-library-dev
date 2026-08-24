@@ -5,8 +5,9 @@ import arrowLeft from "@iconify-icons/mdi/chevron-left";
 import arrowRight from "@iconify-icons/mdi/chevron-right";
 import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
+import CategoryGrouping from './CategoryGrouping';
 
-export default function CategoryCarousel({ themeColors, actions, prop, styles, states, globalComponentStyles }) {
+function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, globalComponentStyles }) {
     const theme = useTheme();
     const smDown = useMediaQuery(theme.breakpoints.down("sm")); 
     const categoryCarouselAlignment =
@@ -309,4 +310,16 @@ export default function CategoryCarousel({ themeColors, actions, prop, styles, s
             </Container>
         </Box>
     );
+}
+
+export default function CategoryCarousel({ themeColors, actions, prop, styles, states, globalComponentStyles, layout, categoryGrouping, categoryGroupingStyles }) {
+    const configuredGrouping = categoryGrouping || Object.values(layout?.defaultLayout || {}).flat().find((block) => block?.component === 'CategoryGrouping');
+    const groupingProps = configuredGrouping?.props || configuredGrouping;
+    const groups = groupingProps?.editable?.groups?.value || groupingProps?.groups || [];
+
+    if (groups.length) {
+        return <CategoryGrouping prop={groupingProps} layout={layout} styles={categoryGroupingStyles || configuredGrouping?.styles || {}} categoryStyles={styles} states={states} themeColors={themeColors} />;
+    }
+
+    return <StandardCategoryCarousel themeColors={themeColors} actions={actions} prop={prop} styles={styles} states={states} globalComponentStyles={globalComponentStyles} />;
 }
