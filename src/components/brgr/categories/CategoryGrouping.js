@@ -211,7 +211,6 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
         <Box sx={{
           position: 'relative',
           backgroundColor: groupRowBackground,
-          // borderBottom: `${styleValue('CategoryGroupingGroupRowBorderWidth', 1)}px solid ${styleValue('CategoryGroupingGroupRowBorderColor', '#eee')}`
         }}>
           {renderArrow('GroupRow', 'left', groupScroll.left, groupScroll)}
           {renderArrow('GroupRow', 'right', groupScroll.right, groupScroll)}
@@ -279,7 +278,6 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
                 pl: { xs: 6, sm: categoryStyleValue('CategoryGroupingCategoryRowPaddingHorizontal', 1) },
                 pr: { xs: 6, sm: categoryStyleValue('CategoryGroupingCategoryRowPaddingHorizontal', 1) },
                 boxSizing: 'border-box', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' },
-                // borderBottom: `${categoryStyleValue('CategoryGroupingCategoryRowBorderWidth', 1)}px solid ${categoryStyleValue('CategoryGroupingCategoryRowBorderColor', '#eee')}`
               }}>
                 {activeCategories.map((category) => (
                   <Button
