@@ -2,17 +2,25 @@ const backendURL =
   process.env.REACT_APP_BACKEND_URL ||
   process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const awsBucketName =
-  process.env.REACT_APP_AWS_BUCKET_NAME ||
-  process.env.NEXT_PUBLIC_AWS_BUCKET_NAME;
+const storeImagesURL =
+  process.env.REACT_APP_STORE_IMAGES_URL ||
+  process.env.NEXT_PUBLIC_STORE_IMAGES_URL;
 
-const awsBucketRegion =
-  process.env.REACT_APP_AWS_BUCKET_REGION ||
-  process.env.NEXT_PUBLIC_AWS_BUCKET_REGION;
+const spacesName =
+  process.env.REACT_APP_SPACES_NAME ||
+  process.env.NEXT_PUBLIC_DO_SPACES_BUCKET_NAME;
 
-const awsBaseURL =
-  awsBucketName && awsBucketRegion
-    ? `https://${awsBucketName}.s3.${awsBucketRegion}.amazonaws.com`
+const spacesEndpoint =
+  process.env.REACT_APP_SPACES_ENDPOINT ||
+  process.env.NEXT_PUBLIC_SPACES_ENDPOINT ||
+  process.env.NEXT_PUBLIC_DO_SPACES_CDN_URL;
+
+// Prefer the CDN endpoint supplied by DigitalOcean. The bucket name is only
+// used as a fallback for deployments that provide the regional endpoint.
+const spacesBaseURL = spacesEndpoint
+  ? spacesEndpoint.replace(/\/$/, "")
+  : spacesName
+    ? `https://${spacesName}.sgp1.cdn.digitaloceanspaces.com`
     : null;
 
 const isAbsoluteURL = (value) =>
@@ -26,19 +34,25 @@ export function getPhotoURL(photoURL) {
 
   if (backendURL && photoURL.startsWith(`${backendURL}/images/`)) {
     const photoKey = photoURL.split("/images/")[1];
-    return awsBaseURL ? `${awsBaseURL}/${photoKey}` : photoURL;
+    return spacesBaseURL ? `${spacesBaseURL}/${photoKey}` : photoURL;
+  }
+
+  if (storeImagesURL && photoURL.startsWith(`${storeImagesURL}/`)) {
+    const photoKey = photoURL.slice(`${storeImagesURL}/`.length);
+    return spacesBaseURL ? `${spacesBaseURL}/${photoKey}` : photoURL;
   }
 
   if (isAbsoluteURL(photoURL) || photoURL.startsWith("/")) return photoURL;
 
-  return awsBaseURL ? `${awsBaseURL}/${photoURL}` : photoURL;
+  return spacesBaseURL ? `${spacesBaseURL}/${photoURL}` : photoURL;
 }
 
 export function processPhotoURL(photoURL) {
   if (
     typeof photoURL === "string" &&
     ((backendURL && photoURL.startsWith(`${backendURL}/images`)) ||
-      (awsBaseURL && photoURL.startsWith(`${awsBaseURL}/`))) &&
+      (storeImagesURL && photoURL.startsWith(`${storeImagesURL}/`)) ||
+      (spacesBaseURL && photoURL.startsWith(`${spacesBaseURL}/`))) &&
     !photoURL.startsWith("file://")
   ) {
     return photoURL.split("/").pop();
