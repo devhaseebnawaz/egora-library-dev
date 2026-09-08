@@ -23,6 +23,20 @@ const spacesBaseURL = spacesEndpoint
     ? `https://${spacesName}.sgp1.cdn.digitaloceanspaces.com`
     : null;
 
+const imageAPIBaseURL = (
+  storeImagesURL || (backendURL ? `${backendURL}/images` : null)
+)?.replace(/\/$/, "");
+
+const getImageURL = (photoKey) => {
+  if (!photoKey) return photoKey;
+  const normalizedKey = String(photoKey).replace(/^\/+/, "");
+  return imageAPIBaseURL
+    ? `${imageAPIBaseURL}/${normalizedKey}`
+    : spacesBaseURL
+      ? `${spacesBaseURL}/${normalizedKey}`
+      : photoKey;
+};
+
 const isAbsoluteURL = (value) =>
   /^(?:https?:)?\/\//i.test(value) ||
   value.startsWith("data:") ||
