@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getPhotoURL } from "../../../utils/photoURL";
 import {
   Dialog,
   Box,
@@ -642,7 +643,7 @@ const handleShare = (type) => {
           <Box
             component="img"
             src={states.itemForDetailedModal?.photoURL
-              ? `${states.storeImagesBaseUrl}/${states.itemForDetailedModal.photoURL}`
+              ? getPhotoURL(states.itemForDetailedModal.photoURL)
               : '/assets/placeholder.png'}
             alt={states.itemForDetailedModal?.name || "Menu Item"}
             loading="lazy"
@@ -899,7 +900,7 @@ const handleShare = (type) => {
           <Box
             component="img"
             src={states.itemForDetailedModal?.photoURL
-              ? `${states.storeImagesBaseUrl}/${states.itemForDetailedModal.photoURL}`
+              ? getPhotoURL(states.itemForDetailedModal.photoURL)
               : '/assets/placeholder.png'}
             alt={states.itemForDetailedModal?.name || "Menu Item"}
             loading="lazy"

@@ -244,7 +244,7 @@ export default function ItemCardV2({
         >
             <CardMedia
                 component="img"
-                image={item?.photoURL ? `${states?.storeImagesBaseUrl}/${item?.photoURL}` : headerLogo || "/assets/placeholder.png"}
+                image={item?.photoURL ? getPhotoURL(item.photoURL) : headerLogo || "/assets/placeholder.png"}
                 alt={item?.name}
                 sx={{
                     objectFit: "fill",

@@ -11,6 +11,7 @@ import {
 import { LoadingButton } from "@mui/lab";
 import axios from "axios";
 import UniversalImage from "../../../UniversalImage";
+import { getPhotoURL } from "../../../utils/photoURL";
 import { fNumber } from "../../../utils/formatNumber";
 import { borderRadius, Container } from "@mui/system";
 import { useSnackbar } from "../../snackbar";
@@ -803,7 +804,7 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                 <UniversalImage
                   src={
                     states?.orderData?.venueId?.photoURL
-                      ? `${states.storeImagesBaseUrl}/${states?.orderData?.venueId?.photoURL}`
+                      ? getPhotoURL(states?.orderData?.venueId?.photoURL)
                       : "/assets/placeholder.png"
                   }
                   alt={"Venue Image"}
@@ -917,7 +918,7 @@ export default function ReviewPage({ id, styles, layout, globalComponentStyles, 
                           <UniversalImage
                             src={
                               item?.photoURL
-                              ? `${states.storeImagesBaseUrl}/${item.photoURL}`
+                              ? getPhotoURL(item.photoURL)
                               : "/assets/placeholder.png"
                             }
                             alt={"Item Image"}

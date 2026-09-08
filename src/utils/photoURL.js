@@ -32,19 +32,23 @@ const isAbsoluteURL = (value) =>
 export function getPhotoURL(photoURL) {
   if (typeof photoURL !== "string" || !photoURL) return null;
 
-  if (backendURL && photoURL.startsWith(`${backendURL}/images/`)) {
-    const photoKey = photoURL.split("/images/")[1];
-    return spacesBaseURL ? `${spacesBaseURL}/${photoKey}` : photoURL;
+  // Legacy AWS URLs are converted to the backend image endpoint. The backend
+  // owns the DigitalOcean Spaces credentials and signs the object request.
+  try {
+    const parsed = new URL(photoURL);
+    if (parsed.hostname.endsWith('.amazonaws.com')) {
+      return getImageURL(parsed.pathname);
+    }
+  } catch (error) {
+    // Continue handling normal object keys and external URLs below.
   }
 
-  if (storeImagesURL && photoURL.startsWith(`${storeImagesURL}/`)) {
-    const photoKey = photoURL.slice(`${storeImagesURL}/`.length);
-    return spacesBaseURL ? `${spacesBaseURL}/${photoKey}` : photoURL;
-  }
+  if (backendURL && photoURL.startsWith(`${backendURL}/images/`)) return photoURL;
+  if (storeImagesURL && photoURL.startsWith(`${storeImagesURL}/`)) return photoURL;
 
   if (isAbsoluteURL(photoURL) || photoURL.startsWith("/")) return photoURL;
 
-  return spacesBaseURL ? `${spacesBaseURL}/${photoURL}` : photoURL;
+  return imageAPIBaseURL ? `${imageAPIBaseURL}/${photoURL.replace(/^\/+/, '')}` : photoURL;
 }
 
 export function processPhotoURL(photoURL) {

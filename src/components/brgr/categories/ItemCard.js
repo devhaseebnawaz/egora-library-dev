@@ -196,7 +196,7 @@ export default function ItemCard({
           component="img"
           image={
             item?.photoURL
-              ? `${states.storeImagesBaseUrl}/${item.photoURL}`
+            ? getPhotoURL(item.photoURL)
               : headerLogo || "/assets/placeholder.png"
           }
           alt={item.name}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getPhotoURL } from "../../../utils/photoURL";
 import { Typography, Box, Link, Container } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
@@ -190,7 +191,7 @@ export default function CustomFooterV2({
         >
           <img
             src={states.selectedVenue.photoURL
-            ? `${states.storeImagesBaseUrl}/${states.selectedVenue.photoURL}`
+            ? getPhotoURL(states.selectedVenue.photoURL)
             : '/assets/placeholder.png'}
             alt="Logo"
             style={{ ...getImageStyles() }}

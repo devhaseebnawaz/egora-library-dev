@@ -6,6 +6,7 @@ import locationIcon from '@iconify-icons/mdi/map-marker';
 import { Icon } from "@iconify/react";
 import { fNumber, fNumberRound, formatTo2,truncateTo2 } from "../../../utils/formatNumber";
 import UniversalImage from "../../../UniversalImage";
+import { getPhotoURL } from "../../../utils/photoURL";
 import { formatTime, formatDate } from "../../../utils/formatDateTime";
 import { getScreenSizeCategory, getIconWidthHeight } from '../../../utils/fontsize';
 import ReviewModal from "../review/reviewModal";
@@ -793,7 +794,7 @@ export default function OrderSuccessPage({ open, onClose, themeColors, actions, 
                             ? `${layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBackgroundColor?.value}`
                             : `${themeColors?.OrderSuccessImageBackgroundColor?.value}`
                 }}>
-                    <img src={states.logoUrl} alt="Logo" style={{
+                    <img src={getPhotoURL(states.logoUrl)} alt="Logo" style={{
                         zIndex: '1000000',
                         borderRadius:
                             layout?.orderSuccessLayout?.body[0].styles?.OrderSuccessImageBorderRadius?.value !== ""

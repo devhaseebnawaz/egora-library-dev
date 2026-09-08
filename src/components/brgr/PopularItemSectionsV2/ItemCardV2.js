@@ -226,7 +226,7 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         component="img"
         src={
           item?.photoURL
-            ? `${states.storeImagesBaseUrl}/${item.photoURL}`
+            ? getPhotoURL(item.photoURL)
             : headerLogo || '/assets/placeholder.png'
         }
         alt={item?.name || "Menu Item"}
