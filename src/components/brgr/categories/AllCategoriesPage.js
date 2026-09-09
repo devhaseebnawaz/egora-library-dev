@@ -175,7 +175,19 @@ export default function AllCategoriesPage({ prop, actions, styles, states, theme
     .map(id => products.find(cat => { 
       return  cat?.id === id || id?.toString() == cat?.franchiseCategoryId?.toString()
     }))
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter((category) => {
+      const groupIds = states?.categoryGroupingCategoryIds;
+      if (!Array.isArray(groupIds) || !groupIds.length) return true;
+      const categoryIds = [
+        category.id,
+        category._id,
+        category.franchiseCategoryId,
+        category.franchiseCategoryId?.id,
+        category.franchiseCategoryId?._id,
+      ].filter(Boolean).map(String);
+      return groupIds.some((groupId) => categoryIds.includes(String(groupId)));
+    });
     
   return (
     <Container style={{ marginTop: "30px" }}>
@@ -183,8 +195,10 @@ export default function AllCategoriesPage({ prop, actions, styles, states, theme
         <Box
           key={category.id}
           ref={categoryRefs.current[category.name]}
+          id={`category-group-${category.id || category._id || category.franchiseCategoryId?.id || category.franchiseCategoryId?._id || category.franchiseCategoryId}`}
+          data-category-id={String(category.id || category._id || category.franchiseCategoryId?.id || category.franchiseCategoryId?._id || category.franchiseCategoryId)}
           data-category-name={category.name}
-          sx={{ marginBottom: 3 }}
+          sx={{ marginBottom: 3, scrollMarginTop: '110px' }}
         >
           <CategoryLayout
           // banner={<Banner img={category.bannerImg} />}

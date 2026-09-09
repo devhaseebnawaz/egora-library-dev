@@ -64,6 +64,22 @@ The library is compatible with both **React** and **Next.js** projects.
  - NEXT_PUBLIC_ENV='staging'       # staging
  - NEXT_PUBLIC_ENV='production'    # production
 
+ # DigitalOcean Spaces image delivery
+ # Use the public CDN endpoint in the client application. Do not expose
+ # SPACES_ACCESS_KEY or SPACES_SECRET_KEY in React/Next.js environment vars.
+ - REACT_APP_SPACES_NAME='egora-dev'
+ - REACT_APP_SPACES_ENDPOINT='https://egora-dev.sgp1.cdn.digitaloceanspaces.com'
+
+ # For Next.js, use the NEXT_PUBLIC_ equivalents instead:
+ - NEXT_PUBLIC_SPACES_NAME='egora-dev'
+ - NEXT_PUBLIC_SPACES_ENDPOINT='https://egora-dev.sgp1.cdn.digitaloceanspaces.com'
+
+ # The store can also keep its existing names:
+ - NEXT_PUBLIC_DO_SPACES_BUCKET_NAME='egora-dev'
+ - NEXT_PUBLIC_DO_SPACES_CDN_URL='https://egora-dev.sgp1.cdn.digitaloceanspaces.com'
+
+ # Access and secret keys belong only in the server-side upload/API service.
+
 # Notes
 
  - Automatically loads the correct package based on environment.  

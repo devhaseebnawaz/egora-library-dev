@@ -150,7 +150,7 @@ export default function ItemCard ({ item, themeColors, styles, actions, states, 
           component="img"
           src={
             item?.photoURL
-              ? `${states.storeImagesBaseUrl}/${item.photoURL}`
+              ? getPhotoURL(item.photoURL)
               : headerLogo || '/assets/placeholder.png'
           }
           alt={item?.name || "Menu Item"}

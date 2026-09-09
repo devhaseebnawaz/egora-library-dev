@@ -12,6 +12,7 @@ import CartCheckoutTotalSummary from './CartCheckoutTotalSummary';
 import PaymentMethods from './PaymentMethods';
 import { getScreenSizeCategory } from '../../../utils/fontsize';
 import CustomerInfoModal from '../categories/CustomerInfoModal';
+import { getPhotoURL } from '../../../utils/photoURL';
 
 const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actions, prop, styles, states, PaymentComponent, previewMode = false }) => {
     layout = layout?.json ? layout?.json : layout
@@ -708,7 +709,7 @@ const CartCheckoutSummary = ({ layout, globalComponentStyles, themeColors, actio
                                     ? `${layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBackgroundColor?.value}`
                                     : `${themeColors?.CartCheckoutSummaryImageBackgroundColor?.value}`
                         }}>
-                            <img src={states.logoUrl} alt="Logo"
+                            <img src={getPhotoURL(states.logoUrl)} alt="Logo"
                                 style={{
                                     borderRadius:
                                         layout?.cartCheckoutSummaryLayout?.body[0].styles?.CartCheckoutSummaryImageBorderRadius?.value !== ""
