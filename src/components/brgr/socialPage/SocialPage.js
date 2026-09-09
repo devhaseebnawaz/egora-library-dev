@@ -106,22 +106,6 @@ export default function SocialPage({
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {backgroundImage && (
-        <Box
-          aria-hidden="true"
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            backgroundColor: styleValue(
-              styles,
-              themeColors,
-              globalComponentStyles,
-              'FollowPageOverlayColor',
-              '#000000'
-            ),
-          }}
-        />
-      )}
 
       <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
         <Typography
