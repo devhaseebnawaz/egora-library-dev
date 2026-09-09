@@ -24,13 +24,14 @@ export default function ItemCardV2({
     styles,
     item,
     actions,
-    states
+    states,
+    prop
 }) {
     const theme = useTheme();
     const smDown = useMediaQuery(theme.breakpoints.down("sm"));
     const { franchise } = states ?? {};
     const storeTaxOnCash = franchise?.storeTaxOnCash;
-    const headerLogo = getPhotoURL(states?.logoUrl);
+    const headerLogo = getPhotoURL(prop?.editable?.logoImage?.value || states?.logoUrl);
     const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
     const hasPromotionDiscount = (item) =>
         getCartItemPromotionDiscount(item) > 0;
@@ -246,6 +247,10 @@ export default function ItemCardV2({
                 component="img"
                 image={item?.photoURL ? getPhotoURL(item.photoURL) : headerLogo || "/assets/placeholder.png"}
                 alt={item?.name}
+                onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = headerLogo || "/assets/placeholder.png";
+                }}
                 sx={{
                     objectFit: "fill",
                     width:

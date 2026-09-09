@@ -258,6 +258,7 @@ export default function AllCategoriesPageV2({ prop, actions, styles, states, the
                     item={item}
                     actions={actions}
                     states={states}
+                    prop={prop}
                   />
                 </Grid>
               ))}
