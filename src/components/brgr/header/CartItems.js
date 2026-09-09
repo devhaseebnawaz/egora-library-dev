@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect } from "react";
+import { getPhotoURL } from "../../../utils/photoURL";
 // import { useCart } from "../CartContext";
 // import { useSwipeable } from "react-swipeable";
 
@@ -143,7 +144,7 @@ const CartItems = ({ showButtons = true, actions, cartItem, cardItems, index, sh
                                 /> */}
                                 <Avatar
                                     variant="rounded"
-                                    src={cartItem?.photoURL ? `${states.storeImagesBaseUrl}/${cartItem.photoURL}`
+                                    src={cartItem?.photoURL ? getPhotoURL(cartItem.photoURL)
                                         : '/assets/placeholder.png'
                                     }
                                     alt={cartItem.name}

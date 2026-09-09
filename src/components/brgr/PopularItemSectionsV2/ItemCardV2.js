@@ -16,14 +16,14 @@ import { getPhotoURL } from "../../../utils/photoURL";
 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
-export default function ItemCardV2({ item, themeColors, styles, actions, states, globalComponentStyles }) {
+export default function ItemCardV2({ item, themeColors, styles, actions, states, globalComponentStyles, prop }) {
   const theme = useTheme();
   const { franchise } = states ?? {};
   const storeTaxOnCash = franchise?.storeTaxOnCash;
   const showTaxWithPrice = franchise?.configurations?.showTaxWithPrice;
   const hasPromotionDiscount = (item) =>
     getCartItemPromotionDiscount(item) > 0;
-  const headerLogo = getPhotoURL(states?.logoUrl);
+    const headerLogo = getPhotoURL(prop?.editable?.logoImage?.value || states?.logoUrl);
   const getDiscountedItemPrice = (item) =>
     Math.max(
       Number(item?.price || 0) -
@@ -226,14 +226,14 @@ export default function ItemCardV2({ item, themeColors, styles, actions, states,
         component="img"
         src={
           item?.photoURL
-            ? `${states.storeImagesBaseUrl}/${item.photoURL}`
+            ? getPhotoURL(item.photoURL)
             : headerLogo || '/assets/placeholder.png'
         }
         alt={item?.name || "Menu Item"}
         loading="lazy"
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = '/assets/placeholder.png'
+          e.target.src = headerLogo || '/assets/placeholder.png'
         }}
         sx={{
           objectFit: "fill",

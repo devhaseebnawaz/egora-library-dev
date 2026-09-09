@@ -167,6 +167,7 @@ export default function PopularMenuSectionV2({ prop, actions, styles, states, th
                 actions={actions}
                 styles={styles}
                 states={states}
+                prop={prop}
                 globalComponentStyles={globalComponentStyles}
                 themeColors={themeColors}  
               />

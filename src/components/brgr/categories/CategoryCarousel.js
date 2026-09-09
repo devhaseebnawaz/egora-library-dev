@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles';
 import { getScreenSizeCategory } from "../../../utils/fontsize";
 import CategoryGrouping from './CategoryGrouping';
 
-function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, globalComponentStyles }) {
+function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, globalComponentStyles, previewMode = false }) {
     const theme = useTheme();
     const smDown = useMediaQuery(theme.breakpoints.down("sm")); 
     const categoryCarouselAlignment =
@@ -86,9 +86,12 @@ function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, 
     return (
         <Box
             style={{
-                position: "sticky",
-                top: 0,
-                zIndex: 1100,
+                // The theme editor is a document editor, so its controls must stay
+                // in the layout instead of following the editor viewport. Store
+                // and standalone preview renders keep the sticky category bar.
+                position: previewMode ? "relative" : "sticky",
+                top: previewMode ? "auto" : 0,
+                zIndex: previewMode ? "auto" : 1100,
                 backgroundColor: styles?.CategoryCarouselBackgroundColor?.value != ""
                     ? styles?.CategoryCarouselBackgroundColor?.value
                     : themeColors?.CategoryCarouselBackgroundColor?.value,
@@ -312,14 +315,14 @@ function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, 
     );
 }
 
-export default function CategoryCarousel({ themeColors, actions, prop, styles, states, globalComponentStyles, layout, categoryGrouping, categoryGroupingStyles }) {
+export default function CategoryCarousel({ themeColors, actions, prop, styles, states, globalComponentStyles, layout, categoryGrouping, categoryGroupingStyles, previewMode = false }) {
     const configuredGrouping = categoryGrouping || Object.values(layout?.defaultLayout || {}).flat().find((block) => block?.component === 'CategoryGrouping');
     const groupingProps = configuredGrouping?.props || configuredGrouping;
     const groups = groupingProps?.editable?.groups?.value || groupingProps?.groups || [];
 
     if (groups.length) {
-        return <CategoryGrouping prop={groupingProps} layout={layout} styles={categoryGroupingStyles || configuredGrouping?.styles || {}} categoryStyles={styles} states={states} themeColors={themeColors} />;
+        return <CategoryGrouping prop={groupingProps} layout={layout} styles={categoryGroupingStyles || configuredGrouping?.styles || {}} categoryStyles={styles} states={states} themeColors={themeColors} previewMode={previewMode} />;
     }
 
-    return <StandardCategoryCarousel themeColors={themeColors} actions={actions} prop={prop} styles={styles} states={states} globalComponentStyles={globalComponentStyles} />;
+    return <StandardCategoryCarousel themeColors={themeColors} actions={actions} prop={prop} styles={styles} states={states} globalComponentStyles={globalComponentStyles} previewMode={previewMode} />;
 }
