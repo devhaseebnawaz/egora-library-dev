@@ -6,6 +6,23 @@ import { terser } from "rollup-plugin-terser";
 import json from "@rollup/plugin-json";
 import path from 'path';
 import polyfillNode from 'rollup-plugin-polyfill-node';
+import fs from 'fs';
+
+const retailCssPlugin = {
+  name: 'retail-css-runtime',
+  resolveId(source, importer) {
+    if (source === './retail.css' && importer?.endsWith('/components/brgr/retail/index.js')) {
+      return `${importer}\0retail-css`;
+    }
+    return null;
+  },
+  load(id) {
+    if (!id.endsWith('/components/brgr/retail/index.js\0retail-css')) return null;
+    const cssPath = id.split('\0')[0].replace('/index.js', '/retail.css');
+    const css = JSON.stringify(fs.readFileSync(cssPath, 'utf8'));
+    return `if (typeof document !== 'undefined' && !document.querySelector('[data-egora-retail-styles]')) { const style = document.createElement('style'); style.setAttribute('data-egora-retail-styles', ''); style.textContent = ${css}; document.head.appendChild(style); }`;
+  },
+};
 
 export default {
   input: "src/index.js",
@@ -31,6 +48,7 @@ export default {
     }),
     polyfillNode(),
     json(),
+    retailCssPlugin,
     babel({
       exclude: "node_modules/**",
       babelHelpers: "bundled",

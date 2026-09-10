@@ -37,5 +37,5 @@ import {
   RetailCartDetails,
   RetailCheckout,
   RetailFooter,
-} from './components/retail';
+} from './components/brgr/retail';
 export { SocialPage, PromotionBanner, StoreBannerPopup, Review, ReviewModal, AnnouncementsBanner, CartDrawer, ItemDetailModal, CustomerInfoModal, CartCheckoutSummary, TextBlock, EditorTextBlock, OrderSuccessPage, Header, LocationModal, HeroCarousel, CategoryCarousel, CategoryGrouping, SearchBar, PopularMenuSection, PopularMenuSectionV2, AllCategoriesPage, AllCategoriesPageV2, Footer, Footer2, InfoBlock, CartBottomBar, RetailAnnouncement, RetailHeader, RetailSearch, RetailHero, RetailCategoryCarousel, RetailProductGrid, RetailCartDrawer, RetailItemDetailModal, RetailCartDetails, RetailCheckout, RetailFooter };

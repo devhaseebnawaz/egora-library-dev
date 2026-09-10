@@ -1,3 +1,5 @@
+import "./retail.css";
+
 export { default as RetailAnnouncement } from "./RetailAnnouncement";
 export { default as RetailHeader } from "./RetailHeader";
 export { default as RetailSearch } from "./RetailSearch";
