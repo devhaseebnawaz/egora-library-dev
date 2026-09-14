@@ -10,8 +10,8 @@ import {
   Paper,
   Stack,
   Typography,
-  useTheme,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import {
   getItemQuantity,
   getItemTotal,
