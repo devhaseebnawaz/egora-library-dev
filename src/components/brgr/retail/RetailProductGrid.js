@@ -1,9 +1,16 @@
+/* eslint-disable react/prop-types */
 import React, { useMemo, useState } from "react";
+import { Add } from "@mui/icons-material";
+import { Box, Button, ButtonBase, FormControl, MenuItem, Paper, Select, Stack, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+
 import {
   getProduct,
   money,
   propItems,
   propValue,
+  resolveComponentStyles,
+  styleLength,
   styleValue,
 } from "./retailShared";
 
@@ -34,10 +41,13 @@ const getCategoryItems = (categories) => {
 export default function RetailProductGrid({
   prop,
   actions,
-  styles,
+  styles: componentStyles,
+  themeColors,
   states,
   previewMode = false,
 }) {
+  const theme = useTheme();
+  const styles = resolveComponentStyles(componentStyles, themeColors);
   const [sort, setSort] = useState("featured");
   const categories = propItems(prop, "categories");
   const legacyItems = propItems(prop, "items");
@@ -66,121 +76,81 @@ export default function RetailProductGrid({
     return products;
   }, [products, sort]);
 
-  const variables = {
-    "--retail-grid-background": styleValue(styles, "RetailProductGridBackgroundColor", "#e7e8eb"),
-    "--retail-grid-heading": styleValue(styles, "RetailProductGridHeadingColor", "#25272b"),
-    "--retail-grid-heading-size": `${styleValue(styles, "RetailProductGridHeadingTextSize", 42)}px`,
-    "--retail-grid-description": styleValue(styles, "RetailProductGridDescriptionColor", "#6f7074"),
-    "--retail-grid-description-size": `${styleValue(styles, "RetailProductGridDescriptionTextSize", 14)}px`,
-    "--retail-grid-column-gap": `${styleValue(styles, "RetailProductGridGap", 24)}px`,
-    "--retail-grid-row-gap": `${styleValue(styles, "RetailProductGridRowGap", 48)}px`,
-    "--retail-grid-card-background": styleValue(styles, "RetailProductGridCardBackgroundColor", "transparent"),
-    "--retail-grid-card-radius": `${styleValue(styles, "RetailProductGridCardBorderRadius", 0)}px`,
-    "--retail-grid-image-background": styleValue(styles, "RetailProductGridImageBackgroundColor", "#f1f2f3"),
-    "--retail-grid-image-height": `${styleValue(styles, "RetailProductGridImageHeight", 310)}px`,
-    "--retail-grid-image-radius": `${styleValue(styles, "RetailProductGridImageBorderRadius", 0)}px`,
-    "--retail-grid-name": styleValue(styles, "RetailProductGridProductNameColor", "#25272b"),
-    "--retail-grid-name-size": `${styleValue(styles, "RetailProductGridProductNameTextSize", 16)}px`,
-    "--retail-grid-product-description": styleValue(styles, "RetailProductGridProductDescriptionColor", "#6f7074"),
-    "--retail-grid-product-description-size": `${styleValue(styles, "RetailProductGridProductDescriptionTextSize", 13)}px`,
-    "--retail-grid-price": styleValue(styles, "RetailProductGridPriceColor", "#25272b"),
-    "--retail-grid-button-background": styleValue(styles, "RetailProductGridButtonBackgroundColor", "transparent"),
-    "--retail-grid-button-text": styleValue(styles, "RetailProductGridButtonTextColor", "#25272b"),
-    "--retail-grid-button-border": styleValue(styles, "RetailProductGridButtonBorderColor", "#7c7d80"),
-    "--retail-grid-button-hover-background": styleValue(styles, "RetailProductGridButtonHoverBackgroundColor", "#25272b"),
-    "--retail-grid-button-hover-text": styleValue(styles, "RetailProductGridButtonHoverTextColor", "#ffffff"),
-    "--retail-grid-button-radius": `${styleValue(styles, "RetailProductGridButtonBorderRadius", 0)}px`,
-  };
-
   if (!sortedProducts.length && !previewMode) return null;
 
   const openProduct = (product) => actions?.handleOpenCard?.(product);
 
+  const productList = sortedProducts;
+  const headingColor = styleValue(styles, "RetailProductGridHeadingColor", theme.palette.text.primary);
+  const descriptionColor = styleValue(styles, "RetailProductGridDescriptionColor", theme.palette.text.secondary);
+  const productNameColor = styleValue(styles, "RetailProductGridProductNameColor", theme.palette.text.primary);
+  const productDescriptionColor = styleValue(styles, "RetailProductGridProductDescriptionColor", theme.palette.text.secondary);
+  const buttonSx = {
+    mt: 2, py: 1.5, px: 2, minHeight: 48, justifyContent: "space-between",
+    background: styleValue(styles, "RetailProductGridButtonBackgroundColor", "transparent"),
+    color: styleValue(styles, "RetailProductGridButtonTextColor", theme.palette.primary.main),
+    borderColor: styleValue(styles, "RetailProductGridButtonBorderColor", theme.palette.primary.main),
+    borderRadius: styleLength(styles, "RetailProductGridButtonBorderRadius", theme.shape.borderRadius),
+    "&:hover": {
+      background: styleValue(styles, "RetailProductGridButtonHoverBackgroundColor", theme.palette.primary.main),
+      color: styleValue(styles, "RetailProductGridButtonHoverTextColor", theme.palette.primary.contrastText),
+      borderColor: styleValue(styles, "RetailProductGridButtonBorderColor", theme.palette.primary.main),
+    },
+  };
+
   return (
-    <section
-      id="retail-products"
-      className="retail-shop-section"
-      style={{ ...variables, background: variables["--retail-grid-background"] }}
-    >
-      <div className="retail-section-heading">
-        <div>
-          <p className="retail-eyebrow">THE EDIT</p>
-          <h2>{title}</h2>
-          {description && <p>{description}</p>}
-        </div>
-        <div className="retail-section-tools">
-          <span>{sortedProducts.length} products</span>
-          <select
-            aria-label="Sort products"
-            value={sort}
-            onChange={(event) => setSort(event.target.value)}
-          >
-            <option value="featured">Featured</option>
-            <option value="price-low">Price low</option>
-            <option value="price-high">Price high</option>
-          </select>
-        </div>
-      </div>
-
-      {sortedProducts.length ? (
-        <div className="retail-product-grid">
-          {sortedProducts.map((product, index) => (
-            <article
-              className="retail-product-card"
-              key={product.id || `${product.name}-${index}`}
-            >
-              <div className={`retail-product-image retail-tone-${index % 4}`}>
-                <button
-                  type="button"
-                  className="retail-product-image-link"
-                  aria-label={`View ${product.name}`}
-                  onClick={() => openProduct(product)}
-                >
-                  <img
-                    src={product.image || "/assets/placeholder.png"}
-                    alt={product.name}
-                  />
-                </button>
-                <button
-                  type="button"
-                  className="retail-quick-add"
-                  onClick={() => openProduct(product)}
-                >
-                  Quick add
-                </button>
-              </div>
-
-              <button
-                type="button"
-                className="retail-add-button"
-                onClick={() => openProduct(product)}
-              >
-                Add to cart <b>+</b>
-              </button>
-
-              <div className="retail-product-info">
-                <h3>{product.name}</h3>
-                {product.description && (
-                  <p className="retail-product-description">
-                    {product.description}
-                  </p>
-                )}
-                {product.category && (
-                  <small className="retail-product-category">
-                    {product.category}
-                  </small>
-                )}
-                <p className="retail-product-price">{money(product.price)}</p>
-              </div>
-            </article>
-          ))}
-        </div>
+    <Box component="section" id="retail-products" sx={{ px: { xs: 2, md: 5 }, py: { xs: 5, md: 8 }, scrollMarginTop: 24, background: styleValue(styles, "RetailProductGridBackgroundColor", theme.palette.background.default) }}>
+      <Stack direction={{ xs: "column", md: "row" }} alignItems={{ xs: "stretch", md: "flex-end" }} justifyContent="space-between" spacing={3} sx={{ pb: 3, mb: 4, borderBottom: 1, borderColor: "divider", color: headingColor }}>
+        <Box sx={{ minWidth: 0 }}>
+          <Typography variant="overline">The edit</Typography>
+          <Typography component="h2" variant="h3" sx={{ color: headingColor, overflowWrap: "anywhere", fontSize: styleLength(styles, "RetailProductGridHeadingTextSize", { xs: 30, md: 42 }), mb: 1 }}>{title}</Typography>
+          {description && <Typography variant="body2" sx={{ color: descriptionColor, fontSize: styleLength(styles, "RetailProductGridDescriptionTextSize", theme.typography.body2.fontSize) }}>{description}</Typography>}
+        </Box>
+        <Stack direction="row" alignItems="center" spacing={2} sx={{ flexShrink: 0, justifyContent: "space-between", color: descriptionColor }}>
+          <Typography variant="body2" sx={{ whiteSpace: "nowrap" }}>{productList.length} products</Typography>
+          <FormControl size="small" sx={{ minWidth: 160 }}>
+            <Select value={sort} onChange={(event) => setSort(event.target.value)} inputProps={{ "aria-label": "Sort products" }} sx={{ color: headingColor }}>
+              <MenuItem value="featured">Featured</MenuItem>
+              <MenuItem value="price-low">Price: low to high</MenuItem>
+              <MenuItem value="price-high">Price: high to low</MenuItem>
+            </Select>
+          </FormControl>
+        </Stack>
+      </Stack>
+      {productList.length ? (
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(4, minmax(0, 1fr))" }, columnGap: styleLength(styles, "RetailProductGridGap", 24), rowGap: styleLength(styles, "RetailProductGridRowGap", 48) }}>
+          {productList.map((product, index) => {
+            
+            return (
+              <Paper component="article" elevation={0} key={product.id || `${product.name}-${index}`} sx={{
+                minWidth: 0, overflow: "hidden", textAlign: "center", background: styleValue(styles, "RetailProductGridCardBackgroundColor", theme.palette.background.paper),
+                borderRadius: styleLength(styles, "RetailProductGridCardBorderRadius", theme.shape.borderRadius),
+                "&:hover [data-retail-product-image]": { transform: "scale(1.05)" },
+                "&:hover [data-retail-quick-add], &:focus-within [data-retail-quick-add]": { opacity: 1, transform: "none" },
+              }}>
+                <Box sx={{ position: "relative", overflow: "hidden", height: styleLength(styles, "RetailProductGridImageHeight", { xs: 300, md: 310 }), background: styleValue(styles, "RetailProductGridImageBackgroundColor", theme.palette.action.hover), borderRadius: styleLength(styles, "RetailProductGridImageBorderRadius", theme.shape.borderRadius) }}>
+                  <ButtonBase aria-label={`View ${product.name}`} onClick={() => openProduct(product)} sx={{ width: "100%", height: "100%", display: "block" }}>
+                    <Box component="img" data-retail-product-image src={product.image || "/assets/placeholder.png"} alt={product.name} sx={{ width: "100%", height: "100%", objectFit: "contain", transition: theme.transitions.create("transform"), "@media (prefers-reduced-motion: reduce)": { transition: "none" } }} />
+                  </ButtonBase>
+                  <Button data-retail-quick-add variant="contained" onClick={() => openProduct(product)} sx={{ position: "absolute", bottom: 1.5, left: 1.5, right: 1.5, bgcolor: "background.paper", color: productNameColor, opacity: { xs: 1, md: 0 }, transform: { xs: "none", md: "translateY(6px)" }, transition: theme.transitions.create(["opacity", "transform"]), "&:hover": { bgcolor: "background.paper" }, "@media (hover: none)": { opacity: 1, transform: "none" } }}>View product</Button>
+                </Box>
+                <Box sx={{ px: 1.5, pb: 2 }}>
+                  <Button fullWidth variant="outlined" onClick={() => openProduct(product)} aria-label={`Add ${product.name} to cart`} sx={buttonSx}>Add to cart<Add fontSize="small" /></Button>
+                  <Typography component="h3" variant="subtitle1" sx={{ mt: 2, mb: 0.75, color: productNameColor, fontSize: styleLength(styles, "RetailProductGridProductNameTextSize", theme.typography.subtitle1.fontSize), overflowWrap: "anywhere" }}>{product.name}</Typography>
+                  {product.description && <Typography variant="body2" sx={{ color: productDescriptionColor, fontSize: styleLength(styles, "RetailProductGridProductDescriptionTextSize", theme.typography.body2.fontSize), display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: 2, overflow: "hidden" }}>{product.description}</Typography>}
+                  {product.category && <Typography component="p" variant="caption" sx={{ mt: 1, color: productDescriptionColor, textTransform: "uppercase", letterSpacing: "0.08em" }}>{product.category}</Typography>}
+                  <Typography sx={{ mt: 1, fontWeight: 700, color: styleValue(styles, "RetailProductGridPriceColor", theme.palette.text.primary) }}>{money(product.price)}</Typography>
+                </Box>
+              </Paper>
+            );
+          })}
+        </Box>
       ) : (
-        <div className="retail-product-empty">
-          <strong>No products selected</strong>
-          <span>Select one or more categories from the component settings.</span>
-        </div>
+        <Paper variant="outlined" sx={{ minHeight: 180, p: 3, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1, borderStyle: "dashed", textAlign: "center", color: descriptionColor }}>
+          <Typography variant="subtitle1" sx={{ color: headingColor }}>No products selected</Typography>
+          <Typography variant="body2">Select one or more categories from the component settings.</Typography>
+        </Paper>
       )}
-    </section>
+    </Box>
   );
 }

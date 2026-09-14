@@ -1,36 +1,67 @@
-import React from "react";
+/* eslint-disable react/prop-types */
+import React, { useState } from "react";
+import { Badge, Box, Button, ButtonBase, IconButton, Stack, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { AccountCircle, Menu, Search, ShoppingBagOutlined } from "@mui/icons-material";
-import { getRetailProductGridCategories, styleValue } from "./retailShared";
+import { getRetailProductGridCategories, propValue, resolveComponentStyles, resolveRetailImage, styleLength, styleValue } from "./retailShared";
 
-export default function RetailHeader({ actions, layout, styles }) {
-  const openCart = () => actions?.handleOpenCart?.();
-  const count = actions?.getCartItem?.()?.items?.length || 0;
+export default function RetailHeader({ actions, layout, prop, states, styles: componentStyles, themeColors }) {
+  const theme = useTheme();
+  const styles = resolveComponentStyles(componentStyles, themeColors);
+  const [menuOpen, setMenuOpen] = useState(false);
   const selectedCategories = getRetailProductGridCategories(layout);
-  const navigationCategories = selectedCategories.length
-    ? selectedCategories
-    : [{ name: "Categories" }];
-  const background = styleValue(styles, "RetailHeaderBackgroundColor", "#e7e8eb");
-  const brandColor = styleValue(styles, "RetailHeaderBrandColor", "#111111");
-  const brandAccentColor = styleValue(styles, "RetailHeaderBrandAccentColor", "#e97845");
-  const brandSize = styleValue(styles, "RetailHeaderBrandTextSize", 39);
-  const navColor = styleValue(styles, "RetailHeaderNavTextColor", "#25272b");
-  const navSize = styleValue(styles, "RetailHeaderNavTextSize", 13);
-  const navGap = styleValue(styles, "RetailHeaderNavGap", 22);
-  const actionColor = styleValue(styles, "RetailHeaderActionIconColor", "#25272b");
-  const actionSize = styleValue(styles, "RetailHeaderActionIconSize", 24);
-  const badgeBackground = styleValue(styles, "RetailHeaderCartBadgeBackgroundColor", "#25272b");
-  const badgeColor = styleValue(styles, "RetailHeaderCartBadgeTextColor", "#ffffff");
-  const badgeSize = styleValue(styles, "RetailHeaderCartBadgeSize", 17);
+  const categories = selectedCategories.length ? selectedCategories : [{ name: "Categories" }];
+  const logoImage = resolveRetailImage(propValue(prop, "logoImage", ""), states?.storeImagesBaseUrl);
+  const count = states?.cardItems?.items?.length ?? actions?.getCartItem?.()?.items?.length ?? 0;
+  const actionColor = styleValue(styles, "RetailHeaderActionIconColor", theme.palette.text.primary);
+  const actionSize = styleLength(styles, "RetailHeaderActionIconSize", 24);
 
-  const openCategory = (category) => {
+  const chooseCategory = (category) => {
     actions?.handleCategoryClick?.(category);
-    if (typeof document !== "undefined") {
-      document.getElementById("retail-products")?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
+    setMenuOpen(false);
+    document.getElementById("retail-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  return <header className="retail-header" style={{ background, "--retail-header-brand-color": brandColor, "--retail-header-brand-accent": brandAccentColor, "--retail-header-brand-size": `${brandSize}px`, "--retail-header-nav-color": navColor, "--retail-header-nav-size": `${navSize}px`, "--retail-header-nav-gap": `${navGap}px`, "--retail-header-action-color": actionColor, "--retail-header-action-size": `${actionSize}px`, "--retail-header-badge-background": badgeBackground, "--retail-header-badge-color": badgeColor, "--retail-header-badge-size": `${badgeSize}px` }}><div className="retail-header-top"><button className="retail-mobile-menu" type="button"><Menu /></button><button className="retail-brand" type="button" onClick={() => actions?.navigateToHome?.()}>EGORA<span>POS</span></button><div className="retail-header-actions"><a href="#account" aria-label="Account login"><AccountCircle /></a><button type="button" aria-label="Search" onClick={() => document.querySelector(".retail-search-trigger")?.click()}><Search /></button><button type="button" aria-label="Cart" onClick={openCart} className="retail-cart-button"><ShoppingBagOutlined /><b>{count}</b></button></div></div><nav className="retail-nav">{navigationCategories.map((category, index) => { const name = category?.name || category?.title; const key = category?.id || category?._id || `${name}-${index}`; return <button type="button" key={key} onClick={() => openCategory(category)}>{name}</button>; })}</nav></header>;
+  return (
+    <Box component="header" sx={{ px: { xs: 2, md: 5 }, py: 2, background: styleValue(styles, "RetailHeaderBackgroundColor", theme.palette.background.paper) }}>
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "auto minmax(0, 1fr) auto", md: "1fr auto 1fr" }, alignItems: "center", gap: 1, minHeight: 64 }}>
+        <Box>
+          <IconButton aria-label="Toggle categories" aria-expanded={menuOpen} onClick={() => setMenuOpen((current) => !current)} sx={{ display: { xs: "inline-flex", md: "none" }, color: actionColor }}>
+            <Menu sx={{ fontSize: actionSize }} />
+          </IconButton>
+        </Box>
+        <ButtonBase aria-label="Store home" onClick={() => actions?.navigateToHome?.()} sx={{ justifySelf: "center", minWidth: 0, borderRadius: 1, px: 1, py: 0.5 }}>
+          {logoImage ? (
+            <Box component="img" src={logoImage} alt="Store logo" sx={{ maxWidth: { xs: 110, sm: 160 }, width: "100%", height: 58, objectFit: "contain" }} />
+          ) : (
+            <Stack alignItems="center" sx={{ color: styleValue(styles, "RetailHeaderBrandColor", theme.palette.text.primary) }}>
+              <Typography component="span" sx={{ fontSize: styleLength(styles, "RetailHeaderBrandTextSize", 39), fontWeight: 700, lineHeight: 1 }}>EGORA</Typography>
+              <Typography component="span" variant="caption" sx={{ letterSpacing: "0.3em", fontWeight: 700, color: styleValue(styles, "RetailHeaderBrandAccentColor", theme.palette.primary.main) }}>POS</Typography>
+            </Stack>
+          )}
+        </ButtonBase>
+        <Stack direction="row" justifyContent="flex-end" spacing={{ xs: 0, sm: 0.5 }} sx={{ color: actionColor, "& .MuiIconButton-root": { color: "inherit" }, "& .MuiSvgIcon-root": { fontSize: actionSize } }}>
+          <IconButton component="a" href="#account" aria-label="Account"><AccountCircle /></IconButton>
+          <IconButton aria-label="Search" onClick={() => window.dispatchEvent(new Event("retail:open-search"))}><Search /></IconButton>
+          <IconButton aria-label={`Cart, ${count} items`} onClick={() => actions?.handleOpenCart?.()}>
+            <Badge badgeContent={count} showZero sx={{ "& .MuiBadge-badge": {
+              background: styleValue(styles, "RetailHeaderCartBadgeBackgroundColor", theme.palette.primary.main),
+              color: styleValue(styles, "RetailHeaderCartBadgeTextColor", theme.palette.primary.contrastText),
+              minWidth: styleLength(styles, "RetailHeaderCartBadgeSize", 17),
+              height: styleLength(styles, "RetailHeaderCartBadgeSize", 17),
+              fontSize: theme.typography.pxToRem(10),
+            } }}><ShoppingBagOutlined /></Badge>
+          </IconButton>
+        </Stack>
+      </Box>
+      {categories.length > 0 && (
+        <Box component="nav" aria-label="Store categories" sx={{ display: { xs: menuOpen ? "flex" : "none", md: "flex" }, flexWrap: "wrap", justifyContent: "center", gap: styleLength(styles, "RetailHeaderNavGap", 22), mt: 1.5 }}>
+          {categories.map((category, index) => {
+            const name = category?.name || category?.title;
+            return <Button key={category?.id || category?._id || `${name}-${index}`} onClick={() => chooseCategory(category)} sx={{ minWidth: 0, textTransform: "none", color: styleValue(styles, "RetailHeaderNavTextColor", theme.palette.text.primary), fontSize: styleLength(styles, "RetailHeaderNavTextSize", theme.typography.body2.fontSize) }}>{name}</Button>;
+          })}
+        </Box>
+      )}
+    </Box>
+  );
 }

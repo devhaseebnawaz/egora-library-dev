@@ -1,4 +1,3 @@
-import "./retail.css";
 
 
 export { default as RetailAnnouncement } from "./RetailAnnouncement";
