@@ -152,6 +152,117 @@ export const resolveRetailImage = (value, imageBaseUrl = "") => {
   return `${String(imageBaseUrl).replace(/\/$/, "")}/${resolvedImage.replace(/^\//, "")}`;
 };
 
+export const getRetailEntityId = (entity) =>
+  String(entity?.id || entity?._id || entity || "");
+
+export const isRetailTrue = (value) => value === true || value === "true";
+
+export const getRetailPrice = (value) => {
+  const parsed = Number(String(value ?? 0).replace(/[^0-9.-]/g, ""));
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+export const createRetailCartItemId = () =>
+  Array.from({ length: 24 }, () =>
+    Math.floor(Math.random() * 16).toString(16)
+  ).join("");
+
+export const getRetailDefaultVariant = (product) => {
+  const variants = Array.isArray(product?.variants) ? product.variants : [];
+  const selectedVariantId = getRetailEntityId(product?.selectedVariant);
+
+  return (
+    variants.find((variant) => getRetailEntityId(variant) === selectedVariantId) ||
+    variants.find((variant) => isRetailTrue(variant?.defaultVariant)) ||
+    variants[0] ||
+    null
+  );
+};
+
+export const getRetailApplicableChoiceGroups = (
+  product,
+  choiceGroups,
+  selectedVariant
+) => {
+  const hasVariant = isRetailTrue(product?.hasVariant);
+  const selectedGroupIds =
+    hasVariant && isRetailTrue(product?.associateChoiceGroupWithPriceVariant)
+      ? selectedVariant?.choiceGroup || []
+      : product?.choiceGroup || [];
+  const groupIds = new Set(selectedGroupIds.map(getRetailEntityId));
+
+  if (!groupIds.size) return [];
+
+  return (choiceGroups || []).filter((group) =>
+    groupIds.has(getRetailEntityId(group))
+  );
+};
+
+export const getRetailChoiceOptionsTotal = (selectedGroups = []) =>
+  selectedGroups.reduce(
+    (total, group) =>
+      total +
+      (group?.items || []).reduce(
+        (groupTotal, item) => groupTotal + getRetailPrice(item?.price),
+        0
+      ),
+    0
+  );
+
+export const validateRetailAddToCart = ({
+  hasVariant,
+  selectedVariant,
+  selectedGroups,
+  applicableChoiceGroups,
+}) => {
+  if (hasVariant && !selectedVariant) {
+    return { ok: false, error: "Please select a variant before adding this item." };
+  }
+
+  const incompleteGroup = applicableChoiceGroups.find((group) => {
+    if (!isRetailTrue(group?.required)) return false;
+
+    const selected = selectedGroups.find(
+      (entry) => getRetailEntityId(entry) === getRetailEntityId(group)
+    );
+    const minimum = Math.max(1, getRetailPrice(group?.quantity || 1));
+    return (selected?.items?.length || 0) < minimum;
+  });
+
+  if (incompleteGroup) {
+    return { ok: false, error: `Please select ${incompleteGroup.name}.` };
+  }
+
+  return { ok: true, error: "" };
+};
+
+export const buildRetailCartItem = (
+  item,
+  { selectedVariant, selectedGroups, quantity, optionsTotal }
+) => {
+  const hasVariant = isRetailTrue(item?.hasVariant);
+  const options =
+    optionsTotal ?? getRetailChoiceOptionsTotal(selectedGroups);
+  const basePrice = hasVariant
+    ? selectedVariant?.price ?? item.price
+    : item.price;
+
+  return {
+    ...item,
+    ...(hasVariant ? { selectedVariant } : {}),
+    isPrepared: false,
+    isComplimentary: false,
+    isVoidItem: false,
+    cartItemId: createRetailCartItemId(),
+    price: basePrice,
+    priceBeforeCompliment: Number(basePrice) + Number(options),
+    priceWithChoiceGroup: Number(basePrice) + Number(options),
+    groups: selectedGroups,
+    qty: quantity,
+    notes: "",
+  };
+};
+
 export const getProduct = (item = {}, imageBaseUrl = "") => ({
   ...item,
   id: item.id || item._id,

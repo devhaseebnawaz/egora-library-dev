@@ -46,7 +46,18 @@ export default function RetailCartDrawer({
                   <Typography variant="body2" sx={{ color: color("MutedTextColor", "text.secondary"), my: 0.5 }}>Quantity: {getItemQuantity(raw)}</Typography>
                   <Typography variant="subtitle2" sx={{ color: color("PriceColor", "text.primary") }}>{money(getItemTotal(raw))}</Typography>
                 </Box>
-                <IconButton aria-label={`Remove ${item.name}`} onClick={() => { if (!editorPreview) actions?.handleRemoveFromCart?.(raw); }} sx={iconSx}><DeleteOutline /></IconButton>
+                <IconButton
+                  aria-label={`Remove ${item.name}`}
+                  disabled={!raw?.cartItemId}
+                  onClick={() => {
+                    if (!editorPreview && raw?.cartItemId) {
+                      actions?.handleRemoveFromCart?.(raw);
+                    }
+                  }}
+                  sx={iconSx}
+                >
+                  <DeleteOutline />
+                </IconButton>
               </Stack>
             );
           })}

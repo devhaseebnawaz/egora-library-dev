@@ -12,7 +12,9 @@ export default function RetailHeader({ actions, layout, prop, states, styles: co
   const selectedCategories = getRetailProductGridCategories(layout);
   const categories = selectedCategories.length ? selectedCategories : [{ name: "Categories" }];
   const logoImage = resolveRetailImage(propValue(prop, "logoImage", ""), states?.storeImagesBaseUrl);
-  const count = states?.cardItems?.items?.length ?? actions?.getCartItem?.()?.items?.length ?? 0;
+  const count = Array.isArray(states?.cardItems)
+    ? 0
+    : states?.cardItems?.items?.length ?? 0;
   const actionColor = styleValue(styles, "RetailHeaderActionIconColor", theme.palette.text.primary);
   const actionSize = styleLength(styles, "RetailHeaderActionIconSize", 24);
 
