@@ -1,11 +1,15 @@
 /* eslint-disable react/prop-types */
 import React, { useMemo, useState } from "react";
-import { Add } from "@mui/icons-material";
-import { Box, Button, ButtonBase, FormControl, MenuItem, Paper, Select, Stack, Typography } from "@mui/material";
+import { Add, Check } from "@mui/icons-material";
+import { Box, Button, ButtonBase, CircularProgress, FormControl, MenuItem, Paper, Select, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
 import {
+  buildRetailCartItem,
   getProduct,
+  getRetailApplicableChoiceGroups,
+  getRetailDefaultVariant,
+  isRetailTrue,
   money,
   propItems,
   propValue,
@@ -45,10 +49,13 @@ export default function RetailProductGrid({
   themeColors,
   states,
   previewMode = false,
+  isEditorPreview = false,
 }) {
+  const editorPreview = previewMode || isEditorPreview;
   const theme = useTheme();
   const styles = resolveComponentStyles(componentStyles, themeColors);
   const [sort, setSort] = useState("featured");
+  const [addState, setAddState] = useState({});
   const categories = propItems(prop, "categories");
   const legacyItems = propItems(prop, "items");
   const title = propValue(prop, "title", "Curated essentials");
@@ -78,7 +85,59 @@ export default function RetailProductGrid({
 
   if (!sortedProducts.length && !previewMode) return null;
 
-  const openProduct = (product) => actions?.handleOpenCard?.(product);
+  const openProduct = (product) => {
+    if (editorPreview) {
+      actions?.handleOpenCard?.(product);
+      return;
+    }
+
+    if (actions?.navigateToProduct) {
+      actions.navigateToProduct(product);
+    }
+  };
+
+  const hasRequiredChoiceGroup = (product, variant) =>
+    getRetailApplicableChoiceGroups(product, states?.choiceGroups || [], variant).some(
+      (group) => isRetailTrue(group?.required)
+    );
+
+  const quickAdd = async (product) => {
+    if (editorPreview) return;
+
+    const productId = product.id || product._id || product.name;
+    const variant = isRetailTrue(product?.hasVariant) ? getRetailDefaultVariant(product) : null;
+
+    if ((isRetailTrue(product?.hasVariant) && !variant) || hasRequiredChoiceGroup(product, variant)) {
+      openProduct(product);
+      return;
+    }
+
+    setAddState((current) => ({ ...current, [productId]: "loading" }));
+
+    try {
+      const cartItem = buildRetailCartItem(product, {
+        selectedVariant: variant,
+        selectedGroups: [],
+        quantity: 1,
+      });
+      const response = await actions?.handleAddToCart?.(cartItem, [], 1, "");
+
+      if (response?.status === 201 || response?.status === 200) {
+        setAddState((current) => ({ ...current, [productId]: "success" }));
+        window.setTimeout(() => {
+          setAddState((current) => {
+            const next = { ...current };
+            delete next[productId];
+            return next;
+          });
+        }, 1800);
+      } else {
+        setAddState((current) => ({ ...current, [productId]: "error" }));
+      }
+    } catch {
+      setAddState((current) => ({ ...current, [productId]: "error" }));
+    }
+  };
 
   const productList = sortedProducts;
   const headingColor = styleValue(styles, "RetailProductGridHeadingColor", theme.palette.text.primary);
@@ -120,7 +179,8 @@ export default function RetailProductGrid({
       {productList.length ? (
         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(4, minmax(0, 1fr))" }, columnGap: styleLength(styles, "RetailProductGridGap", 24), rowGap: styleLength(styles, "RetailProductGridRowGap", 48) }}>
           {productList.map((product, index) => {
-            
+            const productId = product.id || product._id || product.name;
+            const status = addState[productId];
             return (
               <Paper component="article" elevation={0} key={product.id || `${product.name}-${index}`} sx={{
                 minWidth: 0, overflow: "hidden", textAlign: "center", background: styleValue(styles, "RetailProductGridCardBackgroundColor", theme.palette.background.paper),
@@ -132,10 +192,10 @@ export default function RetailProductGrid({
                   <ButtonBase aria-label={`View ${product.name}`} onClick={() => openProduct(product)} sx={{ width: "100%", height: "100%", display: "block" }}>
                     <Box component="img" data-retail-product-image src={product.image || "/assets/placeholder.png"} alt={product.name} sx={{ width: "100%", height: "100%", objectFit: "contain", transition: theme.transitions.create("transform"), "@media (prefers-reduced-motion: reduce)": { transition: "none" } }} />
                   </ButtonBase>
-                  <Button data-retail-quick-add variant="contained" onClick={() => openProduct(product)} sx={{ position: "absolute", bottom: 1.5, left: 1.5, right: 1.5, bgcolor: "background.paper", color: productNameColor, opacity: { xs: 1, md: 0 }, transform: { xs: "none", md: "translateY(6px)" }, transition: theme.transitions.create(["opacity", "transform"]), "&:hover": { bgcolor: "background.paper" }, "@media (hover: none)": { opacity: 1, transform: "none" } }}>View product</Button>
+                  <Button data-retail-quick-add variant="contained" onClick={(event) => { event.stopPropagation(); openProduct(product); }} sx={{ position: "absolute", bottom: 1.5, left: 1.5, right: 1.5, bgcolor: "background.paper", color: productNameColor, opacity: { xs: 1, md: 0 }, transform: { xs: "none", md: "translateY(6px)" }, transition: theme.transitions.create(["opacity", "transform"]), "&:hover": { bgcolor: "background.paper" }, "@media (hover: none)": { opacity: 1, transform: "none" } }}>View product</Button>
                 </Box>
                 <Box sx={{ px: 1.5, pb: 2 }}>
-                  <Button fullWidth variant="outlined" onClick={() => openProduct(product)} aria-label={`Add ${product.name} to cart`} sx={buttonSx}>Add to cart<Add fontSize="small" /></Button>
+                  <Button fullWidth variant="outlined" onClick={() => quickAdd(product)} disabled={status === "loading" || status === "success"} aria-label={status === "success" ? `${product.name} added to cart` : `Add ${product.name} to cart`} sx={buttonSx}>{status === "loading" ? <CircularProgress size={17} color="inherit" sx={{ mx: "auto" }} /> : status === "success" ? <Check sx={{ mx: "auto" }} /> : <>{status === "error" ? "Try again" : "Add to cart"}<Add fontSize="small" /></>}</Button>
                   <Typography component="h3" variant="subtitle1" sx={{ mt: 2, mb: 0.75, color: productNameColor, fontSize: styleLength(styles, "RetailProductGridProductNameTextSize", theme.typography.subtitle1.fontSize), overflowWrap: "anywhere" }}>{product.name}</Typography>
                   {product.description && <Typography variant="body2" sx={{ color: productDescriptionColor, fontSize: styleLength(styles, "RetailProductGridProductDescriptionTextSize", theme.typography.body2.fontSize), display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: 2, overflow: "hidden" }}>{product.description}</Typography>}
                   {product.category && <Typography component="p" variant="caption" sx={{ mt: 1, color: productDescriptionColor, textTransform: "uppercase", letterSpacing: "0.08em" }}>{product.category}</Typography>}
