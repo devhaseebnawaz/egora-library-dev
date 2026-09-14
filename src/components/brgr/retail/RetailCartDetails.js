@@ -16,6 +16,7 @@ import {
   getItemQuantity,
   getItemTotal,
   getProduct,
+  getRetailOrderSummary,
   money,
   styleLength,
   styleValue,
@@ -24,7 +25,8 @@ import {
 export default function RetailCartDetails({ states, actions, styles }) {
   const theme = useTheme();
   const items = states?.cardItems?.items || [];
-  const total = items.reduce((sum, item) => sum + getItemTotal(item), 0);
+  const summary = getRetailOrderSummary(states);
+  const { subTotal } = summary;
   const color = (key, fallback) =>
     styleValue(styles, `RetailCartDetails${key}`, fallback);
   const heading = color("HeadingColor", theme.palette.text.primary);
@@ -105,13 +107,13 @@ export default function RetailCartDetails({ states, actions, styles }) {
         />
         <Stack spacing={1} sx={{ mb: 2 }}>
           <Typography variant="body2">
-            {total >= 1999
+            {subTotal >= 1999
               ? "Congratulations! You get free shipping."
-              : `Add ${money(1999 - total)} for free shipping.`}
+              : `Add ${money(1999 - subTotal)} for free shipping.`}
           </Typography>
           <LinearProgress
             variant="determinate"
-            value={Math.min(100, (total / 1999) * 100)}
+            value={Math.min(100, (subTotal / 1999) * 100)}
             sx={{
               height: 4,
               borderRadius: 1,
@@ -269,7 +271,7 @@ export default function RetailCartDetails({ states, actions, styles }) {
           </Typography>
           <Stack direction="row" justifyContent="space-between" spacing={2}>
             <Typography>Subtotal</Typography>
-            <Typography fontWeight={700}>{money(total)}</Typography>
+            <Typography fontWeight={700}>{money(summary.subTotal)}</Typography>
           </Stack>
 
           <Typography variant="body2" sx={{ color: muted }}>

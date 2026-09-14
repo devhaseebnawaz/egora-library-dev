@@ -3,7 +3,7 @@ import React from "react";
 import { Close, DeleteOutline, ShoppingBagOutlined } from "@mui/icons-material";
 import { Box, Button, Divider, Drawer, IconButton, LinearProgress, Paper, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { getItemQuantity, getItemTotal, getProduct,  money, resolveComponentStyles, styleLength, styleValue } from "./retailShared";
+import { getItemQuantity, getItemTotal, getProduct, getRetailOrderSummary, money, resolveComponentStyles, styleLength, styleValue } from "./retailShared";
 
 export default function RetailCartDrawer({
   states, actions, styles: componentStyles, themeColors, isEditorPreview = false, previewMode = false,
@@ -12,8 +12,7 @@ export default function RetailCartDrawer({
   const theme = useTheme();
   const styles = resolveComponentStyles(componentStyles, themeColors);
   const items = states?.cardItems?.items || [];
-  const subTotal = items.reduce((sum, item) => sum + getItemTotal(item), 0);
-  const total = subTotal;
+  const { subTotal, total } = getRetailOrderSummary(states);
   const count = items.reduce((sum, item) => sum + getItemQuantity(item), 0);
   const color = (key, fallback) => styleValue(styles, `RetailCartDrawer${key}`, fallback);
   const iconSx = { color: color("IconColor", "text.primary"), "& .MuiSvgIcon-root": { fontSize: styleLength(styles, "RetailCartDrawerIconSize", 24) } };

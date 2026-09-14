@@ -23,6 +23,7 @@ import {
   getItemQuantity,
   getItemTotal,
   getProduct,
+  getRetailOrderSummary,
   money,
   styleLength,
   styleValue,
@@ -35,18 +36,15 @@ export default function RetailCheckout({
   PaymentComponent,
 }) {
   const items = states?.cardItems?.items || [];
-  const total = items.reduce((sum, item) => sum + getItemTotal(item), 0);
   const payment = states?.paymentMethod || "cash";
+  const summary = getRetailOrderSummary(states, payment);
   const setPayment = (value) => actions?.handleSetPaymentMethod?.(value);
   const submit = (event) => {
     event.preventDefault();
     const order = {
+      ...summary.orderPayload,
       paymentMethod: payment,
       paymentType: payment,
-      total,
-      subTotal: total,
-      type: "store",
-      orderType: "storeDelivery",
     };
     return payment === "card"
       ? actions?.handlePlaceOrderFromCard?.(order)
@@ -367,7 +365,7 @@ export default function RetailCheckout({
             <TextField label="Discount code" sx={inputSx} />
             <Stack direction="row" justifyContent="space-between" spacing={2}>
               <Typography>Subtotal</Typography>
-              <Typography fontWeight={700}>{money(total)}</Typography>
+              <Typography fontWeight={700}>{money(summary.total)}</Typography>
             </Stack>
             <Stack direction="row" justifyContent="space-between" spacing={2}>
               <Typography>Shipping</Typography>
@@ -380,7 +378,7 @@ export default function RetailCheckout({
             />
             <Stack direction="row" justifyContent="space-between" spacing={2}>
               <Typography variant="h6">Total</Typography>
-              <Typography variant="h6">{money(total)}</Typography>
+              <Typography variant="h6">{money(summary.total)}</Typography>
             </Stack>
           </Stack>
         </Paper>
