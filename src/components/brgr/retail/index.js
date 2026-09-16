@@ -10,4 +10,5 @@ export { default as RetailCartDrawer } from "./RetailCartDrawer";
 export { default as RetailItemDetailModal } from "./RetailItemDetailModal";
 export { default as RetailCartDetails } from "./RetailCartDetails";
 export { default as RetailCheckout } from "./RetailCheckout";
+export { default as RetailOrderSuccess } from "./RetailOrderSuccess";
 export { default as RetailFooter } from "./RetailFooter";
