@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { Close, DeleteOutline, ShoppingBagOutlined } from "@mui/icons-material";
+import { Add, Close, DeleteOutline, Remove, ShoppingBagOutlined } from "@mui/icons-material";
 import { Box, Button, Divider, Drawer, IconButton, LinearProgress, Paper, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { getItemQuantity, getItemTotal, getProduct, getRetailOrderSummary, money, resolveComponentStyles, styleLength, styleValue } from "./retailShared";
@@ -12,13 +12,17 @@ export default function RetailCartDrawer({
   const theme = useTheme();
   const styles = resolveComponentStyles(componentStyles, themeColors);
   const items = states?.cardItems?.items || [];
-  const { subTotal, total } = getRetailOrderSummary(states);
+  const { subTotal, promotion, total } = getRetailOrderSummary(states);
   const count = items.reduce((sum, item) => sum + getItemQuantity(item), 0);
   const color = (key, fallback) => styleValue(styles, `RetailCartDrawer${key}`, fallback);
   const iconSx = { color: color("IconColor", "text.primary"), "& .MuiSvgIcon-root": { fontSize: styleLength(styles, "RetailCartDrawerIconSize", 24) } };
   const radius = styleLength(styles, "RetailCartDrawerButtonBorderRadius", theme.shape.borderRadius);
   const close = () => { if (!editorPreview) actions?.handleOpenCart?.(); };
   const navigate = (action) => { if (!editorPreview) action?.(); };
+  const decrement = (item) => {
+    if (getItemQuantity(item) <= 1) actions?.handleRemoveFromCart?.(item);
+    else actions?.updateItemFromCardDecByOne?.(item);
+  };
   const content = (
     <Box component="aside" sx={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0, p: { xs: 2, sm: 3 }, bgcolor: color("BackgroundColor", "background.paper"), color: color("TextColor", "text.primary") }}>
       <Stack direction="row" spacing={1} alignItems="flex-start" justifyContent="space-between" sx={{ mb: 3 }}>
@@ -46,18 +50,45 @@ export default function RetailCartDrawer({
                   <Typography variant="body2" sx={{ color: color("MutedTextColor", "text.secondary"), my: 0.5 }}>Quantity: {getItemQuantity(raw)}</Typography>
                   <Typography variant="subtitle2" sx={{ color: color("PriceColor", "text.primary") }}>{money(getItemTotal(raw))}</Typography>
                 </Box>
-                <IconButton
-                  aria-label={`Remove ${item.name}`}
-                  disabled={!raw?.cartItemId}
-                  onClick={() => {
-                    if (!editorPreview && raw?.cartItemId) {
-                      actions?.handleRemoveFromCart?.(raw);
-                    }
-                  }}
-                  sx={iconSx}
-                >
-                  <DeleteOutline />
-                </IconButton>
+                <Stack direction="row" spacing={0.5} alignItems="center" sx={{ flexShrink: 0 }}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    sx={{ border: 1, borderColor: color("DividerColor", "divider"), borderRadius: 1 }}
+                  >
+                    <IconButton
+                      size="small"
+                      aria-label={`Decrease ${item.name}`}
+                      onClick={() => { if (!editorPreview) decrement(raw); }}
+                      sx={iconSx}
+                    >
+                      <Remove fontSize="small" />
+                    </IconButton>
+                    <Typography variant="body2" sx={{ minWidth: 24, textAlign: "center" }}>
+                      {getItemQuantity(raw)}
+                    </Typography>
+                    <IconButton
+                      size="small"
+                      aria-label={`Increase ${item.name}`}
+                      onClick={() => { if (!editorPreview) actions?.updateItemFromCardAddByOne?.(raw); }}
+                      sx={iconSx}
+                    >
+                      <Add fontSize="small" />
+                    </IconButton>
+                  </Stack>
+                  <IconButton
+                    aria-label={`Remove ${item.name}`}
+                    disabled={!raw?.cartItemId}
+                    onClick={() => {
+                      if (!editorPreview && raw?.cartItemId) {
+                        actions?.handleRemoveFromCart?.(raw);
+                      }
+                    }}
+                    sx={iconSx}
+                  >
+                    <DeleteOutline />
+                  </IconButton>
+                </Stack>
               </Stack>
             );
           })}
@@ -72,6 +103,7 @@ export default function RetailCartDrawer({
       <Stack spacing={2} sx={{ pt: 3, mt: "auto", flexShrink: 0 }}>
         <Divider sx={{ borderColor: color("DividerColor", "divider") }} />
         <Stack direction="row" justifyContent="space-between"><Typography>Subtotal</Typography><Typography variant="subtitle1" sx={{ color: color("PriceColor", "text.primary") }}>{money(subTotal)}</Typography></Stack>
+        {promotion > 0 && <Stack direction="row" justifyContent="space-between"><Typography>Promotion</Typography><Typography variant="subtitle1" sx={{ color: color("PriceColor", "text.primary") }}>-{money(promotion)}</Typography></Stack>}
         {actions?.naviagateCart && <Button fullWidth variant="outlined" onClick={() => navigate(actions.naviagateCart)} sx={{ borderRadius: radius, color: color("TextColor", "text.primary"), borderColor: color("DividerColor", "divider") }}>View bag</Button>}
         <Button fullWidth variant="contained" disabled={!items.length} onClick={() => navigate(actions?.naviagateCheckout)} sx={{ py: 1.5, borderRadius: radius, bgcolor: color("ButtonBackgroundColor", "primary.main"), color: color("ButtonTextColor", "primary.contrastText"), "&:hover": { bgcolor: color("ButtonBackgroundColor", "primary.dark") } }}>Checkout · {money(total)}</Button>
       </Stack>

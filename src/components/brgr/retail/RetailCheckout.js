@@ -36,6 +36,7 @@ const emptyForm = {
   phone: '',
   email: '',
   address: '',
+  addressDetails: '',
   city: '',
 };
 
@@ -54,6 +55,10 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
   const locationRequired =
     states?.franchise?.configurations?.isEnabledDeliveryLocation === true ||
     states?.franchise?.configurations?.isEnabledDeliveryLocation === 'true';
+  const hasCapturedLocation = Boolean(states?.latLongForDelivery);
+  let locationButtonLabel = 'Use my current location';
+  if (locating) locationButtonLabel = 'Getting location...';
+  else if (hasCapturedLocation) locationButtonLabel = 'Update current location';
   const theme = useTheme();
   const headerBlock = layout?.defaultLayout?.header?.find(
     (block) => block?.component === 'RetailHeader'
@@ -120,6 +125,9 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
 
     try {
       const location = await actions?.handleLocateMe?.();
+      if (!location?.latLong && !states?.latLongForDelivery) {
+        throw new Error('We could not confirm your current location. Please try again.');
+      }
       if (location?.address) {
         setForm((current) => ({ ...current, address: location.address }));
       }
@@ -139,7 +147,7 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
       return;
     }
 
-    if (locationRequired && !states?.latLongForDelivery) {
+    if (locationRequired && !hasCapturedLocation) {
       setError('Use your current location before placing a delivery order.');
       return;
     }
@@ -151,8 +159,8 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
       phone: form.phone.trim(),
       email: form.email.trim(),
       address: {
-        street: form.address.trim(),
-        area: '',
+        street: (locationRequired ? form.addressDetails : form.address).trim(),
+        area: locationRequired ? form.address.trim() : '',
         city: form.city.trim(),
       },
     };
@@ -296,25 +304,52 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
             Delivery address
           </Typography>
           {locationRequired && (
-            <Button
-              variant="outlined"
-              startIcon={<LocationOn />}
-              onClick={locate}
-              disabled={locating}
-              sx={{ alignSelf: 'start' }}
-            >
-              {locating ? 'Getting location...' : 'Use my current location'}
-            </Button>
+            <>
+              <Button
+                variant="outlined"
+                startIcon={<LocationOn />}
+                onClick={locate}
+                disabled={locating}
+                sx={{ alignSelf: 'start' }}
+              >
+                {locationButtonLabel}
+              </Button>
+              <Typography variant="body2" sx={{ color: hasCapturedLocation ? 'success.main' : description }}>
+                {hasCapturedLocation
+                  ? 'Current location captured. Add your house, street, or apartment details below.'
+                  : 'Your current location is required for delivery from this store.'}
+              </Typography>
+              {hasCapturedLocation && (
+                <TextField
+                  fullWidth
+                  disabled
+                  label="Current location"
+                  value={form.address || states?.currentLocation || states?.latLongForDelivery || ''}
+                  sx={inputSx}
+                />
+              )}
+              <TextField
+                required
+                name="addressDetails"
+                value={form.addressDetails}
+                onChange={update}
+                label="House, street, or apartment details"
+                autoComplete="street-address"
+                sx={inputSx}
+              />
+            </>
           )}
-          <TextField
-            required
-            name="address"
-            value={form.address}
-            onChange={update}
-            label="Street address"
-            autoComplete="street-address"
-            sx={inputSx}
-          />
+          {!locationRequired && (
+            <TextField
+              required
+              name="address"
+              value={form.address}
+              onChange={update}
+              label="Delivery address"
+              autoComplete="street-address"
+              sx={inputSx}
+            />
+          )}
           <TextField
             required
             name="city"
@@ -440,6 +475,12 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
               <Stack direction="row" justifyContent="space-between" spacing={2}>
                 <Typography>Discount</Typography>
                 <Typography fontWeight={700}>{`-${money(summary.discount)}`}</Typography>
+              </Stack>
+            )}
+            {summary.promotion > 0 && (
+              <Stack direction="row" justifyContent="space-between" spacing={2}>
+                <Typography>Promotion</Typography>
+                <Typography fontWeight={700}>{`-${money(summary.promotion)}`}</Typography>
               </Stack>
             )}
             {summary.serviceFees > 0 && (
