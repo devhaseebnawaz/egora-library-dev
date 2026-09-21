@@ -12,3 +12,4 @@ export { default as RetailCartDetails } from "./RetailCartDetails";
 export { default as RetailCheckout } from "./RetailCheckout";
 export { default as RetailOrderSuccess } from "./RetailOrderSuccess";
 export { default as RetailFooter } from "./RetailFooter";
+export { default as SocialPage } from "../socialPage/SocialPage";

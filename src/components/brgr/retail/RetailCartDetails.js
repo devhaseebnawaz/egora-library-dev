@@ -273,6 +273,12 @@ export default function RetailCartDetails({ states, actions, styles }) {
             <Typography>Subtotal</Typography>
             <Typography fontWeight={700}>{money(summary.subTotal)}</Typography>
           </Stack>
+          {summary.promotion > 0 && (
+            <Stack direction="row" justifyContent="space-between" spacing={2}>
+              <Typography>Promotion</Typography>
+              <Typography fontWeight={700}>-{money(summary.promotion)}</Typography>
+            </Stack>
+          )}
 
           <Typography variant="body2" sx={{ color: muted }}>
             Delivery charges and tax are calculated at checkout.
