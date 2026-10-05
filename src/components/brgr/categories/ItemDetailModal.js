@@ -539,6 +539,7 @@ const handleShare = (type) => {
     try {
       const newItem = {
         ...item,
+        venueId: item?.venueId || selectedVenue?._id || selectedVenue?.id,
         ...(item.hasVariant ? { selectedVariant: selectedVariant } : {}),
         isPrepared: false,
         isComplimentary: false,
