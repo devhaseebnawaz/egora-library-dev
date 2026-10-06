@@ -18,6 +18,7 @@ import UniversalImage from "../../../UniversalImage";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import RefineLocationModal from "./RefineLocationModal";
 import { getIconWidthHeight, getScreenSizeCategory } from '../../../utils/fontsize';
+import { getVenueOpenStatus, getVenueTimezone } from '../../../utils/venueTimings';
 import { useMediaQuery } from "@mui/material";
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { LoadingButton } from "@mui/lab";
@@ -44,6 +45,16 @@ const modalStyle = (themeColors, layout) => {
         padding: "32px 24px 24px",
         outline: "none"
     }
+};
+
+// Open/closed state of a branch right now, from its venue timings.
+const getOutletOpenStatus = (outlet) =>
+    getVenueOpenStatus(outlet?.venueTimings, { timeZone: getVenueTimezone(outlet) });
+
+const getOutletClosedLabel = (outlet) => {
+    const status = getOutletOpenStatus(outlet);
+    if (status.isOpen) return '';
+    return status.nextOpening ? `Closed now · Opens ${status.nextOpening.label}` : 'Closed now';
 };
 
 export default function LocationModal({ themeColors, actions, prop, styles, states, isGoogleMapsLoaded, previewMode = false, globalComponentStyles, layout }) {
@@ -78,9 +89,14 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             branchId,
         }))
     );
-    const firstOnlineOutlet = filteredOutlets.find(
-        (outlet) => outlet.isOnlineForStore
-    );
+    // Default to a branch that is online and open now; otherwise any online branch.
+    const firstOnlineOutlet =
+        filteredOutlets.find((outlet) => outlet.isOnlineForStore && getOutletOpenStatus(outlet).isOpen) ||
+        filteredOutlets.find((outlet) => outlet.isOnlineForStore);
+    const selectedOutletStatus = states.selectedOutlet ? getOutletOpenStatus(states.selectedOutlet) : null;
+    const selectedOutletClosedMessage = selectedOutletStatus && !selectedOutletStatus.isOpen
+        ? `${states.selectedOutlet?.name || 'This branch'} is closed right now${selectedOutletStatus.nextOpening ? ` and opens ${selectedOutletStatus.nextOpening.label}` : ''}. You can browse the menu, but orders can't be placed until it opens.`
+        : '';
 
     useEffect(() => {
         if (
@@ -989,7 +1005,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                                 }}
                                 renderValue={(selectedId) => {
                                     const selected = filteredOutlets.find(o => o._id === selectedId);
-                                    return selected ? selected.name : "";
+                                    if (!selected) return "";
+                                    return getOutletOpenStatus(selected).isOpen ? selected.name : `${selected.name} (Closed)`;
                                 }}
                                 sx={{
                                     borderRadius:
@@ -1017,6 +1034,11 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                                                 <Typography variant="body2" color="textSecondary">
                                                     {outlet.venueAddressOne} {outlet.venueAddressTwo}
                                                 </Typography>
+                                                {getOutletClosedLabel(outlet) && (
+                                                    <Typography variant="caption" color="error">
+                                                        {getOutletClosedLabel(outlet)}
+                                                    </Typography>
+                                                )}
                                             </Box>
                                         </MenuItem>
                                     ))
@@ -1330,6 +1352,15 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
                     >
                         Select
                     </Button>
+                    {selectedOutletClosedMessage && (
+                        <Typography
+                            variant="body2"
+                            color="error"
+                            sx={{ mt: 2, textAlign: "center" }}
+                        >
+                            {selectedOutletClosedMessage}
+                        </Typography>
+                    )}
                     
                     {states?.errorForDeniedLocation && (
                         <Typography
