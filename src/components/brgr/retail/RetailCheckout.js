@@ -29,6 +29,8 @@ import {
   styleValue,
   styleLength,
 } from './retailShared';
+import useVenueOpenStatus from '../../../hooks/useVenueOpenStatus';
+import VenueClosedBanner from '../venueClosed/VenueClosedBanner';
 
 const emptyForm = {
   firstName: '',
@@ -45,6 +47,7 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [locating, setLocating] = useState(false);
+  const venueStatus = useVenueOpenStatus(states?.selectedVenue, states?.outlets);
   const items = states?.cardItems?.items || [];
   const paymentMethod = states?.paymentMethod || 'cash';
   const summary = getRetailOrderSummary(states, paymentMethod);
@@ -144,6 +147,11 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
 
     if (!items.length) {
       setError('Your cart is empty.');
+      return;
+    }
+
+    if (!venueStatus.isOpen) {
+      setError(venueStatus.placeOrderMessage);
       return;
     }
 
@@ -392,6 +400,7 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
               {summary.deliveryMessage}
             </Typography>
           )}
+          <VenueClosedBanner status={venueStatus} sx={{ borderRadius: 1 }} />
           {paymentMethod !== 'card' && (error || states?.errorForPlaceOrder) && (
             <Alert severity="error">{error || states?.errorForPlaceOrder}</Alert>
           )}
