@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
   Divider,
@@ -17,7 +18,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-import { AccountCircle, LocationOn } from '@mui/icons-material';
+import { AccountCircle } from '@mui/icons-material';
 import {
   getItemQuantity,
   getItemTotal,
@@ -45,6 +46,7 @@ const emptyForm = {
 export default function RetailCheckout({ states, actions, styles, layout, PaymentComponent }) {
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState('');
+  const [placeOrderFailed, setPlaceOrderFailed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [locating, setLocating] = useState(false);
   const venueStatus = useVenueOpenStatus(states?.selectedVenue, states?.outlets);
@@ -59,9 +61,10 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
     states?.franchise?.configurations?.isEnabledDeliveryLocation === true ||
     states?.franchise?.configurations?.isEnabledDeliveryLocation === 'true';
   const hasCapturedLocation = Boolean(states?.latLongForDelivery);
-  let locationButtonLabel = 'Use my current location';
+  let locationButtonLabel = 'Use my current location instead';
   if (locating) locationButtonLabel = 'Getting location...';
-  else if (hasCapturedLocation) locationButtonLabel = 'Update current location';
+  // Google Places suggestions come from the same hook the store location modal uses.
+  const addressSuggestions = states?.value?.length > 0 ? states?.data || [] : [];
   const theme = useTheme();
   const headerBlock = layout?.defaultLayout?.header?.find(
     (block) => block?.component === 'RetailHeader'
@@ -141,9 +144,29 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
     }
   };
 
+  const searchAddress = (_event, value, reason) => {
+    if (reason !== 'input' && reason !== 'clear') return;
+    const address = reason === 'clear' ? '' : value;
+    setForm((current) => ({ ...current, address }));
+    actions?.handleInput?.({ target: { value: address } });
+  };
+
+  const selectAddress = (_event, suggestion) => {
+    if (!suggestion || typeof suggestion === 'string') return;
+    const terms = suggestion.terms || [];
+    const city = terms.length > 1 ? terms[terms.length - 2]?.value : '';
+    setForm((current) => ({
+      ...current,
+      address: suggestion.description,
+      city: current.city || city || '',
+    }));
+    actions?.handleSelect?.(suggestion.description);
+  };
+
   const submit = async (event) => {
     event.preventDefault();
     setError('');
+    setPlaceOrderFailed(false);
 
     if (!items.length) {
       setError('Your cart is empty.');
@@ -156,7 +179,7 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
     }
 
     if (locationRequired && !hasCapturedLocation) {
-      setError('Use your current location before placing a delivery order.');
+      setError('Pick your address from the suggestions or use your current location before placing a delivery order.');
       return;
     }
 
@@ -167,8 +190,8 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
       phone: form.phone.trim(),
       email: form.email.trim(),
       address: {
-        street: (locationRequired ? form.addressDetails : form.address).trim(),
-        area: locationRequired ? form.address.trim() : '',
+        street: (form.addressDetails || form.address).trim(),
+        area: form.addressDetails.trim() ? form.address.trim() : '',
         city: form.city.trim(),
       },
     };
@@ -188,7 +211,9 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
       if (orderId) {
         actions?.naviagateOrderSuccess?.(orderId);
       } else {
-        setError(states?.errorForPlaceOrder || 'We could not place your order. Please try again.');
+        // The order hook stores its message (e.g. "too far from the venue") in state, which this
+        // closure only sees on the next render, so flag the failure and read the message when rendering.
+        setPlaceOrderFailed(true);
       }
     } catch (submitError) {
       setError(submitError?.message || 'We could not place your order. Please try again.');
@@ -311,53 +336,62 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
           <Typography variant="h5" component="h2" sx={headingSx}>
             Delivery address
           </Typography>
-          {locationRequired && (
-            <>
-              <Button
-                variant="outlined"
-                startIcon={<LocationOn />}
-                onClick={locate}
-                disabled={locating}
-                sx={{ alignSelf: 'start' }}
-              >
-                {locationButtonLabel}
-              </Button>
-              <Typography variant="body2" sx={{ color: hasCapturedLocation ? 'success.main' : description }}>
-                {hasCapturedLocation
-                  ? 'Current location captured. Add your house, street, or apartment details below.'
-                  : 'Your current location is required for delivery from this store.'}
-              </Typography>
-              {hasCapturedLocation && (
-                <TextField
-                  fullWidth
-                  disabled
-                  label="Current location"
-                  value={form.address || states?.currentLocation || states?.latLongForDelivery || ''}
-                  sx={inputSx}
-                />
-              )}
+          <Autocomplete
+            freeSolo
+            filterOptions={(options) => options}
+            options={addressSuggestions}
+            getOptionLabel={(option) => (typeof option === 'string' ? option : option?.description || '')}
+            isOptionEqualToValue={(option, value) => option?.place_id === value?.place_id}
+            inputValue={form.address}
+            onInputChange={searchAddress}
+            onChange={selectAddress}
+            renderOption={(props, option) => (
+              <li {...props} key={option.place_id || option.description}>
+                <Box>
+                  <Typography variant="body2">
+                    {option.structured_formatting?.main_text || option.description}
+                  </Typography>
+                  {option.structured_formatting?.secondary_text && (
+                    <Typography variant="caption" sx={{ color: description }}>
+                      {option.structured_formatting.secondary_text}
+                    </Typography>
+                  )}
+                </Box>
+              </li>
+            )}
+            renderInput={(params) => (
               <TextField
+                {...params}
                 required
-                name="addressDetails"
-                value={form.addressDetails}
-                onChange={update}
-                label="House, street, or apartment details"
-                autoComplete="street-address"
+                label="Delivery address"
+                placeholder="Search your area or street"
+                autoComplete="off"
                 sx={inputSx}
               />
-            </>
+            )}
+          />
+          <Button
+            variant="text"
+            onClick={locate}
+            disabled={locating}
+            sx={{ alignSelf: 'start', px: 0, textTransform: 'none' }}
+          >
+            {locationButtonLabel}
+          </Button>
+          {locationRequired && !hasCapturedLocation && (
+            <Typography variant="body2" sx={{ color: description }}>
+              Pick your address from the suggestions or use your current location for delivery.
+            </Typography>
           )}
-          {!locationRequired && (
-            <TextField
-              required
-              name="address"
-              value={form.address}
-              onChange={update}
-              label="Delivery address"
-              autoComplete="street-address"
-              sx={inputSx}
-            />
-          )}
+          <TextField
+            required={locationRequired}
+            name="addressDetails"
+            value={form.addressDetails}
+            onChange={update}
+            label="House, street, or apartment details"
+            autoComplete="street-address"
+            sx={inputSx}
+          />
           <TextField
             required
             name="city"
@@ -401,8 +435,10 @@ export default function RetailCheckout({ states, actions, styles, layout, Paymen
             </Typography>
           )}
           <VenueClosedBanner status={venueStatus} sx={{ borderRadius: 1 }} />
-          {paymentMethod !== 'card' && (error || states?.errorForPlaceOrder) && (
-            <Alert severity="error">{error || states?.errorForPlaceOrder}</Alert>
+          {paymentMethod !== 'card' && (error || placeOrderFailed) && (
+            <Alert severity="error">
+              {error || states?.errorForPlaceOrder || 'We could not place your order. Please try again.'}
+            </Alert>
           )}
           {paymentMethod !== 'card' && (
             <Button

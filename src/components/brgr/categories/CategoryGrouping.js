@@ -67,6 +67,8 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
   const activeGroup = configuredGroups[activeGroupIndex] || configuredGroups[0];
   const activeCategories = activeGroup?.categories || [];
   const groupStyle = activeGroup?.style || {};
+  // Saved themes carry the old roomy spacing, so cap it to keep the bar compact.
+  const compactSpacing = (value, max) => (Number.isFinite(Number(value)) ? Math.min(Number(value), max) : max);
   const styleValue = (key, fallback) => {
     const value = styles?.[key]?.value ?? themeColors?.[key]?.value;
     return value === '' || value === null || value === undefined ? fallback : value;
@@ -120,10 +122,11 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
   const categoryHoverColor = categoryStyleValue('CategoryGroupingCategoryRowHoverTextColor', '#fff');
   const scrollAmount = styleValue('CategoryGroupingArrowScrollAmount', 240);
   const arrowButton = (row, direction) => ({
+    p: 0,
     color: arrowStyleValue(row, direction, 'ArrowColor', '#ffffff'),
     backgroundColor: arrowStyleValue(row, direction, 'ArrowBackgroundColor', '#8ca45d'),
-    width: row === 'CategoryRow' ? 36 : styleValue(`CategoryGrouping${row}ArrowButtonSize`, 36),
-    height: row === 'CategoryRow' ? 36 : styleValue(`CategoryGrouping${row}ArrowButtonSize`, 36),
+    width: row === 'CategoryRow' ? 24 : compactSpacing(styleValue(`CategoryGrouping${row}ArrowButtonSize`, 24), 24),
+    height: row === 'CategoryRow' ? 24 : compactSpacing(styleValue(`CategoryGrouping${row}ArrowButtonSize`, 24), 24),
     borderRadius: row === 'CategoryRow' ? '50%' : styleValue(`CategoryGrouping${row}ArrowBorderRadius`, '50%'),
     '&:hover': {
       color: row === 'CategoryRow' ? '#ffffff' : styleValue(`CategoryGrouping${row}ArrowHoverColor`, '#ffffff'),
@@ -135,9 +138,9 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
       type="button"
       aria-label={`${direction === 'left' ? 'Scroll left' : 'Scroll right'} ${row.toLowerCase()} navigation`}
       onClick={() => scroll.ref.current?.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' })}
-      sx={{ ...arrowButton(row, direction), position: 'absolute', top: '50%', transform: 'translateY(-50%)', [direction]: row === 'CategoryRow' ? 8 : styleValue(`CategoryGrouping${row}ArrowOffset`, 8), zIndex: 2, boxShadow: styleValue('CategoryGroupingArrowShadow', '0 2px 6px rgba(0,0,0,0.16)') }}
+      sx={{ ...arrowButton(row, direction), position: 'absolute', top: '50%', transform: 'translateY(-50%)', [direction]: row === 'CategoryRow' ? 4 : compactSpacing(styleValue(`CategoryGrouping${row}ArrowOffset`, 4), 4), zIndex: 2, boxShadow: styleValue('CategoryGroupingArrowShadow', '0 2px 6px rgba(0,0,0,0.16)') }}
     >
-      {direction === 'left' ? <ArrowBackIosNew sx={{ fontSize: arrowStyleValue(row, direction, 'ArrowIconSize', 14), ml: 0.5 }} /> : <ArrowForwardIos sx={{ fontSize: arrowStyleValue(row, direction, 'ArrowIconSize', 14) }} />}
+      {direction === 'left' ? <ArrowBackIosNew sx={{ fontSize: compactSpacing(arrowStyleValue(row, direction, 'ArrowIconSize', 12), 12), ml: 0.5 }} /> : <ArrowForwardIos sx={{ fontSize: compactSpacing(arrowStyleValue(row, direction, 'ArrowIconSize', 12), 12) }} />}
     </IconButton>
   );
 
@@ -166,7 +169,7 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
     const updateScrollState = () => {
       if (navRef.current) setIsSticky(navRef.current.getBoundingClientRect().top <= 0);
 
-      const stickyHeight = navRef.current?.getBoundingClientRect().height || 104;
+      const stickyHeight = navRef.current?.getBoundingClientRect().height || 76;
       let activeCategory = activeCategories[0];
       activeCategories.forEach((category) => {
         const element = document.getElementById(`category-group-${getId(category)}`);
@@ -194,7 +197,7 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
   return (
     <Box ref={navRef} sx={{
       width: '100%', minHeight: isSticky ?
-        responsiveStyleValue('CategoryGroupingStickyHeight', 104) : 0,
+        (navRef.current?.firstChild?.offsetHeight || compactSpacing(responsiveStyleValue('CategoryGroupingStickyHeight', 76), 76)) : 0,
       backgroundColor: styleValue('CategoryGroupingBackgroundColor', 'transparent')
     }}>
       <Box sx={{
@@ -222,9 +225,9 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
               width: '100%',
               boxSizing: 'border-box',
               justifyContent: groupScroll.overflow ? 'flex-start' : styleValue('CategoryGroupingGroupRowAlignment', 'center'),
-              alignItems: 'center', gap: styleValue('CategoryGroupingGroupRowGap', 2),
+              alignItems: 'center', gap: { xs: 0.5, sm: compactSpacing(styleValue('CategoryGroupingGroupRowGap', 1), 1) },
               overflowX: 'auto',
-              py: styleValue('CategoryGroupingGroupRowPaddingVertical', 1),
+              py: compactSpacing(styleValue('CategoryGroupingGroupRowPaddingVertical', 0.75), 0.75),
               px: styleValue('CategoryGroupingGroupRowPaddingHorizontal', 1),
               pl: { xs: 2, sm: styleValue('CategoryGroupingGroupRowPaddingHorizontal', 1) },
               pr: { xs: 2, sm: styleValue('CategoryGroupingGroupRowPaddingHorizontal', 1) },
@@ -239,8 +242,8 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
                   minWidth: 'max-content',
                   whiteSpace: 'nowrap',
                   borderRadius: styleValue('CategoryGroupingGroupRowBorderRadius', 2),
-                  px: styleValue('CategoryGroupingGroupRowButtonPaddingHorizontal', 3),
-                  py: styleValue('CategoryGroupingGroupRowButtonPaddingVertical', 1),
+                  px: { xs: 1.25, sm: compactSpacing(styleValue('CategoryGroupingGroupRowButtonPaddingHorizontal', 1.75), 1.75) },
+                  py: compactSpacing(styleValue('CategoryGroupingGroupRowButtonPaddingVertical', 0.75), 0.75), lineHeight: 1.4,
                   color: index === activeGroupIndex ? groupActiveColor : groupTextColor,
                   backgroundColor: index === activeGroupIndex ? groupActiveBackground : 'transparent',
                   fontSize: responsiveStyleValue('CategoryGroupingGroupRowTextSize', 14),
@@ -272,11 +275,11 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
               <Box ref={categoryScroll.ref} onScroll={categoryScroll.update} sx={{
                 display: 'flex',
                 justifyContent: categoryScroll.overflow ? 'flex-start' : categoryStyleValue('CategoryGroupingCategoryRowAlignment', 'center'),
-                alignItems: 'center', gap: categoryStyleValue('CategoryGroupingCategoryRowGap', 3),
-                overflowX: 'auto', py: categoryStyleValue('CategoryGroupingCategoryRowPaddingVertical', 1.5),
+                alignItems: 'center', gap: { xs: 0.5, sm: compactSpacing(categoryStyleValue('CategoryGroupingCategoryRowGap', 1), 1) },
+                overflowX: 'auto', py: compactSpacing(categoryStyleValue('CategoryGroupingCategoryRowPaddingVertical', 0.5), 0.5),
                 px: categoryStyleValue('CategoryGroupingCategoryRowPaddingHorizontal', 1),
-                pl: { xs: 6, sm: categoryStyleValue('CategoryGroupingCategoryRowPaddingHorizontal', 1) },
-                pr: { xs: 6, sm: categoryStyleValue('CategoryGroupingCategoryRowPaddingHorizontal', 1) },
+                pl: { xs: 4, sm: categoryStyleValue('CategoryGroupingCategoryRowPaddingHorizontal', 1) },
+                pr: { xs: 4, sm: categoryStyleValue('CategoryGroupingCategoryRowPaddingHorizontal', 1) },
                 boxSizing: 'border-box', scrollbarWidth: 'none', '&::-webkit-scrollbar': { display: 'none' },
               }}>
                 {activeCategories.map((category) => (
@@ -291,8 +294,8 @@ export default function CategoryGrouping({ prop = {}, layout = {}, styles, state
                           categoryActiveColor) : categoryStyleValue('CategoryGroupingCategoryRowTextColor', categoryTextColor),
                       backgroundColor: activeCategoryId === getId(category) ? categoryStyleValue('CategoryGroupingCategoryRowActiveBackgroundColor',
                         categoryActiveBackground) : 'transparent', borderRadius: categoryStyleValue('CategoryGroupingCategoryRowBorderRadius', 2),
-                      px: categoryStyleValue('CategoryGroupingCategoryRowButtonPaddingHorizontal', 2),
-                      py: categoryStyleValue('CategoryGroupingCategoryRowButtonPaddingVertical', 1),
+                      px: { xs: 1.25, sm: compactSpacing(categoryStyleValue('CategoryGroupingCategoryRowButtonPaddingHorizontal', 1.5), 1.5) }, minWidth: 0,
+                      py: compactSpacing(categoryStyleValue('CategoryGroupingCategoryRowButtonPaddingVertical', 0.75), 0.75), lineHeight: 1.4,
                       fontSize: categoryStyleValue('CategoryGroupingCategoryRowTextSize', 14),
                       fontWeight: categoryStyleValue('CategoryGroupingCategoryRowFontWeight', 'normal'),
                       fontFamily: categoryStyleValue('CategoryGroupingCategoryRowFontFamily', 'inherit'),
