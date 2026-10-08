@@ -9,6 +9,7 @@ import {
   getProduct,
   getRetailApplicableChoiceGroups,
   getRetailDefaultVariant,
+  getRetailPromotionPrice,
   isRetailTrue,
   money,
   propItems,
@@ -181,6 +182,7 @@ export default function RetailProductGrid({
           {productList.map((product, index) => {
             const productId = product.id || product._id || product.name;
             const status = addState[productId];
+            const promotion = getRetailPromotionPrice(product);
             return (
               <Paper component="article" elevation={0} key={product.id || `${product.name}-${index}`} sx={{
                 minWidth: 0, overflow: "hidden", textAlign: "center", background: styleValue(styles, "RetailProductGridCardBackgroundColor", theme.palette.background.paper),
@@ -199,7 +201,10 @@ export default function RetailProductGrid({
                   <Typography component="h3" variant="subtitle1" sx={{ mt: 2, mb: 0.75, color: productNameColor, fontSize: styleLength(styles, "RetailProductGridProductNameTextSize", theme.typography.subtitle1.fontSize), overflowWrap: "anywhere" }}>{product.name}</Typography>
                   {product.description && <Typography variant="body2" sx={{ color: productDescriptionColor, fontSize: styleLength(styles, "RetailProductGridProductDescriptionTextSize", theme.typography.body2.fontSize), display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: 2, overflow: "hidden" }}>{product.description}</Typography>}
                   {product.category && <Typography component="p" variant="caption" sx={{ mt: 1, color: productDescriptionColor, textTransform: "uppercase", letterSpacing: "0.08em" }}>{product.category}</Typography>}
-                  <Typography sx={{ mt: 1, fontWeight: 700, color: styleValue(styles, "RetailProductGridPriceColor", theme.palette.text.primary) }}>{money(product.price)}</Typography>
+                  <Stack direction="row" justifyContent="center" alignItems="baseline" flexWrap="wrap" columnGap={1} sx={{ mt: 1 }}>
+                    {promotion.hasPromotion && <Typography component="span" sx={{ textDecoration: "line-through", color: styleValue(styles, "RetailProductGridOriginalPriceColor", theme.palette.text.secondary) }}>{money(promotion.price)}</Typography>}
+                    <Typography component="span" sx={{ fontWeight: 700, color: styleValue(styles, "RetailProductGridPriceColor", theme.palette.text.primary) }}>{money(promotion.finalPrice)}</Typography>
+                  </Stack>
                 </Box>
               </Paper>
             );

@@ -4,7 +4,9 @@ import { Box, Button, Link, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { getRetailProductGridCategories, propValue, resolveComponentStyles, styleValue } from "./retailShared";
 
-export default function RetailFooter({ actions, layout, prop, styles: componentStyles, themeColors }) {
+export default function RetailFooter({ actions, layout, prop, styles: componentStyles, themeColors, previewMode = false, isEditorPreview = false }) {
+  // Sample entries only fill the editor preview; the live store shows real data.
+  const editorPreview = previewMode || isEditorPreview;
   const theme = useTheme();
   const styles = resolveComponentStyles(componentStyles, themeColors);
   const categories = getRetailProductGridCategories(layout);
@@ -16,7 +18,7 @@ export default function RetailFooter({ actions, layout, prop, styles: componentS
     actions?.handleCategoryClick?.(category);
     document.getElementById("retail-products")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-  const menu = categories.length ? categories : ["Categories", "Azadi Bundles", "Hair", "Face", "Beard", "Build Your Own Bundle", "Fragrance", "Best Sellers", "All Products", "Deals", "Gifts", "Blog", "Loyalty Rewards", "Order Tracker"];
+  const menu = categories.length || !editorPreview ? categories : ["Categories", "Azadi Bundles", "Hair", "Face", "Beard", "Build Your Own Bundle", "Fragrance", "Best Sellers", "All Products", "Deals", "Gifts", "Blog", "Loyalty Rewards", "Order Tracker"];
   return (
     <Box component="footer" sx={{ px: { xs: 3, md: 7 }, pt: 7, pb: 2.5, color, background: styleValue(styles, "FooterBackgroundColor", theme.palette.background.paper) }}>
       <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(4, minmax(0, 1fr))" }, gap: 4.5 }}>
@@ -26,7 +28,7 @@ export default function RetailFooter({ actions, layout, prop, styles: componentS
         </Stack>
         <Stack alignItems="flex-start" spacing={1}>
           <Typography component="h3" variant="subtitle2" sx={{ mb: 0.5, textTransform: "uppercase" }}>Menu</Typography>
-          {(linkItems.length ? linkItems : ["Track Your Order", "Search", "About us", "Be Our Distributor", "FAQ", "Careers", "Contact Us", "Privacy Policy", "Refund Policy", "Terms of Service", "Other Stores"].map((label) => ({ label, url: "#top" }))).map((link, index) => <Link key={`${link?.label || link?.name}-${index}`} href={link?.url || "#top"} variant="body2" sx={{ color: linkColor }}>{link?.label || link?.name}</Link>)}
+          {(linkItems.length || !editorPreview ? linkItems : ["Track Your Order", "Search", "About us", "Be Our Distributor", "FAQ", "Careers", "Contact Us", "Privacy Policy", "Refund Policy", "Terms of Service", "Other Stores"].map((label) => ({ label, url: "#top" }))).map((link, index) => <Link key={`${link?.label || link?.name}-${index}`} href={link?.url || "#top"} variant="body2" sx={{ color: linkColor }}>{link?.label || link?.name}</Link>)}
         </Stack>
         <Stack spacing={1.5}>
           <Typography component="h3" variant="subtitle2" sx={{ textTransform: "uppercase" }}>Mini Bio</Typography>
@@ -41,7 +43,7 @@ export default function RetailFooter({ actions, layout, prop, styles: componentS
         </Stack>
       </Box>
       <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={1} sx={{ mt: 4.5, pt: 2, borderTop: 1, borderColor: "divider" }}>
-        <Typography variant="caption">Managed By Zain</Typography>
+        <Typography variant="caption">Managed By Egora</Typography>
         <Typography variant="caption">© {new Date().getFullYear()} Egora</Typography>
       </Stack>
     </Box>

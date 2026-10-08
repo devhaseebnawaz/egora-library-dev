@@ -3,6 +3,7 @@ import {
   calculateCartManualDiscount,
   calculateCartPromotion,
   calculateSubTotal,
+  getCartItemPromotionDiscount,
 } from "../../../utils/cart";
 import {
   calculateAndRoundTax,
@@ -280,6 +281,18 @@ export const getProduct = (item = {}, imageBaseUrl = "") => ({
     item.categoryId?.name ||
     "",
 });
+
+// Store items arrive with the venue's live promotion preview in promotionObj.
+export const getRetailPromotionPrice = (product = {}) => {
+  const price = toNumber(product?.price);
+  const discount = Math.min(toNumber(getCartItemPromotionDiscount(product)), price);
+
+  return {
+    price,
+    finalPrice: round(price - discount),
+    hasPromotion: discount > 0,
+  };
+};
 
 export const getItemQuantity = (item = {}) => Math.max(1, numericPrice(item.qty ?? item.quantity ?? 1));
 
