@@ -82,9 +82,6 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
             }
             return obj;
         }, {});
-    const firstOnlineOutlet = filteredOutlets.find(
-        (outlet) => outlet.isOnlineForStore
-    );
 
     useEffect(() => {
         if (
@@ -110,6 +107,8 @@ export default function LocationModal({ themeColors, actions, prop, styles, stat
     const firstOnlineOutlet =
         filteredOutlets.find((outlet) => outlet.isOnlineForStore && getOutletOpenStatus(outlet).isOpen) ||
         filteredOutlets.find((outlet) => outlet.isOnlineForStore);
+
+
     const selectedOutletStatus = states.selectedOutlet ? getOutletOpenStatus(states.selectedOutlet) : null;
     const selectedOutletClosedMessage = selectedOutletStatus && !selectedOutletStatus.isOpen
         ? `${states.selectedOutlet?.name || 'This branch'} is closed right now${selectedOutletStatus.nextOpening ? ` and opens ${selectedOutletStatus.nextOpening.label}` : ''}. You can browse the menu, but orders can't be placed until it opens.`
