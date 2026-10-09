@@ -10,6 +10,16 @@ import CategoryGrouping from './CategoryGrouping';
 function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, globalComponentStyles, previewMode = false }) {
     const theme = useTheme();
     const smDown = useMediaQuery(theme.breakpoints.down("sm")); 
+    // Keep the arrows small like the compact Koryo bar, even when a saved theme asks for larger icons.
+    const arrowIconSize = (key) => Math.min(Number(
+        styles?.[key]?.value != ""
+            ? styles?.[key]?.value
+            : globalComponentStyles?.Icon?.size?.value != ""
+                ? globalComponentStyles?.Icon?.size?.value
+                : themeColors?.[key]?.value
+    ) || 18, 18);
+    const prevIconSize = arrowIconSize("CategoryCarouselGoPrevIconHeightWidth");
+    const nextIconSize = arrowIconSize("CategoryCarouselGoNextIconHeightWidth");
     const categoryCarouselAlignment =
         styles?.CategoryCarouselAlignment?.value ||
         themeColors?.CategoryCarouselAlignment?.value ||
@@ -104,8 +114,8 @@ function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, 
                 style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: smDown ? "4px" : "8px",
-                    padding: "8px 16px",
+                    gap: smDown ? "2px" : "6px",
+                    padding: smDown ? "4px 8px" : "6px 16px",
                     position: "relative",
                     overflow: "hidden",
                 }}
@@ -115,6 +125,7 @@ function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, 
                         disabled={!states.showLeft}
                         aria-label="Previous categories"
                         style={{
+                            padding: smDown ? "2px" : "4px",
                             flex: "0 0 auto",
                             visibility: states.showLeft ? "visible" : "hidden",
                             backgroundColor:
@@ -136,20 +147,8 @@ function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, 
                             : themeColors?.CategoryCarouselGoPrevIconBackgroundColor?.value}
                     >
                         <Icon icon={arrowLeft}
-                            width={
-                                styles?.CategoryCarouselGoPrevIconHeightWidth?.value != ""
-                                    ? styles?.CategoryCarouselGoPrevIconHeightWidth?.value
-                                    : globalComponentStyles?.Icon?.size?.value != ""
-                                        ? globalComponentStyles?.Icon?.size?.value
-                                        : themeColors?.CategoryCarouselGoPrevIconHeightWidth?.value
-                            }
-                            height={
-                                styles?.CategoryCarouselGoPrevIconHeightWidth?.value != ""
-                                    ? styles?.CategoryCarouselGoPrevIconHeightWidth?.value
-                                    : globalComponentStyles?.Icon?.size?.value != ""
-                                        ? globalComponentStyles?.Icon?.size?.value
-                                        : themeColors?.CategoryCarouselGoPrevIconHeightWidth?.value
-                            }
+                            width={prevIconSize}
+                            height={prevIconSize}
                         />
                     </IconButton>
 
@@ -161,7 +160,7 @@ function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, 
                   minWidth: 0,
                   flexWrap: "nowrap",
                   overflowX: "auto",
-                  gap: smDown ? "0px" : "8px",
+                  gap: smDown ? "4px" : "8px",
                   padding: 0,
                   scrollbarWidth: "none",
                   justifyContent: categoryCarouselAlignment,
@@ -218,7 +217,9 @@ function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, 
                                         ? globalComponentStyles?.Text?.fontStyle?.value :
                                         themeColors?.CategoryCarouselTextStyle?.value,
 
-                                padding: smDown ? "6px 10px" : "8px 12px",
+                                padding: smDown ? "5px 10px" : "6px 14px",
+                                minWidth: 0,
+                                lineHeight: 1.4,
                                 // minWidth: "120px",
                                 // maxWidth: "160px",
                                 borderRadius: "8px",
@@ -274,6 +275,7 @@ function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, 
                         disabled={!states.showRight}
                         aria-label="Next categories"
                         style={{
+                            padding: smDown ? "2px" : "4px",
                             flex: "0 0 auto",
                             visibility: states.showRight ? "visible" : "hidden",
                             backgroundColor:
@@ -294,20 +296,8 @@ function StandardCategoryCarousel({ themeColors, actions, prop, styles, states, 
                                 : themeColors?.CategoryCarouselGoNextIconBackgroundColor?.value}
                     >
                         <Icon icon={arrowRight}
-                            width={
-                                styles?.CategoryCarouselGoNextIconHeightWidth?.value != ""
-                                    ? styles?.CategoryCarouselGoNextIconHeightWidth?.value
-                                    : globalComponentStyles?.Icon?.size?.value != ""
-                                        ? globalComponentStyles?.Icon?.size?.value
-                                        : themeColors?.CategoryCarouselGoNextIconHeightWidth?.value
-                            }
-                            height={
-                                styles?.CategoryCarouselGoNextIconHeightWidth?.value != ""
-                                    ? styles?.CategoryCarouselGoNextIconHeightWidth?.value
-                                    : globalComponentStyles?.Icon?.size?.value != ""
-                                        ? globalComponentStyles?.Icon?.size?.value
-                                        : themeColors?.CategoryCarouselGoNextIconHeightWidth?.value
-                            }
+                            width={nextIconSize}
+                            height={nextIconSize}
                         />
                     </IconButton>
             </Container>

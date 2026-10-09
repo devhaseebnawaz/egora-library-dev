@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Container, Link, Stack, Typography } from '@mui/material';
 import Iconify from '../iconify';
+import { getPhotoURL } from '../../../utils/photoURL';
 
 const SOCIAL_CONFIG = {
   facebook: { label: 'Facebook', icon: 'eva:facebook-fill', color: '#1877f2' },
@@ -75,7 +76,7 @@ export default function SocialPage({
   const editable = prop?.editable || {};
   const title = editable.title?.value || 'Social Links';
   const subtitle = editable.subtitle?.value || '';
-  const backgroundImage = editable.backgroundImage?.value || '';
+  const backgroundImage = getPhotoURL(editable.backgroundImage?.value) || '';
   const socialLinks = (editable.socialLinks?.value || []).filter((link) => link?.url);
 
   return (
@@ -105,22 +106,6 @@ export default function SocialPage({
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {backgroundImage && (
-        <Box
-          aria-hidden="true"
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            backgroundColor: styleValue(
-              styles,
-              themeColors,
-              globalComponentStyles,
-              'FollowPageOverlayColor',
-              '#000000'
-            ),
-          }}
-        />
-      )}
 
       <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
         <Typography

@@ -39,5 +39,7 @@ export default {
     }),
     terser(),
   ],
-  external: ["react", "react-dom"],
+  // Share the host application's MUI/Emotion contexts so its ThemeProvider
+  // also controls components imported from the published library.
+  external: (id) => /^(react|react-dom)(\/|$)/.test(id) || /^@(mui|emotion)\//.test(id),
 };
